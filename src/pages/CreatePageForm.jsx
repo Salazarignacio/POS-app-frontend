@@ -109,7 +109,7 @@ export default function CreatePageForm({ onSave }) {
 
         <Button
           type="submit"
-          className={`w-100 mt-3 ${isValid ? "btn-mas" : "btn-vacio"}`}
+          className={`w-100 mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
           disabled={!isValid}
         >
           Crear producto
