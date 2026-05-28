@@ -6,7 +6,9 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
   const [code, setCode] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [placeholder, setPlaceholder] = useState("Ingrese el código del producto ");
   const itemsRef = useRef([]);
+  const containerRef = useRef(null);
   
 
   useEffect(() => {
@@ -14,13 +16,32 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
     setSelectedIndex(-1);
   }, [posibles]);
 
+  // Cerrar al hacer click afuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // 🔎 BUSQUEDA FINAL (cuando se presiona ENTER o se selecciona)
   const handleSearch = async (value) => {
     if (!value.trim()) return;
 
-    await searchCode(value); // agrega producto real
-    setCode("");
     setOpen(false);
+    setCode("");
+    const found = await searchCode(value); // agrega producto real
+
+    if (!found) {
+      setPlaceholder("⚠️ Producto no encontrado");
+      setTimeout(() => {
+        setPlaceholder("Ingrese el código del producto ");
+      }, 2000);
+    }
   };
 
   // ⌨️ ENTER del lector o teclado
@@ -46,9 +67,9 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
       e.preventDefault();
 
       if (open && selectedIndex >= 0) {
-        await handleSelect(posibles[selectedIndex]);
+        handleSelect(posibles[selectedIndex]);
       } else {
-        await handleSearch(code);
+        handleSearch(code);
       }
     }
 
@@ -68,19 +89,26 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
 
   // 🧠 DEBOUNCE PRO (dropdown humano)
   useEffect(() => {
-    if (!code.trim()) return;
+    if (!code.trim()) {
+      setOpen(false);
+      return;
+    }
 
     const timer = setTimeout(async () => {
       await searchPosible(code); // busca en BD remoto
-      setOpen(true);
+      
+      // Solo abrir si todavía hay texto en el input
+      if (code.trim()) {
+        setOpen(true);
+      }
     }, 300); // tiempo clave (250-350 ideal)
 
     return () => clearTimeout(timer);
   }, [code]);
 
   // 🖱️ click en dropdown
-  const handleSelect = async (producto) => {
-    await handleSearch(producto.codigo);
+  const handleSelect = (producto) => {
+    handleSearch(producto.codigo);
   };
 
   useEffect(() => {
@@ -93,14 +121,14 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
   }, [selectedIndex]);
 
   return (
-    <div className="searcher-container">
+    <div className="searcher-container" ref={containerRef}>
       <div className="container-one">
         <input
           ref={inputRef}
           value={code}
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ingrese el código del producto "
+          placeholder={placeholder}
           className="search-input"
         />
         {open && posibles.length > 0 && (

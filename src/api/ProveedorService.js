@@ -33,13 +33,13 @@ export async function create(prov) {
 }
 
 export async function destroy(id) {
-  const res = await fetch(BASE_URL + `/${id}`, { method: "DELETE" });
+  const res = await fetch(BASE_URL_PROV + `/${id}`, { method: "DELETE" });
   if (!res.ok) {
     throw new Error("No se pudo eliminar archivo");
   }
 }
 export async function update(id, product) {
-  const res = await fetch(BASE_URL + `/${id}`, {
+  const res = await fetch(BASE_URL_PROV + `/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(product),

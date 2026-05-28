@@ -24,6 +24,7 @@ export default function VentasComponent({}) {
   const searchPosible = async (code) => {
     if (!code) {
       setProdPosibles([]);
+      return;
     }
 
     let data = await getByCode(code);
@@ -33,11 +34,11 @@ export default function VentasComponent({}) {
   };
 
   const searchCode = async (code) => {
-    if (!code) return;
+    if (!code) return false;
 
     let data = await getByCode(code);
 
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       data = data[0];
       setProductos((prev) => {
         const existe = prev.find((p) => p.codigo == data.codigo);
@@ -50,7 +51,9 @@ export default function VentasComponent({}) {
 
         return [{ ...data, cantidad: 1 }, ...prev];
       });
+      return true;
     }
+    return false;
   };
 
   const eliminarProducto = (codigo) => {

@@ -5,36 +5,53 @@ import { ProductContext } from "../context/ProductContext";
 
 export default function EditComponent() {
   const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { renderProducts } = useContext(ProductContext);
 
   useEffect(() => {
+    setLoading(true);
     getAll()
-      .then(setProductos)
-      .catch((err) => console.error(err));
+      .then((data) => {
+        setProductos(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, [renderProducts]);
 
   const searchCode = async (e) => {
     const code = e.target.value;
+    setLoading(true);
     if (!code) {
       getAll()
-        .then(setProductos)
-        .catch((err) => console.error(err));
+        .then((data) => {
+          setProductos(data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+      return;
     }
 
     getByCode(code)
-      .then(setProductos)
+      .then((data) => {
+        setProductos(data || []);
+        setLoading(false);
+      })
       .catch((err) => {
         console.error("Falló getByCode:", err);
-        return getAll()
-          .then(setProductos)
-          .catch((err) => console.error("Falló getAll:", err));
+        setLoading(false);
       });
   };
 
   return (
     <div className="edit">
       {/* <h2 className="section-title mb-2">Editar Productos</h2> */}
-      <EditPage productos={productos} searchCode={searchCode}></EditPage>
+      <EditPage productos={productos} searchCode={searchCode} loading={loading}></EditPage>
     </div>
   );
 }

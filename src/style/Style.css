@@ -679,6 +679,16 @@ li {
   }
 }
 
+.no-products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
+  color: var(--font-color);
+  opacity: 0.7;
+  text-align: center;
+}
+
 @keyframes totalPulse {
   0% {
     transform: scale(1);

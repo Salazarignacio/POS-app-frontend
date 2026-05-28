@@ -5,7 +5,7 @@ import "../style/Style.css";
 import ModalUpdatePlural from "../components/ModalUpdatePlural.jsx"
 
 
-export default function EditPage({ productos, searchCode }) {
+export default function EditPage({ productos, searchCode, loading }) {
   return (
     <div className="edit-page">
       <div className="searchBar">
@@ -26,17 +26,13 @@ export default function EditPage({ productos, searchCode }) {
 
       <div className="scroll ">
       <div className="productos-header">
-     {/*      <span></span>
-          <span>Codigo</span>
-          <span>Nombre</span>
-          <span>Categoría</span>
-          <span>Precio</span>
-          <span>Stock</span>
-          <span></span>
-          <span></span> */}
         </div> 
-        {productos.length < 1 ? (
+        {loading ? (
           <Loading />
+        ) : productos.length < 1 ? (
+          <div className="no-products">
+             <h3>⚠️ Producto no existente</h3>
+          </div>
         ) : (
           productos.map((element, a) => {
             return (
