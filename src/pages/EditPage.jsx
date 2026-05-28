@@ -25,7 +25,14 @@ export default function EditPage({ productos, searchCode, loading }) {
       </div>
 
       <div className="scroll ">
-      <div className="productos-header">
+        <div className="productos-header">
+          <span className="header-item"></span> {/* Placeholder para el checkbox */}
+          <span className="header-item">Código</span>
+          <span className="header-item">Nombre</span>
+          <span className="header-item">Categoría</span>
+          <span className="header-item">Precio</span>
+          <span className="header-item">Stock</span>
+          <span className="header-item">Acciones</span>
         </div> 
         {loading ? (
           <Loading />

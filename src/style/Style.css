@@ -562,13 +562,13 @@ li {
   box-shadow: var(--hover-shadow);
 }
 .producto-row {
-  font-size: 0.9rem; /* ojo: tenías 0,2rem con coma, eso es inválido */
+  font-size: 0.9rem;
   font-weight: 400;
   color: #2f3640;
 
   display: grid;
   grid-template-columns:
-    0.3fr
+    0.3fr /* checkbox */
     1.2fr /* codigo */
     2.2fr /* nombre */
     1.5fr /* categoria */
@@ -579,13 +579,14 @@ li {
   align-items: center;
   gap: 12px;
 
-  padding: 10px;
+  padding: 10px 25px; /* Sincronizado con el header si es necesario */
   border-bottom: 1px solid #ccc;
 }
 
 .productos-header {
   display: grid;
   grid-template-columns:
+    0.3fr /* checkbox space */
     1.2fr /* codigo */
     2.2fr /* nombre */
     1.5fr /* categoria */
@@ -596,16 +597,26 @@ li {
   align-items: center;
   gap: 12px;
 
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--font-color);
+  opacity: 0.8;
 
-  border-bottom: 2px solid #e5e7eb;
-  background: #fafafa;
+  padding: 15px 25px; /* Mismo padding lateral que las filas */
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  background: var(--white-black);
+  border-radius: 12px 12px 0 0;
 
   position: sticky;
   top: 0;
   z-index: 5;
+}
+
+.productos-header .header-item:last-child {
+  text-align: center;
+  width: 8rem; /* Coincide con .prod-edit-btn */
 }
 
 /* Formularios */
