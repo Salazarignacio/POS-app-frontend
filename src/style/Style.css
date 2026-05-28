@@ -53,25 +53,31 @@
     #16273f 60%,
     #0f172a 100%
   );
+  --spinner-color: #ebb918;
 }
 
 /* 🌙 DARK MODE */
 .dark {
-  --bg-contenedores: linear-gradient(180deg, #24283a 0%, #1b1f2e 100%);
+  --bg-contenedores: linear-gradient(180deg, #1e1e1e 0%, #121212 100%);
 
   --sh-contenedores:
-    0 8px 22px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
 
-  --btn-ppal: linear-gradient(135deg, #7318eb, #7625e0);
-  --btn-scnd: linear-gradient(135deg, #5308ea, #6106d9);
+  --btn-ppal: linear-gradient(135deg, #06b6d4, #0891b2);
+  --btn-scnd: linear-gradient(135deg, #0891b2, #0e7490);
 
-  --hover-color: rgba(140, 130, 255, 0.12);
-  --hover-shadow: inset 0 0 0 1px rgba(140, 130, 255, 0.25);
+  --hover-color: rgba(6, 182, 212, 0.12);
+  --hover-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.25);
 
-  --font-color: rgb(206, 202, 202);
-  --white-black: #213444;
+  --font-color: #e2e8f0;
+  --white-black: #262626;
 
-  --background: radial-gradient(circle at 20% 20%, #6c70a8 60%, #2a2f55);
+  --background: radial-gradient(circle at 20% 20%, #1a1a1a 0%, #0d0d0d 100%);
+  --spinner-color: #06b6d4;
+}
+
+.custom-spinner {
+  color: var(--spinner-color) !important;
 }
 
 input {
