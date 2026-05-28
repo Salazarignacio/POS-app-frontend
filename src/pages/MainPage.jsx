@@ -26,25 +26,22 @@ export default function MainPage({ children }) {
             to="/"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            <button    className={({ isActive }) => (isActive ? "active-link" : "")}>
-              <img src={ventasicon} />
-            </button>
+            <img src={ventasicon} />
+            <span className="nav-label">Ventas</span>
           </NavLink>
           <NavLink
             to="/edicion"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            <button>
-              <img src={editicon} />
-            </button>
+            <img src={editicon} />
+            <span className="nav-label">Edición</span>
           </NavLink>
           <NavLink
             to="/balance"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            <button>
-              <img src={balanceicon} />
-            </button>
+            <img src={balanceicon} />
+            <span className="nav-label">Balance</span>
           </NavLink>
         </div>
       </div>
