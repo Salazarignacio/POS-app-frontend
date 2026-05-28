@@ -1,5 +1,6 @@
 import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
+import { getByCode } from "../api/ProductoService";
 
 export default function CreatePageForm({ onSave }) {
   const [formData, setFormData] = useState({
@@ -13,21 +14,52 @@ export default function CreatePageForm({ onSave }) {
     codigo: false,
     articulo: false,
   });
+  const [codigoExiste, setCodigoExiste] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   const isValid =
-    formData.codigo.trim() !== "" && formData.articulo.trim() !== "";
+    formData.codigo.trim() !== "" && 
+    formData.articulo.trim() !== "" && 
+    !codigoExiste && 
+    !isValidating;
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
+
+    if (name === "codigo") {
+      setCodigoExiste(false);
+    }
 
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? Number(value) : value,
     }));
   };
+
+  const handleBlurCodigo = async () => {
+    setTouched((prev) => ({ ...prev, codigo: true }));
+    
+    if (formData.codigo.trim()) {
+      setIsValidating(true);
+      try {
+        const data = await getByCode(formData.codigo);
+        // Si data existe y no es un array vacío, o si es un array con elementos
+        if (data && (Array.isArray(data) ? data.length > 0 : true)) {
+          setCodigoExiste(true);
+        } else {
+          setCodigoExiste(false);
+        }
+      } catch (error) {
+        console.error("Error validando código:", error);
+      } finally {
+        setIsValidating(false);
+      }
+    }
+  };
+
   const handleSubmit = (e) => {
-    if (!isValid) return;
     e.preventDefault();
+    if (!isValid) return;
     onSave(formData);
   };
 
@@ -41,14 +73,20 @@ export default function CreatePageForm({ onSave }) {
             name="codigo"
             value={formData.codigo}
             onChange={handleChange}
-            onBlur={() => setTouched((prev) => ({ ...prev, codigo: true }))}
+            onBlur={handleBlurCodigo}
             placeholder="Código obligatorio *"
             className={`input-soft ${
-              touched.codigo && !formData.codigo.trim() ? "input-error" : ""
+              (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
             }`}
           />
           {touched.codigo && !formData.codigo.trim() && (
             <div className="error-text">El código es obligatorio</div>
+          )}
+          {codigoExiste && (
+            <div className="error-text">Este código ya existe en la base de datos</div>
+          )}
+          {isValidating && (
+            <div className="text-muted small mt-1">Validando código...</div>
           )}
         </Form.Group>
 

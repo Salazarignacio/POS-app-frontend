@@ -1,5 +1,6 @@
 import { Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
+import { getByCode } from "../api/ProductoService";
 
 export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
   const [modoPrecio, setModoPrecio] = useState("precio");
@@ -15,12 +16,17 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
     codigo: false,
     articulo: false,
   });
+  const [codigoExiste, setCodigoExiste] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   const isValid = isMultiple
     ? Object.entries(formData).some(
         ([key, value]) => key !== "codigo" && value !== "",
       )
-    : formData.codigo.trim() !== "" && formData.articulo.trim() !== "";
+    : formData.codigo.trim() !== "" && 
+      formData.articulo.trim() !== "" && 
+      !codigoExiste && 
+      !isValidating;
 
   useEffect(() => {
     if (producto) {
@@ -32,17 +38,49 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
         stock: producto.stock,
         codigo: producto.codigo,
       });
+      setCodigoExiste(false);
     }
   }, [producto]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
 
+    if (name === "codigo") {
+      setCodigoExiste(false);
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? (value === "" ? "" : Number(value)) : value,
     }));
   };
+
+  const handleBlurCodigo = async () => {
+    setTouched((prev) => ({ ...prev, codigo: true }));
+    
+    // Si el código es el mismo que el original, no validamos
+    if (producto && formData.codigo.trim() === producto.codigo) {
+      setCodigoExiste(false);
+      return;
+    }
+
+    if (!isMultiple && formData.codigo.trim()) {
+      setIsValidating(true);
+      try {
+        const data = await getByCode(formData.codigo);
+        if (data && (Array.isArray(data) ? data.length > 0 : true)) {
+          setCodigoExiste(true);
+        } else {
+          setCodigoExiste(false);
+        }
+      } catch (error) {
+        console.error("Error validando código:", error);
+      } finally {
+        setIsValidating(false);
+      }
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
@@ -70,14 +108,20 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
               name="codigo"
               value={formData.codigo}
               onChange={handleChange}
-              onBlur={() => setTouched((prev) => ({ ...prev, codigo: true }))}
+              onBlur={handleBlurCodigo}
               placeholder="Código obligatorio *"
               className={`input-soft ${
-                touched.codigo && !formData.codigo.trim() ? "input-error" : ""
+                (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
               }`}
             />
             {touched.codigo && !formData.codigo.trim() && (
               <div className="error-text">El código es obligatorio</div>
+            )}
+            {codigoExiste && (
+              <div className="error-text">Este código ya pertenece a otro producto</div>
+            )}
+            {isValidating && (
+              <div className="text-muted small mt-1">Validando código...</div>
             )}
           </Form.Group>
         )}
