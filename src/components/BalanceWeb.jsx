@@ -1,14 +1,10 @@
 export default function BalanceWeb() {
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <div className="balance-wrapper">
       <iframe
         src="https://balance-five-gamma.vercel.app/"
         title="Balance"
-        style={{
-          width: "100%",
-          height: "100%",
-          border: "none",
-        }}
+        className="balance-iframe"
       />
     </div>
   );
