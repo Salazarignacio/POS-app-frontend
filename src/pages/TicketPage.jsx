@@ -105,11 +105,16 @@ export default function TicketPage({ total, items, prods, setProductos }) {
         <Button
           className="btn-primary-soft w-100 btn-print"
           onClick={handlePrint}
+          title="Imprimir (F9 / Ctrl+P)"
         >
-          <img src={printlogo} />
+          <img src={printlogo} alt="Imprimir" />
         </Button>
 
-        <Button className="btn-cancel w-100" onClick={handleCancelarVenta}>
+        <Button 
+          className="btn-cancel w-100" 
+          onClick={handleCancelarVenta}
+          title="Cancelar Venta (F10)"
+        >
           Cancelar
         </Button>
       </div>

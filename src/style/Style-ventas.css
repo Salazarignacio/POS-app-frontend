@@ -123,11 +123,13 @@
   padding: 10px;
   cursor: pointer;
   border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .buscador-item:hover {
   background: var(--hover-color);
   box-shadow: var(--hover-shadow);
+  padding-left: 15px;
 }
 
 .buscador-item.active {
@@ -462,3 +464,4 @@ background-color: red; */
   gap: 0.7rem;
   margin-top: 1rem;
 }
+
