@@ -5,6 +5,7 @@ import { Modal } from "react-bootstrap";
 import { getById, update } from "../api/ProductoService";
 import UpdatePageForm from "../pages/UpdatePageForm";
 import { ProductContext } from "../context/ProductContext";
+import { toast } from "react-hot-toast";
 
 export default function UpdatePlural() {
   const { setRenderProducts } = useContext(ProductContext);
@@ -42,9 +43,11 @@ export default function UpdatePlural() {
 
       setRenderProducts((prev) => !prev);
       setSelectedIds([]); // Limpiamos la selección después de actualizar
+      toast.success("Productos actualizados correctamente");
       handleClose();
     } catch (error) {
       console.error("Error en actualización múltiple", error);
+      toast.error("Error al actualizar productos");
     }
   };
 

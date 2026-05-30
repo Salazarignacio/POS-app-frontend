@@ -87,8 +87,12 @@ export default function VentasComponent({}) {
             posibles={prodPosibles}
             inputRef={firstInputRef}
           ></SearchIndex>
-          {!productos ? (
-            "Ingrese Procuto"
+          {productos.length === 0 ? (
+            <div className="no-products d-flex flex-column align-items-center justify-content-center py-5 h-100">
+               <i className="fa-solid fa-cart-plus fa-3x mb-3 opacity-20"></i>
+               <p className="fs-5 fw-bold opacity-50">Tu carrito está vacío</p>
+               <p className="small opacity-40">Busca productos para comenzar la venta</p>
+            </div>
           ) : (
             <>
               <div className="carrito-titulos">

@@ -123,35 +123,40 @@ export default function CreatePageForm({ onSave }) {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Categoría</Form.Label>
+          <Form.Label className="fw-bold">Categoría</Form.Label>
           <Form.Control
             type="text"
             name="categoria"
             value={formData.categoria}
             onChange={handleChange}
+            placeholder="Opcional"
             className="input-soft"
           />
         </Form.Group>
 
         <div className="form-row-2">
           <Form.Group>
-            <Form.Label>Precio</Form.Label>
+            <Form.Label className="fw-bold">Precio</Form.Label>
             <Form.Control
               type="number"
               name="precio"
+              inputMode="decimal"
               value={formData.precio}
               onChange={handleChange}
+              placeholder="0.00"
               className="input-soft"
             />
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Stock</Form.Label>
+            <Form.Label className="fw-bold">Stock</Form.Label>
             <Form.Control
               type="number"
               name="stock"
+              inputMode="numeric"
               value={formData.stock}
               onChange={handleChange}
+              placeholder="0"
               className="input-soft"
             />
           </Form.Group>

@@ -160,61 +160,72 @@
   position: relative;
 }
 .btn-mas {
-  background:
-    var(--btn-ppal) padding-box,
-    var(--btn-scnd) border-box;
-
-  border: 2px solid transparent;
-
+  background: var(--btn-ppal);
+  border: none;
   cursor: pointer;
-  transition: transform 0.1s;
-  margin-left: 5px;
-  display: flex;
-  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 10px;
+  display: inline-flex;
   align-items: center;
-  font-weight: 500;
-  color: rgb(255, 255, 255);
-  max-height: 42px;
-  width: 20rem;
+  justify-content: center;
+  padding: 0 24px;
+  height: 42px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
 }
 
 .btn-vacio {
-  border: 2px solid #bfc6d1 !important;
-  background-color: #e9edf3 !important;
-
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
   cursor: not-allowed;
-  transition: transform 0.1s;
-  margin-left: 5px;
-  height: 42px;
-  width: 20rem;
-  display: flex;
-  justify-content: center;
+  margin-left: 10px;
+  display: inline-flex;
   align-items: center;
-  font-weight: 500;
-  color: #8b94a7 !important;
-  opacity: 0.7;
+  justify-content: center;
+  padding: 0 24px;
+  height: 42px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #94a3b8;
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0.5; /* Feedback visual clave de inactividad */
+  box-shadow: none; /* Quitamos profundidad */
+  filter: grayscale(1); /* Eliminamos cualquier rastro de color */
 }
+
+.dark .btn-vacio {
+  background: #27272a;
+  border-color: #3f3f46;
+  color: #52525b;
+  opacity: 0.4;
+}
+
 .btn-vacio:hover {
   transform: none;
+  filter: grayscale(1);
+  box-shadow: none;
 }
 
 .btn-mas:hover {
-  transform: scale(1.1);
-
-  border: 2px solid var(--btn-scnd);
-   background:
-    var(--btn-scnd) padding-box,
-    var(--btn-ppal) border-box;
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .btn-mas:active {
-  transform: scale(0.95);
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-mas img,
 .btn-vacio img {
-  width: 50px;
-  height: 50px;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
 .search-input::placeholder {

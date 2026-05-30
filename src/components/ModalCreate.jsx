@@ -6,6 +6,8 @@ import { Modal } from "react-bootstrap";
 import { create } from "../api/ProductoService";
 import CreatePageForm from "../pages/CreatePageForm";
 
+import { toast } from "react-hot-toast";
+
 export default function ModalCreate({}) {
   const { setRenderProducts } = useContext(ProductContext);
   const [show, setShow] = useState(false);
@@ -14,16 +16,12 @@ export default function ModalCreate({}) {
   const save = async (prod) => {
     try {
       const data = await create(prod);
-      console.log(data);
-
+      toast.success("Producto creado exitosamente");
       setProducto(data);
       setRenderProducts((prev) => !prev);
       handleClose();
     } catch (error) {
-      const mensaje =
-        error.response?.data?.message ||
-        "Error, el código que desea cargar ya pertenece a un producto";
-      alert(mensaje);
+      toast.error("Error: El código ya pertenece a un producto");
     }
   };
 

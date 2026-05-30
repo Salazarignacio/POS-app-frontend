@@ -206,6 +206,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
             <Form.Control
               type="number"
               name={modoPrecio === "precio" ? "precio" : "porcentaje"}
+              inputMode="decimal"
               placeholder={
                 modoPrecio === "precio" ? "Valor fijo" : "% sobre actual"
               }
@@ -230,6 +231,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
             <Form.Control
               type="number"
               name="stock"
+              inputMode="numeric"
               value={formData.stock}
               onChange={handleChange}
               placeholder={isMultiple ? "Opcional" : "0"}
