@@ -743,12 +743,12 @@ li {
   border-radius: 20px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  background: #ffffff; /* Blanco puro para máxima claridad */
+  background: #f8fafc; /* Tono delicado para el fondo del modal */
   overflow: hidden;
 }
 
 .dark .modal-content {
-  background: #18181b; /* Zinc 900 */
+  background: var(--bg-contenedores); 
   border-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -790,12 +790,12 @@ li {
 .input-soft {
   background-color: #ffffff !important;
   color: var(--font-color) !important;
-  border: 1.5px solid #e2e8f0 !important; /* Borde definido para distinción */
+  border: 1.5px solid #cbd5e1 !important; /* Borde más definido para Light Mode */
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 0.9rem;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Sutil sombra para profundidad */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02); 
 }
 
 .dark .input-soft {
@@ -805,7 +805,7 @@ li {
 }
 
 .input-soft:hover {
-  border-color: #cbd5e1 !important;
+  border-color: #94a3b8 !important; /* Borde más oscuro al pasar el mouse */
 }
 
 .input-soft:focus {
