@@ -541,13 +541,15 @@ img:hover {
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background-color: #fef2f2;
-  border-color: #dc2626;
+  background-color: #fee2e2; /* Rojo más saturado y visible */
+  border-color: #ef4444;
+  color: #b91c1c; /* Texto más oscuro para contraste */
   transform: translateY(-1px);
 }
 
 .dark .btn-cancel:hover:not(:disabled) {
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.2); /* Mayor visibilidad en modo oscuro */
+  border-color: #f87171;
 }
 
 /* Estados Desactivados Unificados */
