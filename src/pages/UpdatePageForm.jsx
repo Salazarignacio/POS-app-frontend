@@ -101,9 +101,9 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
   return (
     <div>
       {isMultiple && (
-        <div className="alert alert-info py-2 mb-3" style={{ fontSize: '0.85rem' }}>
-          <i className="fa-solid fa-circle-info me-2"></i>
-          Los campos vacíos <strong>no se modificarán</strong> en los productos seleccionados.
+        <div className="alert-info-custom mb-4">
+          <i className="fa-solid fa-circle-info"></i>
+          <span>Los campos vacíos <strong>no se modificarán</strong> en los productos seleccionados.</span>
         </div>
       )}
       <Form onSubmit={handleSubmit} className="update-form">
@@ -175,7 +175,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
         </Form.Group>
 
         <div className="form-row-2">
-          <Form.Group className="d-flex flex-column">
+          <Form.Group>
             <Form.Label className="fw-bold">Precio / Aumento</Form.Label>
             <div className="price-options mb-2">
               <Form.Check
@@ -223,8 +223,8 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
             )}
           </Form.Group>
 
-          <Form.Group className="d-flex flex-column justify-content-end">
-            <Form.Label className="fw-bold mb-auto">
+          <Form.Group>
+            <Form.Label className="fw-bold">
               {isMultiple ? "Nuevo Stock" : "Stock"}
             </Form.Label>
             <Form.Control
