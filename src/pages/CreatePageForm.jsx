@@ -28,77 +28,89 @@ export default function CreatePageForm({ onSave }) {
 
     if (name === "codigo") {
       setCodigoExiste(false);
+      setTouched(prev => ({ ...prev, codigo: false }));
     }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: type === "number" ? (value === "" ? "" : Number(value)) : value,
     }));
   };
 
   const handleBlurCodigo = async () => {
-    setTouched((prev) => ({ ...prev, codigo: true }));
+    if (!formData.codigo.trim()) {
+      setTouched((prev) => ({ ...prev, codigo: true }));
+      return;
+    }
     
-    if (formData.codigo.trim()) {
-      setIsValidating(true);
-      try {
-        const data = await getByCode(formData.codigo);
-        // Si data existe y no es un array vacío, o si es un array con elementos
-        if (data && (Array.isArray(data) ? data.length > 0 : true)) {
-          setCodigoExiste(true);
-        } else {
-          setCodigoExiste(false);
-        }
-      } catch (error) {
-        console.error("Error validando código:", error);
-      } finally {
-        setIsValidating(false);
+    setIsValidating(true);
+    try {
+      const data = await getByCode(formData.codigo);
+      if (data && (Array.isArray(data) ? data.length > 0 : true)) {
+        setCodigoExiste(true);
+      } else {
+        setCodigoExiste(false);
       }
+    } catch (error) {
+      console.error("Error validando código:", error);
+    } finally {
+      setIsValidating(false);
+      setTouched((prev) => ({ ...prev, codigo: true }));
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isValid) return;
-    onSave(formData);
+    
+    // Filtramos campos vacíos opcionales
+    const cleanData = Object.fromEntries(
+      Object.entries(formData).filter(([_, v]) => v !== "")
+    );
+    onSave(cleanData);
   };
 
   return (
     <>
       <Form onSubmit={handleSubmit} className="update-form">
         <Form.Group className="mb-3">
-          <Form.Label>Código</Form.Label>
-          <Form.Control
-            type="text"
-            name="codigo"
-            value={formData.codigo}
-            onChange={handleChange}
-            onBlur={handleBlurCodigo}
-            placeholder="Código obligatorio *"
-            className={`input-soft ${
-              (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
-            }`}
-          />
+          <Form.Label className="fw-bold">Código</Form.Label>
+          <div className="position-relative">
+            <Form.Control
+              type="text"
+              name="codigo"
+              value={formData.codigo}
+              onChange={handleChange}
+              onBlur={handleBlurCodigo}
+              placeholder="Ej: PROD-001"
+              className={`input-soft ${
+                (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
+              }`}
+            />
+            {isValidating && (
+              <div className="spinner-border spinner-border-sm text-primary position-absolute" 
+                   style={{ right: '10px', top: '12px' }} role="status">
+                <span className="visually-hidden">Validando...</span>
+              </div>
+            )}
+          </div>
           {touched.codigo && !formData.codigo.trim() && (
             <div className="error-text">El código es obligatorio</div>
           )}
           {codigoExiste && (
             <div className="error-text">Este código ya existe en la base de datos</div>
           )}
-          {isValidating && (
-            <div className="text-muted small mt-1">Validando código...</div>
-          )}
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Nombre del artículo</Form.Label>
+          <Form.Label className="fw-bold">Nombre del artículo</Form.Label>
           <Form.Control
             type="text"
             name="articulo"
             value={formData.articulo}
             onChange={handleChange}
             onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
-            placeholder="Nombre artículo obligatorio *"
+            placeholder="Nombre descriptivo"
             className={`input-soft ${
               touched.articulo && !formData.articulo.trim() ? "input-error" : ""
             }`}

@@ -31,14 +31,15 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
   useEffect(() => {
     if (producto) {
       setFormData({
-        articulo: producto.articulo,
-        categoria: producto.categoria,
-        precio: producto.precio,
+        articulo: producto.articulo || "",
+        categoria: producto.categoria || "",
+        precio: producto.precio || "",
         porcentaje: "",
-        stock: producto.stock,
-        codigo: producto.codigo,
+        stock: producto.stock || "",
+        codigo: producto.codigo || "",
       });
       setCodigoExiste(false);
+      setTouched({ codigo: false, articulo: false });
     }
   }, [producto]);
 
@@ -47,6 +48,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
 
     if (name === "codigo") {
       setCodigoExiste(false);
+      setTouched(prev => ({ ...prev, codigo: false }));
     }
 
     setFormData((prev) => ({
@@ -56,11 +58,9 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
   };
 
   const handleBlurCodigo = async () => {
-    setTouched((prev) => ({ ...prev, codigo: true }));
-    
-    // Si el código es el mismo que el original, no validamos
     if (producto && formData.codigo.trim() === producto.codigo) {
       setCodigoExiste(false);
+      setTouched((prev) => ({ ...prev, codigo: true }));
       return;
     }
 
@@ -77,6 +77,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
         console.error("Error validando código:", error);
       } finally {
         setIsValidating(false);
+        setTouched((prev) => ({ ...prev, codigo: true }));
       }
     }
   };
@@ -85,61 +86,74 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
     e.preventDefault();
     if (!isValid) return;
 
-    let dataToSend = { ...formData };
+    let dataToSend = Object.fromEntries(
+      Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
+    );
 
     if (modoPrecio === "precio") {
       delete dataToSend.porcentaje;
-    }
-
-    if (modoPrecio === "porcentaje") {
+    } else if (modoPrecio === "porcentaje") {
       delete dataToSend.precio;
     }
-    console.log(formData);
+
     updateFn(dataToSend);
   };
   return (
     <div>
+      {isMultiple && (
+        <div className="alert alert-info py-2 mb-3" style={{ fontSize: '0.85rem' }}>
+          <i className="fa-solid fa-circle-info me-2"></i>
+          Los campos vacíos <strong>no se modificarán</strong> en los productos seleccionados.
+        </div>
+      )}
       <Form onSubmit={handleSubmit} className="update-form">
         {!isMultiple && (
           <Form.Group className="mb-3">
-            <Form.Label>Código</Form.Label>
-            <Form.Control
-              type="text"
-              name="codigo"
-              value={formData.codigo}
-              onChange={handleChange}
-              onBlur={handleBlurCodigo}
-              placeholder="Código obligatorio *"
-              className={`input-soft ${
-                (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
-              }`}
-            />
+            <Form.Label className="fw-bold">Código</Form.Label>
+            <div className="position-relative">
+              <Form.Control
+                type="text"
+                name="codigo"
+                value={formData.codigo}
+                onChange={handleChange}
+                onBlur={handleBlurCodigo}
+                placeholder="Código único"
+                className={`input-soft ${
+                  (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
+                }`}
+              />
+              {isValidating && (
+                <div className="spinner-border spinner-border-sm text-primary position-absolute" 
+                     style={{ right: '10px', top: '12px' }} role="status">
+                  <span className="visually-hidden">Validando...</span>
+                </div>
+              )}
+            </div>
             {touched.codigo && !formData.codigo.trim() && (
               <div className="error-text">El código es obligatorio</div>
             )}
             {codigoExiste && (
               <div className="error-text">Este código ya pertenece a otro producto</div>
             )}
-            {isValidating && (
-              <div className="text-muted small mt-1">Validando código...</div>
-            )}
           </Form.Group>
         )}
 
         <Form.Group className="mb-3">
-          <Form.Label>Nombre del artículo</Form.Label>
+          <Form.Label className="fw-bold">
+            {isMultiple ? "Nuevo nombre (opcional)" : "Nombre del artículo"}
+          </Form.Label>
           <Form.Control
             type="text"
             name="articulo"
             value={formData.articulo}
             onChange={handleChange}
             onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
-            placeholder="Nombre artículo obligatorio *"
+            placeholder={isMultiple ? "Dejar vacío para mantener original" : "Nombre descriptivo"}
             className={`input-soft ${
-              touched.articulo && !formData.articulo.trim() ? "input-error" : ""
+              !isMultiple && touched.articulo && !formData.articulo.trim() ? "input-error" : ""
             }`}
           />
-          {touched.articulo && !formData.articulo.trim() && (
+          {!isMultiple && touched.articulo && !formData.articulo.trim() && (
             <div className="error-text">
               El nombre del artículo es obligatorio
             </div>
@@ -147,23 +161,28 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Categoría</Form.Label>
+          <Form.Label className="fw-bold">
+            {isMultiple ? "Nueva categoría (opcional)" : "Categoría"}
+          </Form.Label>
           <Form.Control
             type="text"
             name="categoria"
             value={formData.categoria}
             onChange={handleChange}
+            placeholder={isMultiple ? "Mantener original" : ""}
             className="input-soft"
           />
         </Form.Group>
 
         <div className="form-row-2">
-          <Form.Group>
-            <div className="price-options">
+          <Form.Group className="d-flex flex-column">
+            <Form.Label className="fw-bold">Precio / Aumento</Form.Label>
+            <div className="price-options mb-2">
               <Form.Check
                 type="radio"
-                label="$"
+                label="Precio $"
                 name="modoPrecio"
+                id="radio-precio"
                 checked={modoPrecio === "precio"}
                 onChange={() => {
                   setModoPrecio("precio");
@@ -173,8 +192,9 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
 
               <Form.Check
                 type="radio"
-                label="%"
+                label="Aumento %"
                 name="modoPrecio"
+                id="radio-porcentaje"
                 checked={modoPrecio === "porcentaje"}
                 onChange={() => {
                   setModoPrecio("porcentaje");
@@ -187,7 +207,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
               type="number"
               name={modoPrecio === "precio" ? "precio" : "porcentaje"}
               placeholder={
-                modoPrecio === "precio" ? "Precio exacto" : "% de aumento"
+                modoPrecio === "precio" ? "Valor fijo" : "% sobre actual"
               }
               value={
                 modoPrecio === "precio" ? formData.precio : formData.porcentaje
@@ -195,15 +215,24 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
               onChange={handleChange}
               className="input-soft"
             />
+            {isMultiple && modoPrecio === "porcentaje" && formData.porcentaje && (
+              <div className="text-primary x-small mt-1" style={{ fontSize: '0.75rem' }}>
+                <i className="fa-solid fa-wand-magic-sparkles me-1"></i>
+                Se aplicará un {formData.porcentaje}% a cada producto.
+              </div>
+            )}
           </Form.Group>
 
-          <Form.Group>
-            <Form.Label>Stock</Form.Label>
+          <Form.Group className="d-flex flex-column justify-content-end">
+            <Form.Label className="fw-bold mb-auto">
+              {isMultiple ? "Nuevo Stock" : "Stock"}
+            </Form.Label>
             <Form.Control
               type="number"
               name="stock"
               value={formData.stock}
               onChange={handleChange}
+              placeholder={isMultiple ? "Opcional" : "0"}
               className="input-soft"
             />
           </Form.Group>
