@@ -22,6 +22,7 @@ export default function EditProductoPage({ props }) {
         <span className="check">
           <input
             type="checkbox"
+            checked={selectedIds.includes(props.id)}
             onChange={(e) => handleSelect(props.id, e.target.checked)}
           />
         </span>

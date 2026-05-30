@@ -2,13 +2,15 @@ import { getAll, getByCode } from "../api/ProductoService";
 import { useState, useEffect, useContext } from "react";
 import EditPage from "../pages/EditPage";
 import { ProductContext } from "../context/ProductContext";
+import { SelectedIds } from "../context/SelectedIds";
 
 export default function EditComponent() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const { renderProducts } = useContext(ProductContext);
+  const { setSelectedIds } = useContext(SelectedIds);
 
-  useEffect(() => {
+  const fetchAll = () => {
     setLoading(true);
     getAll()
       .then((data) => {
@@ -19,24 +21,22 @@ export default function EditComponent() {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    // Limpiamos la selección al entrar al componente
+    setSelectedIds([]);
+    fetchAll();
   }, [renderProducts]);
 
   const searchCode = async (e) => {
     const code = e.target.value;
-    setLoading(true);
     if (!code) {
-      getAll()
-        .then((data) => {
-          setProductos(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+      fetchAll();
       return;
     }
 
+    setLoading(true);
     getByCode(code)
       .then((data) => {
         setProductos(data || []);

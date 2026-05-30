@@ -19,7 +19,7 @@ export async function test() {
 export async function getById(id) {
   const res = await fetch(BASE_URL + `/${id}`);
   if (!res.ok) {
-    throw new ("Error al encontrar id " + id)();
+    throw new Error("Error al encontrar id " + id);
   }
   return res.json();
 }
@@ -32,7 +32,7 @@ export async function create(product) {
     body: JSON.stringify(product),
   });
   if (!res.ok) {
-    throw new "Error al crear producto"();
+    throw new Error("Error al crear producto");
   }
   return await res.json();
 }

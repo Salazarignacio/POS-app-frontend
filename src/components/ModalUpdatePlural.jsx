@@ -8,7 +8,7 @@ import { ProductContext } from "../context/ProductContext";
 
 export default function UpdatePlural() {
   const { setRenderProducts } = useContext(ProductContext);
-  const { selectedIds } = useContext(SelectedIds);
+  const { selectedIds, setSelectedIds } = useContext(SelectedIds);
   const isEmpty = selectedIds.length < 2;
 
   const [show, setShow] = useState(false);
@@ -35,11 +35,13 @@ export default function UpdatePlural() {
             ...original,
             ...filteredData,
           };
-          setRenderProducts((prev) => !prev);
+
           return update(id, merged);
         }),
       );
 
+      setRenderProducts((prev) => !prev);
+      setSelectedIds([]); // Limpiamos la selección después de actualizar
       handleClose();
     } catch (error) {
       console.error("Error en actualización múltiple", error);

@@ -13,7 +13,7 @@ export async function getAllProv() {
 export async function getByIdProv(id) {
   const res = await fetch(BASE_URL_PROV + `/${id}`);
   if (!res.ok) {
-    throw new ("Error al encontrar id " + id)();
+    throw new Error("Error al encontrar id " + id);
   }
   return res.json();
 }
@@ -27,7 +27,7 @@ export async function create(prov) {
     body: JSON.stringify(prov),
   });
   if (!res.ok) {
-    throw new "Error al crear proveedor"();
+    throw new Error("Error al crear proveedor");
   }
   return await res.json();
 }
