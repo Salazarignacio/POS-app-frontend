@@ -8,30 +8,15 @@ export default function VentasPage({
   focusFirstInput
 }) {
 
-  const total = props.reduce(
-    (acc, item) => acc + item.precio * item.cantidad,
-    0
-  );
-
   return (
-    <div className="ticket-print">
-
-      {/* 🔝 Título */}
-      <div className="ticket-title only-print">
-        <h4>*RESUMEN*</h4>
-      </div>
-
+    <div className="ventas-list">
       {props.map((a) => (
         <div key={a.codigo} className="carrito-container">
           <div>{a.articulo}</div>
 
           <div>
-            <span className="only-print">
-              {a.precio.toLocaleString("es-AR")}
-            </span>
-
             <input
-              className="no-print sell-input"
+              className="sell-input"
               type="text"
               value={a.precio ? `$ ${a.precio.toLocaleString("es-AR")}` : ""}
               onChange={(e) => {
@@ -51,12 +36,8 @@ export default function VentasPage({
           </div>
 
           <div>
-            <span className="only-print">
-              {a.cantidad.toLocaleString("es-AR")}
-            </span>
-
             <input
-              className="no-print sell-input-cantidad"
+              className="sell-input-cantidad"
               type="text"
               inputMode="numeric"
               value={a.cantidad ? a.cantidad.toLocaleString("es-AR") : ""}
@@ -76,13 +57,13 @@ export default function VentasPage({
             />
           </div>
 
-          <div className="no-print sell-input-subtotal">
+          <div className="sell-input-subtotal">
             ${(a.precio * a.cantidad).toLocaleString("es-AR")}
           </div>
 
           <div>
             <Button
-              className="btn-edit no-print"
+              className="btn-edit"
               onClick={() => eliminarProducto(a.codigo)}
               tabIndex={-1}
             >
@@ -91,12 +72,6 @@ export default function VentasPage({
           </div>
         </div>
       ))}
-
-      {/* 🔽 Total */}
-      <div className="ticket-total only-print">
-        <h5>TOTAL ${total.toLocaleString("es-AR")}</h5>
-      </div>
-
     </div>
   );
 }

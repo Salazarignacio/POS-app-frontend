@@ -1,7 +1,44 @@
 import { Button } from "react-bootstrap";
 import printlogo from "../assets/printlogo.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { update } from "../api/ProductoService";
+
+const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
+  <div className="printable-ticket">
+    <div className="ticket-header">
+      <h2>MI NEGOCIO</h2>
+      <p>Ignacio</p>
+      <p>{fecha} - {hora}</p>
+    </div>
+    <div className="ticket-divider">--------------------------------</div>
+    <div className="ticket-items">
+      {prods.map((p, i) => (
+        <div key={i} className="ticket-item-row">
+          <div className="item-main">
+            <span className="item-qty">{p.cantidad}x </span>
+            <span className="item-name">{p.articulo}</span>
+          </div>
+          <div className="item-prices">
+            <span>${p.precio.toLocaleString("es-AR")}</span>
+            <span className="item-subtotal">${(p.precio * p.cantidad).toLocaleString("es-AR")}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div className="ticket-divider">--------------------------------</div>
+    <div className="ticket-footer">
+      <div className="footer-row">
+        <span>Artículos:</span>
+        <span>{items}</span>
+      </div>
+      <div className="footer-row total">
+        <span>TOTAL:</span>
+        <span>${total.toLocaleString("es-AR")}</span>
+      </div>
+      <p className="thanks">¡Gracias por su compra!</p>
+    </div>
+  </div>
+);
 
 export default function TicketPage({ total, items, prods, setProductos }) {
   const [animarTotal, setAnimarTotal] = useState(false);
@@ -23,7 +60,7 @@ export default function TicketPage({ total, items, prods, setProductos }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [prods]); // Added prods dependency for handlePrint closure
 
   const handleCancelarVenta = () => {
     const ok = window.confirm("¿Cancelar la venta actual?");
@@ -32,21 +69,29 @@ export default function TicketPage({ total, items, prods, setProductos }) {
     setProductos([]);
     localStorage.removeItem("productos");
   };
+
   const handlePrint = async () => {
-    const ok = window.confirm("Imprimir ticket?");
+    if (prods.length === 0) return;
+    
+    const ok = window.confirm("¿Confirmar venta e imprimir ticket?");
     if (!ok) return;
-    prods.map((element) => {
-      element.stock = element.stock - element.cantidad;
-      return element;
-    });
-    prods.map(async (element) => {
-      const actualizarStock = await update(element.id, element);
-    });
+
+    // Actualizar stock en el backend
+    try {
+      for (const element of prods) {
+        const nuevoStock = element.stock - element.cantidad;
+        await update(element.id, { ...element, stock: nuevoStock });
+      }
+    } catch (error) {
+      console.error("Error al actualizar stock:", error);
+      alert("Error al actualizar stock, pero se procederá con la impresión.");
+    }
 
     window.print();
     setProductos([]);
     localStorage.removeItem("productos");
   };
+
   const now = new Date();
   const fechaFormateada = now.toLocaleDateString("es-AR");
   const hora = now.toLocaleTimeString("es-AR", {
@@ -57,11 +102,9 @@ export default function TicketPage({ total, items, prods, setProductos }) {
 
   useEffect(() => {
     setAnimarTotal(true);
-
     const timer = setTimeout(() => {
       setAnimarTotal(false);
     }, 300);
-
     return () => clearTimeout(timer);
   }, [total]);
 
@@ -101,19 +144,31 @@ export default function TicketPage({ total, items, prods, setProductos }) {
         </div>
       </div>
 
+      {/* Ticket oculto diseñado solo para impresión */}
+      <div className="print-only">
+        <TicketToPrint 
+          total={total} 
+          items={items} 
+          prods={prods} 
+          fecha={fechaFormateada} 
+          hora={hora} 
+        />
+      </div>
+
       <div className="ticket-actions">
         <Button
-          className="btn-primary-soft w-100 btn-print"
+          className="btn-print w-100"
           onClick={handlePrint}
           title="Imprimir (F9 / Ctrl+P)"
+          disabled={prods.length === 0}
         >
           <img src={printlogo} alt="Imprimir" />
         </Button>
-
         <Button 
           className="btn-cancel w-100" 
           onClick={handleCancelarVenta}
           title="Cancelar Venta (F10)"
+          disabled={prods.length === 0}
         >
           Cancelar
         </Button>
