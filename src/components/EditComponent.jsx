@@ -10,42 +10,33 @@ export default function EditComponent() {
   const { renderProducts } = useContext(ProductContext);
   const { setSelectedIds } = useContext(SelectedIds);
 
-  const fetchAll = () => {
-    setLoading(true);
-    getAll()
-      .then((data) => {
-        setProductos(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  };
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Limpiamos la selección al entrar al componente
-    setSelectedIds([]);
-    fetchAll();
-  }, [renderProducts]);
+    const delayDebounceFn = setTimeout(() => {
+      setLoading(true);
+      setSelectedIds([]); // Limpiamos selección al buscar o recargar
+      
+      const request = searchTerm 
+        ? getByCode(searchTerm) 
+        : getAll();
 
-  const searchCode = async (e) => {
-    const code = e.target.value;
-    if (!code) {
-      fetchAll();
-      return;
-    }
+      request
+        .then((data) => {
+          setProductos(data || []);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error al obtener productos:", err);
+          setLoading(false);
+        });
+    }, 300);
 
-    setLoading(true);
-    getByCode(code)
-      .then((data) => {
-        setProductos(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Falló getByCode:", err);
-        setLoading(false);
-      });
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, renderProducts]);
+
+  const searchCode = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   return (
