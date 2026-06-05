@@ -10,22 +10,25 @@ const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
       <p>Ignacio</p>
       <p>{fecha} - {hora}</p>
     </div>
+    
     <div className="ticket-divider">--------------------------------</div>
+    
     <div className="ticket-items">
       {prods.map((p, i) => (
         <div key={i} className="ticket-item-row">
           <div className="item-main">
-            <span className="item-qty">{p.cantidad}x </span>
-            <span className="item-name">{p.articulo}</span>
+            <span>{p.cantidad}x {p.articulo}</span>
           </div>
           <div className="item-prices">
             <span>${p.precio.toLocaleString("es-AR")}</span>
-            <span className="item-subtotal">${(p.precio * p.cantidad).toLocaleString("es-AR")}</span>
+            <span>${(p.precio * p.cantidad).toLocaleString("es-AR")}</span>
           </div>
         </div>
       ))}
     </div>
+    
     <div className="ticket-divider">--------------------------------</div>
+    
     <div className="ticket-footer">
       <div className="footer-row">
         <span>Artículos:</span>
@@ -35,7 +38,9 @@ const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
         <span>TOTAL:</span>
         <span>${total.toLocaleString("es-AR")}</span>
       </div>
-      <p className="thanks">¡Gracias por su compra!</p>
+      <div className="thanks">
+        <p>¡Gracias por su compra!</p>
+      </div>
     </div>
   </div>
 );

@@ -456,3 +456,99 @@ background-color: red; */
   margin-top: 1rem;
 }
 
+/* --- ESTILOS DE IMPRESIÓN --- */
+
+@media print {
+  /* Ocultar todo lo que no sea el ticket */
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-ticket, .printable-ticket * {
+    visibility: visible;
+  }
+
+  .printable-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm; /* Ancho estándar de ticketera */
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #000;
+    background: #fff;
+  }
+
+  .ticket-header {
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  .ticket-header h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .ticket-header p {
+    margin: 2px 0;
+  }
+
+  .ticket-divider {
+    text-align: center;
+    margin: 5px 0;
+    letter-spacing: -1px;
+  }
+
+  .ticket-items {
+    width: 100%;
+  }
+
+  .ticket-item-row {
+    margin-bottom: 2px; /* Reducción de sangría vertical */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-main {
+    display: flex;
+    font-weight: bold;
+  }
+
+  .item-prices {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    font-size: 11px;
+  }
+
+  .ticket-footer {
+    margin-top: 10px;
+  }
+
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+
+  .footer-row.total {
+    font-size: 14px;
+    font-weight: bold;
+    border-top: 1px solid #000;
+    padding-top: 5px;
+  }
+
+  .thanks {
+    text-align: center;
+    margin-top: 15px;
+    font-style: italic;
+  }
+
+  /* Eliminar cabeceras/pies de página del navegador */
+  @page {
+    margin: 0;
+  }
+}
+
