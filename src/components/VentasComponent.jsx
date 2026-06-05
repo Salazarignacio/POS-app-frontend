@@ -49,7 +49,7 @@ export default function VentasComponent({}) {
           );
         }
 
-        return [{ ...data, cantidad: 1 }, ...prev];
+        return [{ ...data, cantidad: 1, originalPrecio: data.precio }, ...prev];
       });
       return true;
     }

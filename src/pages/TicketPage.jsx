@@ -80,7 +80,18 @@ export default function TicketPage({ total, items, prods, setProductos }) {
     try {
       for (const element of prods) {
         const nuevoStock = element.stock - element.cantidad;
-        await update(element.id, { ...element, stock: nuevoStock });
+        
+        // Creamos una copia limpia para el backend restaurando el precio original
+        const productToUpdate = {
+          id: element.id,
+          codigo: element.codigo,
+          articulo: element.articulo,
+          categoria: element.categoria,
+          stock: nuevoStock,
+          precio: element.originalPrecio !== undefined ? element.originalPrecio : element.precio
+        };
+
+        await update(element.id, productToUpdate);
       }
     } catch (error) {
       console.error("Error al actualizar stock:", error);
