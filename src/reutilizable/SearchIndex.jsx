@@ -142,7 +142,10 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
                 }`}
                 onClick={() => handleSelect(a)}
               >
-                {a.articulo}
+                <div className="d-flex justify-content-between">
+                  <span>{a.articulo}</span>
+                  <small className="opacity-50">#{a.codigo}</small>
+                </div>
               </div>
             ))}
           </div>

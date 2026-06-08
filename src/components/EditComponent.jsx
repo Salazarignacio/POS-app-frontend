@@ -39,10 +39,25 @@ export default function EditComponent() {
     setSearchTerm(e.target.value);
   };
 
+  const handleSelectAll = (checked) => {
+    if (checked) {
+      const allIds = productos.map((p) => p.id);
+      setSelectedIds(allIds);
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
   return (
     <div className="edit">
       {/* <h2 className="section-title mb-2">Editar Productos</h2> */}
-      <EditPage productos={productos} searchCode={searchCode} loading={loading}></EditPage>
+      <EditPage
+        productos={productos}
+        searchCode={searchCode}
+        loading={loading}
+        searchTerm={searchTerm}
+        handleSelectAll={handleSelectAll}
+      ></EditPage>
     </div>
   );
 }

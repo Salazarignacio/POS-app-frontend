@@ -56,15 +56,19 @@ export async function getByCode(code) {
   try {
     const res = await fetch(BASE_URL + `/codigo/${code}`);
     if (res.status === 404) {
-      return null; // 👈 no es error, simplemente no existe
+      return []; // 👈 Siempre retornar array vacío si no hay resultados
     }
 
     if (!res.ok) {
-      throw new Error("Error inesperado");
+      throw new Error("Error inesperado al buscar producto");
     }
 
-    return await res.json();
+    const data = await res.json();
+    // 💡 IMPORTANTE: Si el backend devuelve un objeto (un solo resultado) lo metemos en un array.
+    // Si ya es un array, lo dejamos como está.
+    return Array.isArray(data) ? data : [data];
   } catch (err) {
-    throw err; // errores reales
+    console.error("Error en getByCode:", err);
+    return []; // En caso de error, retornamos array vacío para no romper el front
   }
 }

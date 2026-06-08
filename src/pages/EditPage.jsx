@@ -4,9 +4,14 @@ import ModalCreate from "../components/ModalCreate.jsx";
 import "../style/Style.css";
 import ModalUpdatePlural from "../components/ModalUpdatePlural.jsx"
 import Skeleton from "../reutilizable/Skeleton.jsx";
+import { useContext } from "react";
+import { SelectedIds } from "../context/SelectedIds.jsx";
 
 
-export default function EditPage({ productos, searchCode, loading }) {
+export default function EditPage({ productos, searchCode, loading, searchTerm, handleSelectAll }) {
+  const { selectedIds } = useContext(SelectedIds);
+  const isAllSelected = productos.length > 0 && productos.every(p => selectedIds.includes(p.id));
+
   return (
     <div className="edit-page">
       <div className="searchBar">
@@ -27,7 +32,15 @@ export default function EditPage({ productos, searchCode, loading }) {
 
       <div className="scroll ">
         <div className="productos-header">
-          <span className="header-item"></span> {/* Placeholder para el checkbox */}
+          <span className="header-item">
+            {searchTerm && productos.length > 0 && (
+              <input
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={(e) => handleSelectAll(e.target.checked)}
+              />
+            )}
+          </span> {/* Placeholder para el checkbox */}
           <span className="header-item">Código</span>
           <span className="header-item">Nombre</span>
           <span className="header-item">Categoría</span>
