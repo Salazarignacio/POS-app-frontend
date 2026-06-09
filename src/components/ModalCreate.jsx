@@ -21,7 +21,9 @@ export default function ModalCreate({}) {
       setRenderProducts((prev) => !prev);
       handleClose();
     } catch (error) {
-      toast.error("Error: El código ya pertenece a un producto");
+      // Intentamos extraer el mensaje de error específico si existe
+      const errorMessage = error.message || "Error al crear el producto";
+      toast.error(errorMessage);
     }
   };
 

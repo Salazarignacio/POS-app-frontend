@@ -32,7 +32,8 @@ export async function create(product) {
     body: JSON.stringify(product),
   });
   if (!res.ok) {
-    throw new Error("Error al crear producto");
+    const errorText = await res.text();
+    throw new Error(errorText || "Error al crear producto");
   }
   return await res.json();
 }
