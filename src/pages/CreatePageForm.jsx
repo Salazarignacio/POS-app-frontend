@@ -63,9 +63,9 @@ export default function CreatePageForm({ onSave }) {
     e.preventDefault();
     if (!isValid) return;
     
-    // Filtramos campos vacíos opcionales
+    // Filtramos campos vacíos opcionales, pero permitimos el número 0
     const cleanData = Object.fromEntries(
-      Object.entries(formData).filter(([_, v]) => v !== "")
+      Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
     );
     onSave(cleanData);
   };
