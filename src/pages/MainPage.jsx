@@ -43,6 +43,13 @@ export default function MainPage({ children }) {
             <img src={balanceicon} />
             <span className="nav-label">Balance</span>
           </NavLink>
+          <NavLink
+            to="/import"
+            className={({ isActive }) => (isActive ? "active-link" : "")}
+          >
+            <i className="fa-solid fa-robot" style={{fontSize: '24px', color: 'white', marginRight: '15px'}}></i>
+            <span className="nav-label">IA Carga</span>
+          </NavLink>
         </div>
       </div>
       <div className="content">{children}</div>

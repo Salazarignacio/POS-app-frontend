@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage.jsx";
 import EditComponent from "./components/EditComponent.jsx";
+import SmartImport from "./components/SmartImport.jsx";
 import DeleteProductoBDC from "./components/DeleteProductBDC.jsx";
 import "./style/Style.css";
 import { ProductProviderWrapper } from "./context/ProductContext.jsx";
@@ -34,6 +35,7 @@ function App() {
               <MainPage>
                 <Routes>
                   <Route path="/edicion" element={<EditComponent />} />
+                  <Route path="/import" element={<SmartImport />} />
                   <Route path="/destroy" element={<DeleteProductoBDC />} />
                   <Route path="/" element={<VentasComponent />} />
 
