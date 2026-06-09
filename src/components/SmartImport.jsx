@@ -17,20 +17,28 @@ export default function SmartImport() {
   };
 
   const handleTestAI = async () => {
+    if (!apiKey) {
+      toast.error("No se encontró la API Key en el archivo .env");
+      return;
+    }
     if (!prompt.trim()) {
       toast.error("Escribe algo para probar la IA");
       return;
     }
     setLoading(true);
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      // Usamos el ID tecnico exacto que vimos en tu lista de diagnostico (indice 10)
+      const model = genAI.getGenerativeModel(
+        { model: "gemini-flash-latest" },
+        { apiVersion: "v1beta" }
+      );
       const result = await model.generateContent(prompt);
       const response = await result.response;
       setAiResponse(response.text());
       toast.success("¡IA respondiendo correctamente!");
     } catch (error) {
       console.error("Error con Gemini:", error);
-      toast.error("Error al conectar con la IA. Revisa tu API Key.");
+      toast.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
