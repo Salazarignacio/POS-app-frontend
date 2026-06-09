@@ -63,11 +63,19 @@ export default function CreatePageForm({ onSave }) {
     e.preventDefault();
     if (!isValid) return;
     
-    // Filtramos campos vacíos opcionales, pero permitimos el número 0
-    const cleanData = Object.fromEntries(
-      Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
-    );
-    onSave(cleanData);
+    // Si precio o stock están vacíos, les asignamos 0 por defecto
+    const dataToSend = {
+      ...formData,
+      precio: formData.precio === "" ? 0 : formData.precio,
+      stock: formData.stock === "" ? 0 : formData.stock,
+    };
+
+    // Filtramos solo la categoría si está vacía, para que sea realmente opcional
+    if (dataToSend.categoria === "") {
+      delete dataToSend.categoria;
+    }
+
+    onSave(dataToSend);
   };
 
   return (
