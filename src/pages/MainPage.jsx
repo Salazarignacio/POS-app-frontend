@@ -4,6 +4,7 @@ import "../style/Style.css";
 import ventasicon from "../assets/ventas.png";
 import editicon from "../assets/edit.png";
 import balanceicon from "../assets/balance.png";
+import aiicon from "../assets/ia.png";
 import { NavLink } from "react-router-dom";
 
 export default function MainPage({ children }) {
@@ -47,7 +48,7 @@ export default function MainPage({ children }) {
             to="/import"
             className={({ isActive }) => (isActive ? "active-link" : "")}
           >
-            <i className="fa-solid fa-robot" style={{fontSize: '24px', color: 'white', marginRight: '15px'}}></i>
+            <img src={aiicon} />
             <span className="nav-label">IA Carga</span>
           </NavLink>
         </div>

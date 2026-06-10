@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button, Form, Card, Table, Spinner } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
+import iaIcon from "../assets/ia.png";
 
 export default function SmartImport() {
   const [file, setFile] = useState(null);
@@ -13,6 +14,7 @@ export default function SmartImport() {
   const [extractedProducts, setExtractedProducts] = useState([]);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiUrl = import.meta.env.VITE_API_URL;
   const genAI = new GoogleGenerativeAI(apiKey);
 
   const handleFileChange = (e) => {
@@ -86,6 +88,64 @@ export default function SmartImport() {
     }
   };
 
+  const handleEditChange = (index, field, value) => {
+    const updatedProducts = [...extractedProducts];
+    updatedProducts[index][field] = value;
+    setExtractedProducts(updatedProducts);
+  };
+
+  const handleRemoveProduct = (index) => {
+    const updatedProducts = extractedProducts.filter((_, i) => i !== index);
+    setExtractedProducts(updatedProducts);
+  };
+
+  const handleConfirmImport = async () => {
+    if (extractedProducts.length === 0) return;
+    setLoading(true);
+
+    const saveProducts = async () => {
+      let savedCount = 0;
+      let errorCount = 0;
+
+      for (const product of extractedProducts) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(product)
+          });
+
+          if (response.ok) {
+            savedCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (error) {
+          console.error("Error guardando producto:", error);
+          errorCount++;
+        }
+      }
+
+      if (errorCount > 0) {
+        throw new Error(`Se guardaron ${savedCount} productos, pero ${errorCount} fallaron.`);
+      }
+      return savedCount;
+    };
+
+    toast.promise(
+      saveProducts(),
+      {
+        loading: 'Guardando productos en la base de datos...',
+        success: (count) => {
+          setExtractedProducts([]);
+          setFile(null);
+          return `¡Éxito! Se guardaron ${count} productos correctamente.`;
+        },
+        error: (err) => `Error: ${err.message}`,
+      }
+    ).finally(() => setLoading(false));
+  };
+
   const handleTestAI = async () => {
     if (!apiKey) {
       toast.error("No se encontró la API Key en el archivo .env");
@@ -110,110 +170,194 @@ export default function SmartImport() {
     }
   };
 
-  const handleConfirmImport = async () => {
-    toast.promise(
-      new Promise(resolve => setTimeout(resolve, 2000)),
-      {
-        loading: 'Cargando productos en la base de datos...',
-        success: '¡Importación finalizada con éxito!',
-        error: 'Error al importar.',
-      }
-    );
-  };
-
   return (
-    <div className="container mt-4">
-      <h2 className="section-title mb-4">🤖 Carga Inteligente (Multi-formato)</h2>
-      
-      <Card className="p-4 shadow-sm border-0 mb-4">
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">Paso 1: Probar Conexión</Form.Label>
-          <Form.Control 
-            as="textarea" 
-            rows={1}
-            placeholder="Escribe algo para probar (ej: Hola)"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="input-soft mb-2"
-          />
-          <Button 
-            variant="outline-secondary" 
-            size="sm"
-            onClick={handleTestAI}
-            disabled={loading}
-          >
-            {loading ? <Spinner animation="border" size="sm" /> : "Probar Chat"}
-          </Button>
-        </Form.Group>
-
-        {aiResponse && (
-          <div className="mt-2 p-2 bg-light rounded border small">
-            <strong>Respuesta:</strong> {aiResponse}
+    <div className="ventas-container">
+      {/* PANEL IZQUIERDO: CONFIGURACIÓN Y CARGA */}
+      <div className="productos-ventas p-4 d-flex flex-column gap-4" style={{ flex: 1 }}>
+        <div className="d-flex align-items-center gap-3 mb-2">
+          <div className="bg-primary p-3 rounded-circle text-white shadow-sm" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--btn-ppal)' }}>
+            <i className="fa-solid fa-robot fa-lg"></i>
           </div>
-        )}
-      </Card>
+          <h2 className="section-title mb-0">Carga Inteligente</h2>
+        </div>
 
-      <Card className="p-4 shadow-sm border-0 mb-4">
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">Paso 2: Subir Lista de Precios (Imagen, PDF, Word, Excel)</Form.Label>
-          <Form.Control 
+        {/* PASO 1: PROBAR CONEXIÓN */}
+        <div className="ticket-info p-3" style={{ border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', background: 'var(--white-black)' }}>
+          <label className="form-label d-block mb-2" style={{ fontSize: '0.75rem', opacity: 0.7 }}>Paso 1: Probar Conexión (Opcional)</label>
+          <div className="d-flex gap-2">
+            <input
+              type="text"
+              placeholder="Escribe algo para probar el chat"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="search-input"
+              style={{ flex: 1, height: '42px' }}
+            />
+            <button 
+              className={loading || !prompt.trim() ? "btn-vacio" : "btn-mas"}
+              onClick={handleTestAI}
+              disabled={loading || !prompt.trim()}
+              style={{ padding: '0 15px', marginLeft: 0, height: '42px' }}
+            >
+              {loading ? <Spinner animation="border" size="sm" /> : <i className="fa-solid fa-paper-plane"></i>}
+            </button>
+          </div>
+          {aiResponse && (
+            <div className="mt-3 p-3 rounded-3 small animate__animated animate__fadeIn" style={{ background: 'var(--bg-contenedores)', borderLeft: '3px solid var(--btn-ppal)', color: 'var(--font-color)' }}>
+              <strong>IA:</strong> {aiResponse}
+            </div>
+          )}
+        </div>
+
+        {/* PASO 2: SUBIR ARCHIVO */}
+        <div className="ticket-info p-4 d-flex flex-column justify-content-center align-items-center text-center gap-3" 
+             style={{ border: '2px dashed var(--btn-ppal)', background: 'var(--hover-color)', cursor: 'pointer', borderRadius: '15px', minHeight: '200px' }}
+             onClick={() => document.getElementById('file-upload').click()}>
+          <input 
+            id="file-upload"
             type="file" 
             accept="image/*,.pdf,.docx,.xlsx"
             onChange={handleFileChange}
-            className="input-soft mb-3"
+            style={{ display: 'none' }}
           />
-          <Button 
-            variant="primary" 
-            onClick={handleProcessFile}
-            disabled={loading || !file}
-            className="w-100"
-          >
-            {loading ? (
-              <>
-                <Spinner animation="border" size="sm" className="me-2" />
-                Procesando archivo con Gemini...
-              </>
-            ) : "Escanear con IA"}
-          </Button>
-        </Form.Group>
-      </Card>
-
-      {extractedProducts.length > 0 && (
-        <Card className="p-4 shadow-sm border-0 mb-4 animate__animated animate__fadeIn">
-          <h4 className="mb-3">Resultados Extraídos</h4>
-          <div className="table-responsive">
-            <Table hover size="sm">
-              <thead className="table-light">
-                <tr>
-                  <th>Código</th>
-                  <th>Artículo</th>
-                  <th>Categoría</th>
-                  <th>Precio</th>
-                  <th>Stock</th>
-                </tr>
-              </thead>
-              <tbody>
-                {extractedProducts.map((p, idx) => (
-                  <tr key={idx}>
-                    <td>{p.codigo}</td>
-                    <td>{p.articulo}</td>
-                    <td>{p.categoria}</td>
-                    <td>${p.precio}</td>
-                    <td>{p.stock}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+          <i className={`fa-solid ${file ? 'fa-file-circle-check text-success' : 'fa-cloud-arrow-up'} fa-3x opacity-50`}></i>
+          <div>
+            <h5 className="mb-1" style={{ color: 'var(--font-color)' }}>{file ? file.name : "Subir Lista de Precios"}</h5>
+            <p className="small opacity-50 mb-0">JPG, PNG, PDF, DOCX o XLSX</p>
           </div>
-          <Button 
-            variant="success" 
-            className="mt-3"
-            onClick={handleConfirmImport}
-          >
-            Confirmar y Guardar en BD
-          </Button>
-        </Card>
-      )}
+          {file && (
+            <button className="btn-cancel py-1 px-3 mt-2" style={{ width: 'auto', height: 'auto', fontSize: '0.8rem', border: '1px solid #ef4444' }} onClick={(e) => { e.stopPropagation(); setFile(null); }}>
+              Remover archivo
+            </button>
+          )}
+        </div>
+
+        <button 
+          className={loading || !file ? "btn-vacio py-3" : "btn-mas py-3"}
+          onClick={handleProcessFile}
+          disabled={loading || !file}
+          style={{ width: '100%', marginLeft: 0, height: '60px', fontSize: '1.1rem', borderRadius: '15px' }}
+        >
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" className="me-2" />
+              Escaneando documento...
+            </>
+          ) : (
+            <>
+              <i className="fa-solid fa-wand-magic-sparkles me-2"></i>
+              Escanear con Inteligencia Artificial
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* PANEL DERECHO: RESULTADOS */}
+      <div className="ticket-ventas d-flex flex-column" style={{ flex: 1.5, marginLeft: '20px' }}>
+        {extractedProducts.length === 0 ? (
+          <div className="no-products d-flex flex-column align-items-center justify-content-center py-5 h-100 opacity-50" style={{ color: 'var(--font-color)' }}>
+            <i className="fa-solid fa-list-check fa-4x mb-4"></i>
+            <h4 className="fw-bold">Sin resultados aún</h4>
+            <p className="small">Los productos detectados aparecerán aquí para su revisión.</p>
+          </div>
+        ) : (
+          <div className="d-flex flex-column h-100 animate__animated animate__fadeIn" style={{ color: 'var(--font-color)' }}>
+            <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+              <h4 className="ticket-title mb-0">Resultados de Extracción</h4>
+              <span className="badge bg-primary rounded-pill px-3" style={{ background: 'var(--btn-ppal)' }}>{extractedProducts.length} detectados</span>
+            </div>
+
+            <div className="scroll flex-grow-1 mb-4 pe-2">
+              <div className="d-flex flex-column gap-3">
+                {extractedProducts.map((p, idx) => (
+                  <div key={idx} className="ticket-info p-3 position-relative animate__animated animate__fadeInUp" style={{ animationDelay: `${idx * 0.05}s`, background: 'var(--white-black)', borderRadius: '12px' }}>
+                    <button 
+                      className="position-absolute top-0 end-0 m-2 btn-edit" 
+                      style={{ height: '30px', width: '30px', color: '#ef4444', padding: 0 }}
+                      onClick={() => handleRemoveProduct(idx)}
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                    
+                    <div className="row g-2">
+                      <div className="col-12">
+                        <label className="form-label mb-1" style={{ fontSize: '0.65rem' }}>Artículo</label>
+                        <input 
+                          type="text" 
+                          className="search-input w-100" 
+                          value={p.articulo || ''} 
+                          onChange={(e) => handleEditChange(idx, 'articulo', e.target.value)}
+                          style={{ height: '35px' }}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label className="form-label mb-1" style={{ fontSize: '0.65rem' }}>Código</label>
+                        <input 
+                          type="text" 
+                          className="search-input w-100" 
+                          value={p.codigo || ''} 
+                          onChange={(e) => handleEditChange(idx, 'codigo', e.target.value)}
+                          style={{ height: '35px' }}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label className="form-label mb-1" style={{ fontSize: '0.65rem' }}>Categoría</label>
+                        <input 
+                          type="text" 
+                          className="search-input w-100" 
+                          value={p.categoria || ''} 
+                          onChange={(e) => handleEditChange(idx, 'categoria', e.target.value)}
+                          style={{ height: '35px' }}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label className="form-label mb-1" style={{ fontSize: '0.65rem' }}>Precio</label>
+                        <input 
+                          type="number" 
+                          className="search-input w-100" 
+                          value={p.precio || 0} 
+                          onChange={(e) => handleEditChange(idx, 'precio', parseFloat(e.target.value))}
+                          style={{ height: '35px' }}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label className="form-label mb-1" style={{ fontSize: '0.65rem' }}>Stock</label>
+                        <input 
+                          type="number" 
+                          className="search-input w-100" 
+                          value={p.stock || 0} 
+                          onChange={(e) => handleEditChange(idx, 'stock', parseInt(e.target.value))}
+                          style={{ height: '35px' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="ticket-actions pt-3 border-top">
+              <button 
+                className="btn-print py-3" 
+                onClick={handleConfirmImport} 
+                disabled={loading}
+                style={{ height: 'auto', gap: '10px' }}
+              >
+                <i className="fa-solid fa-cloud-arrow-up fa-2x"></i>
+                <span style={{ fontSize: '1.1rem' }}>Confirmar y Guardar Todo</span>
+              </button>
+              <button 
+                className="btn-cancel" 
+                onClick={() => setExtractedProducts([])}
+                disabled={loading}
+                style={{ height: '45px' }}
+              >
+                Descartar resultados
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
