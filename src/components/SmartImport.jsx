@@ -12,8 +12,10 @@ export default function SmartImport() {
   const [loading, setLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const [extractedProducts, setExtractedProducts] = useState([]);
+  const [provider, setProvider] = useState("gemini"); // 'gemini' o 'groq'
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const groqKey = import.meta.env.VITE_GROQ_API_KEY;
   const apiUrl = import.meta.env.VITE_API_URL;
   const genAI = new GoogleGenerativeAI(apiKey);
 
@@ -43,6 +45,60 @@ export default function SmartImport() {
     };
   }
 
+  const processWithGroq = async (file, instruction) => {
+    let content = [];
+    if (file.type.startsWith('image/')) {
+      const base64Data = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.readAsDataURL(file);
+      });
+      
+      content = [
+        { type: "text", text: instruction },
+        { type: "image_url", image_url: { url: `data:${file.type};base64,${base64Data}` } }
+      ];
+    } else {
+      let text = "";
+      if (file.type === 'application/pdf') {
+        throw new Error("PDF no soportado en Groq actualmente. Usa Gemini.");
+      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        const arrayBuffer = await file.arrayBuffer();
+        const { value } = await mammoth.extractRawText({ arrayBuffer });
+        text = value;
+      } else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data);
+        const csvData = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
+        text = csvData;
+      }
+      content = [{ type: "text", text: `${instruction}\n\nTexto extraído:\n${text}` }];
+    }
+
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${groqKey.trim()}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "llama-3.2-11b-vision-preview",
+        messages: [{ role: "user", content }],
+        temperature: 0.1,
+        response_format: { type: "json_object" }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || `Error en Groq: ${response.status}`);
+    
+    const resText = data.choices[0].message.content;
+    const parsed = JSON.parse(resText);
+    const result = Array.isArray(parsed) ? parsed : (parsed.productos || parsed.items || Object.values(parsed)[0]);
+    if (!Array.isArray(result)) throw new Error("La IA no devolvió un formato de lista válido.");
+    return result;
+  };
+
   const handleProcessFile = async () => {
     if (!file) {
       toast.error("Selecciona un archivo primero");
@@ -51,38 +107,34 @@ export default function SmartImport() {
     setLoading(true);
     setExtractedProducts([]);
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }, { apiVersion: "v1beta" });
-      let content = [];
       const instruction = "Analiza este documento/imagen de una lista de precios y extrae los productos. Devuelve ÚNICAMENTE un JSON array con objetos que tengan exactamente estas propiedades: codigo, articulo, categoria, precio, stock. Si un dato no está, usa null o 0 para stock. No incluyas texto extra, solo el JSON.";
 
-      if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-        const filePart = await fileToGenerativePart(file);
-        content = [instruction, filePart];
-      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-        const arrayBuffer = await file.arrayBuffer();
-        const { value: text } = await mammoth.extractRawText({ arrayBuffer });
-        content = [`${instruction}\n\nTexto extraído del documento:\n${text}`];
-      } else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-        const data = await file.arrayBuffer();
-        const workbook = XLSX.read(data);
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const csvData = XLSX.utils.sheet_to_csv(firstSheet);
-        content = [`${instruction}\n\nDatos de Excel en formato CSV:\n${csvData}`];
+      let products = [];
+      if (provider === 'gemini') {
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }, { apiVersion: "v1beta" });
+        let content = [];
+        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+          content = [instruction, await fileToGenerativePart(file)];
+        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          const { value: text } = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+          content = [`${instruction}\n\nTexto:\n${text}`];
+        } else {
+          const workbook = XLSX.read(await file.arrayBuffer());
+          content = [`${instruction}\n\nCSV:\n${XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]])}`];
+        }
+        const result = await model.generateContent(content);
+        const text = (await result.response).text();
+        const jsonMatch = text.match(/\[.*\]/s);
+        products = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      } else {
+        products = await processWithGroq(file, instruction);
       }
 
-      const result = await model.generateContent(content);
-      const response = await result.response;
-      const text = response.text();
-      
-      const jsonMatch = text.match(/\[.*\]/s);
-      const cleanJson = jsonMatch ? jsonMatch[0] : text;
-      
-      const products = JSON.parse(cleanJson);
-      setExtractedProducts(products);
-      toast.success(`Se detectaron ${products.length} productos correctamente`);
+      setExtractedProducts(Array.isArray(products) ? products : []);
+      toast.success(`Se detectaron ${products.length || 0} productos`);
     } catch (error) {
-      console.error("Error al procesar archivo:", error);
-      toast.error("No se pudieron extraer los datos. Verifica el formato del archivo.");
+      console.error("Error al procesar:", error);
+      toast.error(error.message || "Error al procesar. Intenta con el otro proveedor.");
     } finally {
       setLoading(false);
     }
@@ -147,24 +199,37 @@ export default function SmartImport() {
   };
 
   const handleTestAI = async () => {
-    if (!apiKey) {
-      toast.error("No se encontró la API Key en el archivo .env");
-      return;
-    }
+    if (loading) return;
     if (!prompt.trim()) {
-      toast.error("Escribe algo para probar la IA");
+      toast.error("Escribe algo para probar");
       return;
     }
     setLoading(true);
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }, { apiVersion: "v1beta" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      setAiResponse(response.text());
-      toast.success("¡IA respondiendo correctamente!");
+      if (provider === 'gemini') {
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }, { apiVersion: "v1beta" });
+        const result = await model.generateContent(prompt);
+        setAiResponse((await result.response).text());
+      } else {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { 
+            "Authorization": `Bearer ${groqKey.trim()}`, 
+            "Content-Type": "application/json" 
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || "Error en Groq");
+        setAiResponse(data.choices[0].message.content);
+      }
+      toast.success("¡Respuesta recibida!");
     } catch (error) {
-      console.error("Error con Gemini:", error);
-      toast.error(`Error: ${error.message}`);
+      console.error("Error test:", error);
+      toast.error(error.message || "Error en la conexión");
     } finally {
       setLoading(false);
     }
@@ -174,11 +239,24 @@ export default function SmartImport() {
     <div className="ventas-container">
       {/* PANEL IZQUIERDO: CONFIGURACIÓN Y CARGA */}
       <div className="productos-ventas p-4 d-flex flex-column gap-4" style={{ flex: 1 }}>
-        <div className="d-flex align-items-center gap-3 mb-2">
-          <div className="bg-primary p-3 rounded-circle text-white shadow-sm" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--btn-ppal)' }}>
-            <i className="fa-solid fa-robot fa-lg"></i>
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center gap-3">
+            <div className="p-3 rounded-circle text-white shadow-sm" style={{ width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--btn-ppal)' }}>
+              <i className="fa-solid fa-robot fa-lg"></i>
+            </div>
+            <h2 className="section-title mb-0">IA Multimodal</h2>
           </div>
-          <h2 className="section-title mb-0">Carga Inteligente</h2>
+          
+          <div className="price-options p-1">
+            <div className="form-check p-0">
+              <input type="radio" className="form-check-input" id="p-gemini" checked={provider === 'gemini'} onChange={() => setProvider('gemini')} />
+              <label className="form-check-label" htmlFor="p-gemini">Gemini</label>
+            </div>
+            <div className="form-check p-0">
+              <input type="radio" className="form-check-input" id="p-groq" checked={provider === 'groq'} onChange={() => setProvider('groq')} />
+              <label className="form-check-label" htmlFor="p-groq">Groq (Rápido)</label>
+            </div>
+          </div>
         </div>
 
         {/* PASO 1: PROBAR CONEXIÓN */}
