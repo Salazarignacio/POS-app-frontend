@@ -82,7 +82,7 @@ export default function SmartImport() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.2-11b-vision-preview",
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
         messages: [{ role: "user", content }],
         temperature: 0.1,
         response_format: { type: "json_object" }
@@ -93,10 +93,27 @@ export default function SmartImport() {
     if (!response.ok) throw new Error(data.error?.message || `Error en Groq: ${response.status}`);
     
     const resText = data.choices[0].message.content;
-    const parsed = JSON.parse(resText);
-    const result = Array.isArray(parsed) ? parsed : (parsed.productos || parsed.items || Object.values(parsed)[0]);
-    if (!Array.isArray(result)) throw new Error("La IA no devolvió un formato de lista válido.");
-    return result;
+    const jsonMatch = resText.match(/\[.*\]/s) || resText.match(/\{.*\}/s);
+    const cleanText = jsonMatch ? jsonMatch[0] : resText;
+    
+    const parsed = JSON.parse(cleanText);
+    const rawResult = Array.isArray(parsed) ? parsed : (parsed.productos || parsed.items || Object.values(parsed)[0]);
+    if (!Array.isArray(rawResult)) throw new Error("La IA no devolvió un formato de lista válido.");
+
+    // Normalizar llaves (minúsculas y sin acentos) para el backend
+    return rawResult.map(item => {
+      const normalized = {};
+      Object.keys(item).forEach(key => {
+        const cleanKey = key.toLowerCase()
+          .replace(/[áàäâ]/g, 'a')
+          .replace(/[éèëê]/g, 'e')
+          .replace(/[íìïî]/g, 'i')
+          .replace(/[óòöô]/g, 'o')
+          .replace(/[úùüû]/g, 'u');
+        normalized[cleanKey] = item[key];
+      });
+      return normalized;
+    });
   };
 
   const handleProcessFile = async () => {
@@ -161,10 +178,17 @@ export default function SmartImport() {
 
       for (const product of extractedProducts) {
         try {
+          // Limpiar y asegurar tipos de datos antes de enviar
+          const cleanProduct = {
+            ...product,
+            precio: product.precio ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, '')) || 0 : 0,
+            stock: product.stock ? parseInt(product.stock.toString().replace(/[^0-9]/g, ''), 10) || 0 : 0
+          };
+
           const response = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(product)
+            body: JSON.stringify(cleanProduct)
           });
 
           if (response.ok) {
