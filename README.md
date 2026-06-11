@@ -8,131 +8,61 @@ La aplicación consume una API REST externa desarrollada en Java.
 
 🚀 Demo
 
-Deploy
-https://producto-front-lqpuye7af-salazarignacios-projects.vercel.app/
-
-Backend
-https://github.com/Salazarignacio/producto-api
+*   **Deploy:** [Ver Aplicación](https://producto-front-lqpuye7af-salazarignacios-projects.vercel.app/)
+*   **Backend:** [Repositorio Backend](https://github.com/Salazarignacio/producto-api)
 
 ⚙️ Tecnologías utilizadas
 
-React
-
-JavaScript
-
-Fetch API
-
-React Bootstrap
-
-HTML / CSS
-
-Variables de entorno (.env)
-
-Vercel (deploy)
+*   **React** (Vite)
+*   **Google Gemini AI** & **Groq AI** (Multimodal Vision)
+*   **Mammoth.js** (Procesamiento de Word)
+*   **XLSX** (Procesamiento de Excel)
+*   **React Bootstrap** & **Hot Toast**
+*   **JavaScript** (Fetch API)
 
 📦 Funcionalidades principales
-Gestión de productos
 
-Listado completo de productos
+### 🤖 Carga Inteligente con IA (Novedad)
+El sistema integra Inteligencia Artificial avanzada para automatizar la carga de inventario a partir de documentos externos.
+*   **Lectura Multiformato:** Procesa imágenes (JPG, PNG), documentos PDF, archivos de Word (.docx) y planillas de Excel (.xlsx).
+*   **Extracción Automática:** La IA analiza el archivo, identifica productos, categorías, precios y stock, devolviendo una lista editable.
+*   **Sincronización Inteligente (Upsert):** Al confirmar la carga, el sistema verifica automáticamente si el producto ya existe mediante su código:
+    *   **Actualización:** Si el producto existe, actualiza su precio y stock.
+    *   **Creación:** Si el producto es nuevo, lo registra en la base de datos.
+*   **Doble Motor de IA:** Permite alternar entre **Google Gemini** y **Groq (Llama 3.2 Vision)** para garantizar disponibilidad y velocidad.
 
-Creación de nuevos productos
+### Gestión de productos
+*   Listado completo con renderizado inmediato.
+*   Creación, edición individual y **edición múltiple dinámica**.
+*   Eliminación de productos con confirmación.
+*   Limpieza automática de códigos (alfanuméricos únicamente) para evitar errores de duplicidad.
 
-Edición individual
-
-Edición múltiple dinámica
-
-Eliminación de productos
-
-Actualización automática de la interfaz ante cada cambio (renderizado inmediato)
-
-Ventas (POS)
-
-Sistema de ventas diseñado para ser rápido y fluido en entornos reales de mostrador.
-
-Permite:
-
-Agregar productos a la venta rápidamente
-
-Modificar precio y cantidad en tiempo real
-
-Confirmar ventas sin interrumpir el flujo de trabajo
-
-Impresión directa de tickets
+### Ventas (POS)
+*   Sistema optimizado para entorno de mostrador.
+*   Modificación de precio y cantidad en tiempo real durante la venta.
+*   Impresión directa de tickets con diseño profesional.
 
 🔎 Búsqueda inteligente de productos
-
-El selector de productos cuenta con búsqueda reactiva, permitiendo encontrar artículos mediante:
-
-nombre
-
-código de barras
-
-categoría
-
-Los resultados se actualizan dinámicamente mientras el usuario escribe.
+Selector con búsqueda reactiva por nombre, código de barras o categoría con actualización dinámica.
 
 ⌨️ Optimización para uso con teclado
-
-El sistema fue diseñado para poder operarse sin necesidad de utilizar el mouse, permitiendo una experiencia de venta más rápida.
-
-Incluye:
-
-cursor automático en el input principal al cargar la aplicación
-
-navegación entre campos utilizando TAB
-
-navegación en listas utilizando flechas del teclado
-
-modificación rápida de precio y cantidad
-
-confirmación de acciones sin interrumpir el flujo
-
-Esto permite que la aplicación funcione de forma ágil y eficiente en situaciones reales de venta.
+Diseño enfocado en la operación sin mouse:
+*   Foco automático en campos clave.
+*   Navegación completa mediante TAB y flechas del teclado.
+*   Atajos para confirmación rápida de acciones.
 
 🎨 Experiencia de usuario
-
-La interfaz fue diseñada con foco en claridad, velocidad y estética moderna.
-
-Incluye:
-
-modo claro / modo oscuro
-
-interfaz minimalista
-
-animaciones sutiles en:
-
-agregado de productos
-
-actualización de precios
-
-efectos hover
-
-feedback visual inmediato
+*   **Modo Oscuro / Claro** integrado.
+*   Interfaz basada en contenedores modernos y animaciones sutiles.
+*   Feedback visual inmediato mediante notificaciones (Toasts).
 
 🌐 Configuración de entornos
-
-La aplicación utiliza variables de entorno para definir la URL de la API, lo que permite ejecutarla fácilmente en:
-
-entorno local
-
-entorno de producción
-
-sin modificar el código fuente.
-
-🧠 Decisiones de diseño
-
-El sistema fue pensado para pequeños comercios, priorizando simplicidad y rapidez de uso.
-
-Por ejemplo:
-
-Se permite stock negativo, ya que muchos comercios pequeños no manejan control estricto de inventario.
-
-Las categorías son opcionales, permitiendo usar el sistema sin necesidad de estructurar los productos.
-
-Estas decisiones buscan mantener el sistema flexible y práctico para el uso diario.
+La aplicación es altamente configurable mediante un archivo `.env`:
+*   `VITE_API_URL`: Dirección de la API de productos.
+*   `VITE_GEMINI_API_KEY`: Clave para el motor de IA de Google.
+*   `VITE_GROQ_API_KEY`: Clave para el motor de IA de Groq.
+*   `VITE_BALANCE_WEB_URL`: URL personalizada para la sección de Balance (opcional).
 
 🛠 Estado del proyecto
-
-🟢 Versión funcional completa
-
-El sistema implementa las funcionalidades esenciales de un POS moderno para pequeños comercios, con una experiencia fluida y optimizada para velocidad de uso.
+🟢 **Versión funcional completa**
+Implementa un ciclo de vida completo desde la carga masiva inteligente hasta la venta final, optimizando tiempos de gestión para el comerciante.
