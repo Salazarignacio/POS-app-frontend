@@ -12,7 +12,7 @@ export default function SmartImport() {
   const [loading, setLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const [extractedProducts, setExtractedProducts] = useState([]);
-  const [provider, setProvider] = useState("gemini"); // 'gemini' o 'groq'
+  const [provider, setProvider] = useState("groq"); // 'gemini' o 'groq'
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const groqKey = import.meta.env.VITE_GROQ_API_KEY;
@@ -176,20 +176,56 @@ export default function SmartImport() {
       let savedCount = 0;
       let errorCount = 0;
 
-      for (const product of extractedProducts) {
+      // Filtrar solo los que tienen los campos obligatorios (nombre y código)
+      const validProducts = extractedProducts.filter(p => p.articulo?.trim() && p.codigo?.trim());
+
+      if (validProducts.length === 0) {
+        throw new Error("No hay productos válidos para guardar (faltan Artículo o Código)");
+      }
+
+      for (const product of validProducts) {
         try {
           // Limpiar y asegurar tipos de datos antes de enviar
           const cleanProduct = {
-            ...product,
+            articulo: product.articulo.trim(),
+            codigo: product.codigo.trim(),
+            categoria: product.categoria?.trim() || "",
             precio: product.precio ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, '')) || 0 : 0,
             stock: product.stock ? parseInt(product.stock.toString().replace(/[^0-9]/g, ''), 10) || 0 : 0
           };
 
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cleanProduct)
-          });
+          // 1. Verificar si el producto ya existe por su código
+          const checkResponse = await fetch(`${apiUrl}/codigo/${cleanProduct.codigo}`);
+          const existingProducts = await checkResponse.json();
+
+          let response;
+          // 2. Si existe (la API devuelve una lista), buscamos el ID exacto y actualizamos
+          if (checkResponse.ok && existingProducts.length > 0) {
+            // Buscamos coincidencia exacta de código para estar seguros
+            const existing = existingProducts.find(p => p.codigo === cleanProduct.codigo);
+            
+            if (existing) {
+              response = await fetch(`${apiUrl}/${existing.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cleanProduct)
+              });
+            } else {
+              // Caso borde: existe algo parecido pero no el código exacto
+              response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cleanProduct)
+              });
+            }
+          } else {
+            // 3. Si no existe, creamos uno nuevo
+            response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(cleanProduct)
+            });
+          }
 
           if (response.ok) {
             savedCount++;
@@ -197,7 +233,7 @@ export default function SmartImport() {
             errorCount++;
           }
         } catch (error) {
-          console.error("Error guardando producto:", error);
+          console.error("Error procesando producto:", error);
           errorCount++;
         }
       }
