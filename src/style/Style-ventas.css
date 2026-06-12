@@ -64,7 +64,7 @@
   padding: 1rem;
   border-radius: 1rem;
 
-  height: 86vh;
+  height: 78vh;
   box-shadow: var(--sh-contenedores);
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -85,7 +85,7 @@
 
 .scroll {
   height: 100%;
-  overflow-y: auto;
+  overflow-y: auto !important;
   overflow-x: hidden;
 }
 
