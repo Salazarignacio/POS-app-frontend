@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100%;
+  width: 100vw;
   max-width: 1400px; /* Ancho máximo controlado para la carpeta */
   padding: 40px 20px 20px 20px;
   box-sizing: border-box;
