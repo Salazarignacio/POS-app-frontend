@@ -13,15 +13,16 @@ export default function MainPage({ children }) {
   return (
     <div className="general">
       {/* FLECHA SIEMPRE VISIBLE */}
-      <div
+      {/* <div
         className={`toggle-btn ${open ? "open" : "closed"}`}
         onClick={() => setOpen(!open)}
       >
         {open ? <i className="fa-solid fa-x"></i> : <i className="fa-solid fa-right-long"></i>}
-      </div>
+      </div> */}
 
       {/* ASIDE */}
-      <div className={`aside ${open ? "open" : "closed"}`}>
+      <div className="content">
+      <div >
         <div className="botones">
           <NavLink
             to="/"
@@ -53,7 +54,7 @@ export default function MainPage({ children }) {
           </NavLink>
         </div>
       </div>
-      <div className="content">{children}</div>
+      {children}</div>
     </div>
   );
 }
