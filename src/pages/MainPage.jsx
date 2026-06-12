@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import "../style/Style.css";
 import ventasicon from "../assets/ventas.png";
 import editicon from "../assets/edit.png";
@@ -8,53 +6,48 @@ import aiicon from "../assets/ia.png";
 import { NavLink } from "react-router-dom";
 
 export default function MainPage({ children }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="general">
-      {/* FLECHA SIEMPRE VISIBLE */}
-      {/* <div
-        className={`toggle-btn ${open ? "open" : "closed"}`}
-        onClick={() => setOpen(!open)}
-      >
-        {open ? <i className="fa-solid fa-x"></i> : <i className="fa-solid fa-right-long"></i>}
-      </div> */}
+    <div className="app-layout">
+      {/* NAVEGACIÓN ESTILO FOLDER TABS */}
+      <nav className="tabs-header">
+        <NavLink
+          to="/"
+          className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
+        >
+           {/* <img src={ventasicon} alt="Ventas" className="tab-icon" />  */}
+          <span className="tab-label">Ventas</span>
+        </NavLink>
 
-      {/* ASIDE */}
-      <div className="content">
-      <div >
-        <div className="botones">
-          <NavLink
-            to="/"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <img src={ventasicon} />
-            <span className="nav-label">Ventas</span>
-          </NavLink>
-          <NavLink
-            to="/edicion"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <img src={editicon} />
-            <span className="nav-label">Edición</span>
-          </NavLink>
-          <NavLink
-            to="/balance"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <img src={balanceicon} />
-            <span className="nav-label">Balance</span>
-          </NavLink>
-          <NavLink
-            to="/import"
-            className={({ isActive }) => (isActive ? "active-link" : "")}
-          >
-            <img src={aiicon} />
-            <span className="nav-label">IA Carga</span>
-          </NavLink>
-        </div>
-      </div>
-      {children}</div>
+        <NavLink
+          to="/edicion"
+          className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
+        >
+           {/* <img src={editicon} alt="Edición" className="tab-icon" />  */}
+          <span className="tab-label">Edición</span>
+        </NavLink>
+
+        <NavLink
+          to="/balance"
+          className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
+        >
+          {/* <img src={balanceicon} alt="Balance" className="tab-icon" /> */}
+          <span className="tab-label">Balance</span>
+        </NavLink>
+
+        <NavLink
+          to="/import"
+          className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
+        >
+          {/* <img src={aiicon} alt="IA Carga" className="tab-icon" /> */}
+          <span className="tab-label">IA Carga</span>
+        </NavLink>
+      </nav>
+
+      {/* PANEL DE CONTENIDO (FUSIÓN CON SOLAPA ACTIVA) */}
+      <main className="panel-content">
+        {children}
+      </main>
     </div>
   );
 }
+

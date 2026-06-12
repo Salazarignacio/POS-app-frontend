@@ -33,9 +33,9 @@
 .productos-ventas {
   /*   overflow-y: auto;
   overflow-x: hidden; */
-  background: var(--bg-contenedores);
+  /* background: var(--bg-contenedores);
   padding: 1rem;
-  border-radius: 1rem;
+  border-radius: 1rem; */
 
   display: flex;
   flex-direction: column;
@@ -43,8 +43,8 @@
   align-items: center;
   height: 86vh;
 
-  box-shadow: var(--sh-contenedores);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  /* box-shadow: var(--sh-contenedores);
+  border: 1px solid rgba(0, 0, 0, 0.05); */
 }
 
 .modal-header {

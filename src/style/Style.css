@@ -1,4 +1,106 @@
+/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 30px 40px 0 40px; /* Padding superior y lateral, 0 abajo */
+  background: var(--background);
+  box-sizing: border-box;
+}
+
+.tabs-header {
+  display: flex;
+  margin-bottom: -1px; /* SUPERPOSICIÓN CLAVE: El margen negativo permite que la tab pise el borde del panel */
+  z-index: 10;
+  position: relative;
+  
+}
+
+.tab-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 30px;
+  text-decoration: none;
+  border-radius: 24px 24px 0 0; /* Esquinas superiores muy redondeadas (estilo folder) */
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  /* border: 1px solid rgba(0, 0, 0, 0.1); */
+  border-bottom: none;
+  
+  /* PESTAÑAS INACTIVAS: Fondo gris más oscuro que el fondo general */
+  /* background: #d1d5db; */ /* Gris sólido más oscuro */
+  color: #4b5563;
+  margin-right: -1px; /* Elimina el espacio entre solapas, haciéndolas continuas */
+}
+
+.tab-link:hover:not(.tab-active) {
+  background: #9ca3af;
+  color: #1f2937;
+}
+
+.tab-icon {
+  width: 26px;
+  height: 26px;
+  opacity: 0.7;
+}
+
+/* PESTAÑA ACTIVA: FUSIÓN TOTAL CON EL PANEL */
+.tab-active {
+  background: #F5F5F5  !important; /* Blanco exacto del panel de abajo */
+  color: var(--btn-ppal) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 3px solid #F5F5F5 ; /* Sella la fusión tapando la línea superior del panel */
+  position: relative;
+  z-index: 20; /* Eleva la pestaña por encima del panel */
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.tab-active .tab-icon {
+  opacity: 1;
+  filter: none;
+}
+
+/* PANEL PRINCIPAL (EL CUERPO DE LA CARPETA) */
+.panel-content {
+  flex: 1;
+  background: #F5F5F5 ;
+  border-radius: 0 24px 24px 24px; /* Esquinas redondeadas excepto arriba izquierda para fundirse con la tab */
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 5;
+  min-height: 0;
+}
+
+/* MODO OSCURO */
+body.dark .tab-link {
+  /* background: #111827; */ /* Fondo oscuro sólido */
+  color: #6b7280;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark .tab-active {
+  background: var(--bg-contenedores) !important;
+  border-bottom: 3px solid var(--bg-contenedores);
+  color: #06b6d4 !important;
+}
+
+body.dark .panel-content {
+  background: var(--bg-contenedores);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Eliminar barra naranja vertical de diseños anteriores */
+.active-link::before {
+  display: none !important;
+}
+
 /* SCROLLBAR PERSONALIZADA */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
