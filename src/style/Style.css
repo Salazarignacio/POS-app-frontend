@@ -74,6 +74,7 @@
   z-index: 5;
   min-height: 0;
   width: 90vw;
+  align-self: center;
 }
 
 /* MODO OSCURO */
