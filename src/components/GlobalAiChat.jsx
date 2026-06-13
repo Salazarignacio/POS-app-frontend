@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { processAiAction } from '../api/AiAgentService';
 import { toast } from 'react-hot-toast';
 import { Spinner, Modal } from 'react-bootstrap';
@@ -12,6 +12,57 @@ export default function GlobalAiChat() {
   const [loading, setLoading] = useState(false);
   
   const { setRenderProducts } = useContext(ProductContext);
+
+  // DRAG LOGIC
+  const [position, setPosition] = useState({ 
+    x: window.innerWidth - 85, 
+    y: window.innerHeight - 85 
+  });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const dragStartTime = useRef(0);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    dragOffset.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    };
+    dragStartTime.current = Date.now();
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      
+      const newX = Math.min(Math.max(10, e.clientX - dragOffset.current.x), window.innerWidth - 70);
+      const newY = Math.min(Math.max(10, e.clientY - dragOffset.current.y), window.innerHeight - 70);
+      
+      setPosition({ x: newX, y: newY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging]);
+
+  const toggleChat = (e) => {
+    // Si el clic duró poco, lo tomamos como intención de abrir el chat, no de arrastrar
+    const dragDuration = Date.now() - dragStartTime.current;
+    if (dragDuration < 200) {
+      setIsOpen(!isOpen);
+    }
+  };
 
   // Para el Smart Create desde la IA Global
   const [smartCreateData, setSmartCreateData] = useState(null);
@@ -76,6 +127,7 @@ export default function GlobalAiChat() {
         setShowSmartModal(true);
         setIsOpen(false); // Cerramos el chat para ver el modal
       } else if (aiResponse.action === 'update_cart_quantity') {
+        // Despachamos evento personalizado para que VentasComponent lo escuche
         const event = new CustomEvent('ai-update-cart', { 
           detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
         });
@@ -125,15 +177,33 @@ export default function GlobalAiChat() {
       {/* Botón Flotante (Icono de IA) */}
       <button 
         className={`ai-floating-button ${isOpen ? 'active' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        title="Asistente IA"
+        onMouseDown={handleMouseDown}
+        onClick={toggleChat}
+        style={{ 
+          left: `${position.x}px`, 
+          top: `${position.y}px`,
+          position: 'fixed',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          bottom: 'auto',
+          right: 'auto',
+          transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+        }}
+        title="Asistente IA (Arrastrame)"
       >
         {isOpen ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-robot"></i>}
       </button>
 
       {/* Ventana de Chat Flotante */}
       {isOpen && (
-        <div className="ai-chat-popup">
+        <div 
+          className="ai-chat-popup"
+          style={{
+            left: position.x < (window.innerWidth / 2) ? `${position.x}px` : `${position.x - 290}px`,
+            top: position.y < (window.innerHeight / 2) ? `${position.y + 70}px` : `${position.y - 320}px`,
+            bottom: 'auto',
+            right: 'auto'
+          }}
+        >
           <div className="ai-chat-header">
             <i className="fa-solid fa-wand-magic-sparkles me-2"></i>
             Asistente Inteligente

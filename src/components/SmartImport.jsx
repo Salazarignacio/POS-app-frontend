@@ -12,6 +12,7 @@ export default function SmartImport() {
   const [loading, setLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const [extractedProducts, setExtractedProducts] = useState([]);
+  const [importPrompt, setImportPrompt] = useState("");
   const [provider, setProvider] = useState("groq"); // 'gemini' o 'groq'
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -166,6 +167,77 @@ export default function SmartImport() {
   const handleRemoveProduct = (index) => {
     const updatedProducts = extractedProducts.filter((_, i) => i !== index);
     setExtractedProducts(updatedProducts);
+  };
+
+  const handleApplyAiToImport = async (e) => {
+    e.preventDefault();
+    if (!importPrompt.trim() || extractedProducts.length === 0) return;
+
+    setLoading(true);
+    try {
+      const instruction = `ACTÚA COMO UN PROCESADOR DE DATOS JSON.
+Tu tarea es modificar una lista de productos basada en una petición.
+Petición: "${importPrompt}"
+
+REGLAS CRÍTICAS:
+1. Responde EXCLUSIVAMENTE con el array JSON modificado.
+2. NO incluyas explicaciones ni texto fuera del JSON.
+3. Mantén las propiedades: codigo, articulo, categoria, precio, stock.
+4. Si la petición pide cambiar categoría, precio o stock de "todos", aplícalo a cada objeto del array.
+
+LISTA A MODIFICAR:
+${JSON.stringify(extractedProducts)}`;
+
+      let products = [];
+      if (provider === 'gemini') {
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        const result = await model.generateContent(instruction);
+        const text = (await result.response).text();
+        const jsonMatch = text.match(/\[[\s\S]*\]/);
+        products = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      } else {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${groqKey.trim()}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [{ role: "user", content: instruction }],
+            temperature: 0.1,
+            response_format: { type: "json_object" }
+          })
+        });
+        const data = await response.json();
+        const resText = data.choices[0].message.content;
+        
+        // Manejo de respuesta Groq que puede venir envuelta en un objeto
+        const parsed = JSON.parse(resText);
+        if (Array.isArray(parsed)) {
+          products = parsed;
+        } else {
+          // Si Groq devuelve { "productos": [...] } o similar
+          products = parsed.productos || parsed.items || parsed.data || Object.values(parsed).find(v => Array.isArray(v)) || [];
+        }
+      }
+
+      if (Array.isArray(products) && products.length > 0) {
+        // Aseguramos que los números sean números
+        const sanitizedProducts = products.map(p => ({
+          ...p,
+          precio: parseFloat(p.precio) || 0,
+          stock: parseInt(p.stock) || 0
+        }));
+        setExtractedProducts(sanitizedProducts);
+        toast.success("¡Lista actualizada correctamente!");
+        setImportPrompt("");
+      } else {
+        throw new Error("La IA no devolvió una lista válida");
+      }
+    } catch (error) {
+      console.error("Error aplicando IA:", error);
+      toast.error("Error al procesar la orden con IA");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleConfirmImport = async () => {
@@ -403,6 +475,32 @@ export default function SmartImport() {
             <div className="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
               <h4 className="ticket-title mb-0">Resultados de Extracción</h4>
               <span className="badge bg-primary rounded-pill px-3" style={{ background: 'var(--btn-ppal)' }}>{extractedProducts.length} detectados</span>
+            </div>
+
+            {/* COMANDO DE IA PARA LA LISTA (NUEVO) */}
+            <div className="mb-4 p-3 rounded-3" style={{ background: 'var(--hover-color)', border: '1px solid var(--btn-ppal)' }}>
+              <label className="form-label d-block mb-2" style={{ fontSize: '0.8rem', fontWeight: 800 }}>
+                <i className="fa-solid fa-wand-magic-sparkles me-1"></i> 
+                Modificar esta lista con IA
+              </label>
+              <form onSubmit={handleApplyAiToImport} className="d-flex gap-2">
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  placeholder="Ej: 'Sube un 15% a todos' o 'Pon stock 0'..."
+                  value={importPrompt}
+                  onChange={(e) => setImportPrompt(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <button 
+                  type="submit" 
+                  className="btn-mas" 
+                  disabled={loading || !importPrompt.trim()}
+                  style={{ width: 'auto', padding: '0 20px', height: '42px' }}
+                >
+                  {loading ? <Spinner animation="border" size="sm" /> : "Aplicar"}
+                </button>
+              </form>
             </div>
 
             <div className="scroll flex-grow-1 mb-4 pe-2">
