@@ -87,7 +87,11 @@ export default function GlobalAiChat() {
           window.dispatchEvent(event);
         }
       } else if (aiResponse.action === 'filter_view') {
-        toast.info("Para filtrar, por favor ve a la sección de Edición.");
+        const event = new CustomEvent('ai-filter-view', { 
+          detail: { action: 'filter_view', filter: aiResponse.filter } 
+        });
+        window.dispatchEvent(event);
+        toast.success(`Filtrando por: ${aiResponse.filter}`);
       }
       
       setPrompt('');
