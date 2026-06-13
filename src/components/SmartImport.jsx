@@ -160,7 +160,14 @@ export default function SmartImport() {
 
   const handleEditChange = (index, field, value) => {
     const updatedProducts = [...extractedProducts];
-    updatedProducts[index][field] = value;
+    
+    // Si el campo es código, limpiamos cualquier cosa que no sea número
+    if (field === 'codigo') {
+      updatedProducts[index][field] = value.toString().replace(/\D/g, '');
+    } else {
+      updatedProducts[index][field] = value;
+    }
+    
     setExtractedProducts(updatedProducts);
   };
 

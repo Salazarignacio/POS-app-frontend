@@ -72,9 +72,16 @@ EJEMPLO DE RESPUESTA:
     });
 
     const data = await response.json();
+    
+    // VALIDACIÓN DE RESPUESTA: Verificamos que la API haya devuelto datos válidos
+    if (!response.ok || !data.choices || data.choices.length === 0) {
+      const errorMsg = data.error?.message || "La IA no pudo procesar la solicitud (posible límite de cuota agotado).";
+      throw new Error(errorMsg);
+    }
+
     return JSON.parse(data.choices[0].message.content);
   } catch (error) {
-    console.error("Error en Groq AI Agent:", error);
+    console.error("Error en Groq AI Agent:", error.message);
     throw error;
   }
 }

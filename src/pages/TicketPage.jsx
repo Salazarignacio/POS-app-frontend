@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 import printlogo from "../assets/printlogo.png";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { update } from "../api/ProductoService";
 
 const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora }) => (
@@ -60,25 +60,6 @@ const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora })
 export default function TicketPage({ total, subtotal, discount, items, prods, setProductos }) {
   const [animarTotal, setAnimarTotal] = useState(false);
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey && e.key.toLowerCase() === "p") || e.key === "F9") {
-        e.preventDefault();
-        handlePrint();
-      }
-      if (e.key === "F10") {
-        e.preventDefault();
-        handleCancelarVenta();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [prods]); // Added prods dependency for handlePrint closure
-
   const handleCancelarVenta = () => {
     const ok = window.confirm("¿Cancelar la venta actual?");
     if (!ok) return;
@@ -119,6 +100,25 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
     setProductos([]);
     localStorage.removeItem("productos");
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey && e.key.toLowerCase() === "p") || e.key === "F9") {
+        e.preventDefault();
+        handlePrint();
+      }
+      if (e.key === "F10") {
+        e.preventDefault();
+        handleCancelarVenta();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [prods, handlePrint, handleCancelarVenta]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const now = new Date();
   const fechaFormateada = now.toLocaleDateString("es-AR");
