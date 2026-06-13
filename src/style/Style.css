@@ -3,9 +3,9 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
-  max-width: 1400px; /* Ancho máximo controlado para la carpeta */
-  padding: 40px 20px 20px 20px;
+  width: 90vw;
+  
+  padding: 30px 0px 20px 0px;
   box-sizing: border-box;
 }
 
@@ -14,7 +14,7 @@
   margin-bottom: -1px; 
   z-index: 10;
   position: relative;
-  padding-left: 20px;
+  /* padding-left: 20px; */
 }
 
 .tab-link {
@@ -27,16 +27,15 @@
   font-weight: 700;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: none;
-  background: #e2e8f0; 
+  border: none; /* Sin bordes */
+  background: transparent; /* Sin fondo */
   color: #64748b;
   margin-right: 2px;
 }
 
 .tab-link:hover:not(.tab-active) {
-  background: #cbd5e1;
-  color: #334155;
+  background: rgba(0, 0, 0, 0.03); /* Fondo muy sutil al pasar el mouse */
+  color: #1e293b;
 }
 
 .tab-icon {
@@ -47,13 +46,13 @@
 
 /* PESTAÑA ACTIVA */
 .tab-active {
-  background: #F5F5F5 !important;
-  color: var(--btn-ppal) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 3px solid #F5F5F5;
+  background: #f8f6e9; /* Tono arena cálido y profesional */
+  color: #f59e0b !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 3px solid #f8f6e9; /* Une visualmente la pestaña al panel */
   position: relative;
   z-index: 20;
-  box-shadow: 0 -4px 10px rgba(0,0,0,0.02);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
 }
 
 .tab-active .tab-icon {
@@ -63,10 +62,10 @@
 /* PANEL PRINCIPAL */
 .panel-content {
   flex: 1;
-  background: #F5F5F5;
+  background: #f8f6e9; /* Mismo tono que la pestaña activa */
   border-radius: 0 24px 24px 24px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
   padding: 15px;
   padding-top:25px;
   overflow-y: auto;
@@ -617,6 +616,30 @@ img:hover {
 
 .btn-print:active:not(:disabled) {
   transform: translateY(0) scale(0.98);
+}
+
+/* SOMBREADO SUTIL PARA EL CONTENEDOR DEL TICKET */
+.ticket-ventas {
+  background: #ffffff !important;
+  border-radius: 12px;
+  padding: 20px !important;
+  /* Sombreado de contorno para efecto de elevación sutil */
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.02),
+    0 4px 8px rgba(0,0,0,0.02),
+    0 8px 16px rgba(0,0,0,0.02),
+    0 16px 32px rgba(0,0,0,0.02),
+    0 0 0 1px rgba(0,0,0,0.05) !important;
+  border: none !important;
+  height: 100% !important;
+  display: block !important; /* Asegura que ocupe todo el ancho */
+}
+
+.dark .ticket-ventas {
+  background: #1e1e1e !important;
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.4),
+    0 0 0 1px rgba(255,255,255,0.05) !important;
 }
 
 .btn-cancel {

@@ -77,7 +77,7 @@ export default function VentasComponent({}) {
   };
 
   return (
-    <div>
+    <>
       {/* <h2>Ventas</h2> */}
       <div className="ventas-container">
         <div className="productos-ventas">
@@ -119,6 +119,6 @@ export default function VentasComponent({}) {
           <TicketComponent prods={productos} setProductos={setProductos} />
         </div>
       </div>
-    </div>
+    </>
   );
 }
