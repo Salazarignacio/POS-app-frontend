@@ -46,9 +46,11 @@ export default function SmartImport() {
     };
   }
 
-  const processWithGroq = async (file, instruction) => {
+  const processWithGroq = async (file, instruction, extractedText = null) => {
     let content = [];
-    if (file.type.startsWith('image/')) {
+    if (extractedText) {
+      content = [{ type: "text", text: `${instruction}\n\nTexto extraído:\n${extractedText}` }];
+    } else if (file.type.startsWith('image/')) {
       const base64Data = await new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result.split(',')[1]);
@@ -61,9 +63,7 @@ export default function SmartImport() {
       ];
     } else {
       let text = "";
-      if (file.type === 'application/pdf') {
-        throw new Error("PDF no soportado en Groq actualmente. Usa Gemini.");
-      } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
         const arrayBuffer = await file.arrayBuffer();
         const { value } = await mammoth.extractRawText({ arrayBuffer });
         text = value;
@@ -126,33 +126,43 @@ export default function SmartImport() {
     setExtractedProducts([]);
     try {
       const instruction = "Analiza este documento/imagen de una lista de precios y extrae los productos. Devuelve ÚNICAMENTE un JSON array con objetos que tengan exactamente estas propiedades: codigo, articulo, categoria, precio, stock. Si un dato no está, usa null o 0 para stock. No incluyas texto extra, solo el JSON.";
+      const transcriptionPrompt = "Transcribe el contenido completo de este documento a texto plano, sin resumir ni inferir nada.";
 
       let products = [];
-      if (provider === 'gemini') {
+
+      if (file.type.startsWith('image/')) {
+        // Groq directo para imágenes
+        products = await processWithGroq(file, instruction);
+      } else {
+        // Híbrido: Gemini (extracción) + Groq (procesamiento)
         const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" }, { apiVersion: "v1beta" });
-        let content = [];
-        if (file.type.startsWith('image/') || file.type === 'application/pdf') {
-          content = [instruction, await fileToGenerativePart(file)];
+        let geminiInput = [];
+
+        if (file.type === 'application/pdf') {
+          geminiInput = [transcriptionPrompt, await fileToGenerativePart(file)];
         } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
           const { value: text } = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
-          content = [`${instruction}\n\nTexto:\n${text}`];
-        } else {
+          geminiInput = [`${transcriptionPrompt}\n\nContenido DOCX:\n${text}`];
+        } else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
           const workbook = XLSX.read(await file.arrayBuffer());
-          content = [`${instruction}\n\nCSV:\n${XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]])}`];
+          const csv = XLSX.utils.sheet_to_csv(workbook.Sheets[workbook.SheetNames[0]]);
+          geminiInput = [`${transcriptionPrompt}\n\nContenido XLSX (CSV):\n${csv}`];
+        } else {
+          throw new Error("Tipo de archivo no soportado.");
         }
-        const result = await model.generateContent(content);
-        const text = (await result.response).text();
-        const jsonMatch = text.match(/\[.*\]/s);
-        products = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-      } else {
-        products = await processWithGroq(file, instruction);
+
+        const result = await model.generateContent(geminiInput);
+        const extractedText = (await result.response).text();
+
+        // Paso B: Groq con el texto extraído
+        products = await processWithGroq(file, instruction, extractedText);
       }
 
       setExtractedProducts(Array.isArray(products) ? products : []);
       toast.success(`Se detectaron ${products.length || 0} productos`);
     } catch (error) {
       console.error("Error al procesar:", error);
-      toast.error(error.message || "Error al procesar. Intenta con el otro proveedor.");
+      toast.error(error.message || "Error al procesar.");
     } finally {
       setLoading(false);
     }
@@ -386,20 +396,11 @@ ${JSON.stringify(extractedProducts)}`;
             <h2 className="section-title mb-0">IA Multimodal</h2>
           </div>
           
-          <div className="price-options p-1">
-            <div className="form-check p-0">
-              <input type="radio" className="form-check-input" id="p-gemini" checked={provider === 'gemini'} onChange={() => setProvider('gemini')} />
-              <label className="form-check-label" htmlFor="p-gemini">Gemini</label>
-            </div>
-            <div className="form-check p-0">
-              <input type="radio" className="form-check-input" id="p-groq" checked={provider === 'groq'} onChange={() => setProvider('groq')} />
-              <label className="form-check-label" htmlFor="p-groq">Groq (Rápido)</label>
-            </div>
-          </div>
+         
         </div>
 
         {/* PASO 1: PROBAR CONEXIÓN */}
-        <div className="ticket-info p-3" style={{ border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', background: 'var(--white-black)' }}>
+       {/*  <div className="ticket-info p-3" style={{ border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', background: 'var(--white-black)' }}>
           <label className="form-label d-block mb-2" style={{ fontSize: '0.75rem', opacity: 0.7 }}>Paso 1: Probar Conexión (Opcional)</label>
           <div className="d-flex gap-2">
             <input
@@ -424,7 +425,7 @@ ${JSON.stringify(extractedProducts)}`;
               <strong>IA:</strong> {aiResponse}
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* PASO 2: SUBIR ARCHIVO */}
         <div className="ticket-info p-4 d-flex flex-column justify-content-center align-items-center text-center gap-3" 
