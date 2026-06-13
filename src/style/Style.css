@@ -46,10 +46,10 @@
 
 /* PESTAÑA ACTIVA */
 .tab-active {
-  background: #f8f6e9; /* Tono arena cálido y profesional */
+  background: #fcfbfb;; /* Tono arena cálido y profesional */
   color: #f59e0b !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: 3px solid #f8f6e9; /* Une visualmente la pestaña al panel */
+  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaña al panel */
   position: relative;
   z-index: 20;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
@@ -62,7 +62,7 @@
 /* PANEL PRINCIPAL */
 .panel-content {
   flex: 1;
-  background: #e9f6f8; /* Mismo tono que la pestaña activa */
+  background: #fcfbfb; /* Mismo tono que la pestaña activa */
   border-radius: 0 24px 24px 24px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
