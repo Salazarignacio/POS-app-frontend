@@ -76,10 +76,27 @@ export default function GlobalAiChat() {
         setShowSmartModal(true);
         setIsOpen(false); // Cerramos el chat para ver el modal
       } else if (aiResponse.action === 'update_cart_quantity') {
-        // Despachamos evento personalizado para que VentasComponent lo escuche
         const event = new CustomEvent('ai-update-cart', { 
           detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
         });
+        window.dispatchEvent(event);
+      } else if (aiResponse.action === 'add_to_cart') {
+        const event = new CustomEvent('ai-add-to-cart', { 
+          detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
+        });
+        window.dispatchEvent(event);
+      } else if (aiResponse.action === 'remove_from_cart') {
+        const event = new CustomEvent('ai-remove-from-cart', { 
+          detail: { filter: aiResponse.filter } 
+        });
+        window.dispatchEvent(event);
+      } else if (aiResponse.action === 'apply_discount') {
+        const event = new CustomEvent('ai-apply-discount', { 
+          detail: { value: aiResponse.value, type: aiResponse.type } 
+        });
+        window.dispatchEvent(event);
+      } else if (aiResponse.action === 'checkout') {
+        const event = new CustomEvent('ai-checkout');
         window.dispatchEvent(event);
       } else if (aiResponse.action === 'clear_cart') {
         if (window.confirm("¿Seguro que querés vaciar el carrito de ventas?")) {

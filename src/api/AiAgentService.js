@@ -34,6 +34,14 @@ ACCIONES DISPONIBLES:
    - Parámetros: { action: "update_cart_quantity", filter: "nombre_o_codigo", quantity: 5 }
 6. clear_cart: Vacía completamente el carrito de ventas actual.
    - Parámetros: { action: "clear_cart" }
+7. add_to_cart: Agrega un producto nuevo al carrito de ventas.
+   - Parámetros: { action: "add_to_cart", filter: "nombre_o_codigo", quantity: 1 }
+8. remove_from_cart: Elimina un producto específico del carrito de ventas.
+   - Parámetros: { action: "remove_from_cart", filter: "nombre_o_codigo" }
+9. apply_discount: Aplica un descuento al total de la venta (porcentaje o monto fijo).
+   - Parámetros: { action: "apply_discount", value: 10, type: "percentage" | "fixed" }
+10. checkout: Finaliza la venta, dispara la impresión o el cobro.
+    - Parámetros: { action: "checkout" }
 
 NOTAS SOBRE FILTROS:
 - Si el usuario dice "todos", usa "todos" en el campo filter.

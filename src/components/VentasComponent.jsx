@@ -42,9 +42,63 @@ export default function VentasComponent({}) {
     };
     window.addEventListener('ai-clear-cart', handleAiClearCart);
 
+    const handleAiAddToCart = async (e) => {
+      const { filter, quantity } = e.detail;
+      const data = await getByCode(filter);
+      if (data && data.length > 0) {
+        const prod = data[0];
+        setProductos((prev) => {
+          const existe = prev.find((p) => p.codigo === prod.codigo);
+          if (existe) {
+            return prev.map((p) =>
+              p.codigo === prod.codigo ? { ...p, cantidad: p.cantidad + (quantity || 1) } : p
+            );
+          }
+          return [{ ...prod, cantidad: quantity || 1, originalPrecio: prod.precio }, ...prev];
+        });
+        toast.success(`Agregado: ${prod.articulo}`);
+      } else {
+        toast.error(`No encontré el producto "${filter}" para agregar`);
+      }
+    };
+    window.addEventListener('ai-add-to-cart', handleAiAddToCart);
+
+    const handleAiRemoveFromCart = (e) => {
+      const { filter } = e.detail;
+      setProductos((prev) => {
+        const item = prev.find(p => 
+          (p.articulo && p.articulo.toLowerCase().includes(filter.toLowerCase())) ||
+          (p.codigo && p.codigo.toLowerCase() === filter.toLowerCase())
+        );
+        if (item) {
+          toast.success(`Eliminado: ${item.articulo}`);
+          return prev.filter(p => p.codigo !== item.codigo);
+        } else {
+          toast.error(`"${filter}" no está en el carrito`);
+          return prev;
+        }
+      });
+    };
+    window.addEventListener('ai-remove-from-cart', handleAiRemoveFromCart);
+
+    const handleAiCheckout = () => {
+      // Disparamos un evento para que TicketComponent lo capture si es necesario, 
+      // o simplemente buscamos el botón de imprimir y le damos click si existe.
+      const checkoutBtn = document.querySelector('.btn-print');
+      if (checkoutBtn && !checkoutBtn.disabled) {
+        checkoutBtn.click();
+      } else {
+        toast.error("No se puede finalizar la venta (carrito vacío o faltan datos)");
+      }
+    };
+    window.addEventListener('ai-checkout', handleAiCheckout);
+
     return () => {
       window.removeEventListener('ai-update-cart', handleAiCartUpdate);
       window.removeEventListener('ai-clear-cart', handleAiClearCart);
+      window.removeEventListener('ai-add-to-cart', handleAiAddToCart);
+      window.removeEventListener('ai-remove-from-cart', handleAiRemoveFromCart);
+      window.removeEventListener('ai-checkout', handleAiCheckout);
     };
   }, []);
 

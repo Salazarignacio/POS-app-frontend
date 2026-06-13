@@ -3,7 +3,7 @@ import printlogo from "../assets/printlogo.png";
 import { useState, useEffect, useRef } from "react";
 import { update } from "../api/ProductoService";
 
-const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
+const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora }) => (
   <div className="printable-ticket">
     <div className="ticket-header">
       <h2>MI NEGOCIO</h2>
@@ -34,6 +34,18 @@ const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
         <span>Artículos:</span>
         <span>{items}</span>
       </div>
+      {discount > 0 && (
+        <>
+          <div className="footer-row">
+            <span>Subtotal:</span>
+            <span>${subtotal.toLocaleString("es-AR")}</span>
+          </div>
+          <div className="footer-row">
+            <span>Descuento:</span>
+            <span>-${discount.toLocaleString("es-AR")}</span>
+          </div>
+        </>
+      )}
       <div className="footer-row total">
         <span>TOTAL:</span>
         <span>${total.toLocaleString("es-AR")}</span>
@@ -45,7 +57,7 @@ const TicketToPrint = ({ total, items, prods, fecha, hora }) => (
   </div>
 );
 
-export default function TicketPage({ total, items, prods, setProductos }) {
+export default function TicketPage({ total, subtotal, discount, items, prods, setProductos }) {
   const [animarTotal, setAnimarTotal] = useState(false);
 
   useEffect(() => {
@@ -151,6 +163,19 @@ export default function TicketPage({ total, items, prods, setProductos }) {
             <strong>{items} artículos</strong>
           </div>
 
+          {discount > 0 && (
+            <>
+              <div className="ticket-row small opacity-75">
+                <span>Subtotal</span>
+                <span>${subtotal.toLocaleString("es-AR")}</span>
+              </div>
+              <div className="ticket-row small text-danger">
+                <span>Descuento</span>
+                <span>-${discount.toLocaleString("es-AR")}</span>
+              </div>
+            </>
+          )}
+
           <div
             className={`ticket-row total ${animarTotal ? "total-animado" : ""}`}
           >
@@ -164,6 +189,8 @@ export default function TicketPage({ total, items, prods, setProductos }) {
       <div className="print-only">
         <TicketToPrint 
           total={total} 
+          subtotal={subtotal}
+          discount={discount}
           items={items} 
           prods={prods} 
           fecha={fechaFormateada} 
