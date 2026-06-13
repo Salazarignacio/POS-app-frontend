@@ -2,13 +2,13 @@ import { Form, Button } from "react-bootstrap";
 import { useState } from "react";
 import { getByCode } from "../api/ProductoService";
 
-export default function CreatePageForm({ onSave }) {
+export default function CreatePageForm({ onSave, initialData }) {
   const [formData, setFormData] = useState({
-    articulo: "",
-    categoria: "",
-    precio: "",
-    stock: "",
-    codigo: "",
+    articulo: initialData?.articulo || "",
+    categoria: initialData?.categoria || "",
+    precio: initialData?.precio || "",
+    stock: initialData?.stock || "",
+    codigo: initialData?.codigo || "",
   });
   const [touched, setTouched] = useState({
     codigo: false,
@@ -66,14 +66,10 @@ export default function CreatePageForm({ onSave }) {
     // Si precio o stock están vacíos, les asignamos 0 por defecto
     const dataToSend = {
       ...formData,
+      categoria: formData.categoria.trim() || "",
       precio: formData.precio === "" ? 0 : formData.precio,
       stock: formData.stock === "" ? 0 : formData.stock,
     };
-
-    // Filtramos solo la categoría si está vacía, para que sea realmente opcional
-    if (dataToSend.categoria === "") {
-      delete dataToSend.categoria;
-    }
 
     onSave(dataToSend);
   };

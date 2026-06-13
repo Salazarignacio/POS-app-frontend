@@ -8,7 +8,16 @@ import { useContext } from "react";
 import { SelectedIds } from "../context/SelectedIds.jsx";
 
 
-export default function EditPage({ productos, searchCode, loading, searchTerm, handleSelectAll }) {
+export default function EditPage({ 
+  productos, 
+  searchCode, 
+  loading, 
+  searchTerm, 
+  handleSelectAll,
+  smartCreateData,
+  showSmartModal,
+  onCloseSmartModal
+}) {
   const { selectedIds } = useContext(SelectedIds);
   const isAllSelected = productos.length > 0 && productos.every(p => selectedIds.includes(p.id));
 
@@ -27,6 +36,11 @@ export default function EditPage({ productos, searchCode, loading, searchTerm, h
         />
 
         <ModalCreate />
+        <ModalCreate 
+          externalShow={showSmartModal} 
+          externalOnHide={onCloseSmartModal} 
+          initialData={smartCreateData}
+        />
        <ModalUpdatePlural></ModalUpdatePlural> 
       </div>
 

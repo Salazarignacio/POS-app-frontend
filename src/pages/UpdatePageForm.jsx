@@ -86,9 +86,24 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
     e.preventDefault();
     if (!isValid) return;
 
-    let dataToSend = Object.fromEntries(
-      Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
-    );
+    let dataToSend;
+    
+    if (isMultiple) {
+      // Para actualización múltiple, solo enviamos lo que el usuario escribió
+      dataToSend = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
+      );
+    } else {
+      // Para un solo producto, aseguramos que codigo y articulo estén, 
+      // y aplicamos los defaults de 0 a los campos numéricos vacíos
+      dataToSend = {
+        ...formData,
+        categoria: formData.categoria.trim() || "",
+        precio: formData.precio === "" ? 0 : formData.precio,
+        stock: formData.stock === "" ? 0 : formData.stock,
+      };
+      delete dataToSend.porcentaje;
+    }
 
     if (modoPrecio === "precio") {
       delete dataToSend.porcentaje;

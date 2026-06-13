@@ -32,7 +32,7 @@ export default function ModalUpdate({ id }) {
   return (
     <>
       <Button variant="primary" className="btn-edit" onClick={handleShow}>
-        <i class="fa-regular fa-pen-to-square"></i>
+        <i className="fa-regular fa-pen-to-square"></i>
       </Button>
 
       <Modal show={show} onHide={handleClose} centered backdrop="static">

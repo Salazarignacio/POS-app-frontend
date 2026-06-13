@@ -43,7 +43,7 @@
 
 .modal-header {
   background: var(--bg-contenedores);
-  color: var(--font-color)
+  color: var(--font-color);
 }
 .cancel-btn:hover {
   transform: scale(1.1);
@@ -61,14 +61,12 @@
   height: 78vh;
   box-shadow: var(--sh-contenedores);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 
-  0 1px 2px  rgba(0, 0, 0, 0.06),
-  0 4px 10px rgba(0, 0, 0, 0.08),
-  0 12px 28px rgba(0, 0, 0, 0.07),
-  0 24px 48px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    0 12px 28px rgba(0, 0, 0, 0.07),
+    0 24px 48px rgba(0, 0, 0, 0.04);
 }
-
-
 
 .searcher-container {
   display: flex;
@@ -142,7 +140,7 @@
   padding: 0 16px;
 
   border-radius: 10px;
-  border: 1px solid var(--font-color);
+  border: 1px solid rgba(0, 0, 0, 0.12);
 
   font-size: 15px;
   font-weight: 500;
@@ -244,7 +242,7 @@
   border-radius: 0.3rem;
 }
 .sell-input-subtotal {
-/* text-align: right;
+  /* text-align: right;
 background-color: red; */
 }
 
@@ -284,9 +282,9 @@ background-color: red; */
 /* CABECERA */
 .carrito-titulos {
   display: grid;
-  grid-template-columns: 1.4fr 1fr .7fr 1fr 0.5fr;
+  grid-template-columns: 1.4fr 1fr 0.7fr 1fr 0.5fr;
   width: 62.9vw;
-  
+
   padding: 10px 25px;
   font-weight: bold;
   /* background-color: rgb(224, 224, 224); */
@@ -298,7 +296,7 @@ background-color: red; */
   justify-self: start;
 }
 
-.carrito-titulos span:nth-child(n+2) {
+.carrito-titulos span:nth-child(n + 2) {
   justify-self: end;
 }
 
@@ -306,7 +304,7 @@ background-color: red; */
 
 .carrito-container {
   display: grid;
-  grid-template-columns: 1.4fr 1fr .7fr 1fr 0.5fr;
+  grid-template-columns: 1.4fr 1fr 0.7fr 1fr 0.5fr;
   width: 62.9vw;
   align-items: center;
   /* justify-items: start; */
@@ -323,7 +321,7 @@ background-color: red; */
 }
 
 /* Columnas 2 a 5 */
-.carrito-container > *:nth-child(n+2) {
+.carrito-container > *:nth-child(n + 2) {
   justify-self: end;
 }
 
@@ -461,7 +459,8 @@ background-color: red; */
     visibility: hidden;
   }
 
-  .printable-ticket, .printable-ticket * {
+  .printable-ticket,
+  .printable-ticket * {
     visibility: visible;
   }
 
@@ -472,7 +471,7 @@ background-color: red; */
     width: 80mm; /* Ancho estándar de ticketera */
     margin: 0;
     padding: 0;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     font-size: 12px;
     color: #000;
     background: #fff;
@@ -549,9 +548,6 @@ background-color: red; */
   }
 }
 
-na del navegador */
-  @page {
-    margin: 0;
-  }
+@page {
+  margin: 0;
 }
-

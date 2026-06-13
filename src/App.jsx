@@ -8,6 +8,7 @@ import { ProductProviderWrapper } from "./context/ProductContext.jsx";
 import { SelectedProviderWrapper } from "./context/SelectedIds.jsx";
 import VentasComponent from "./components/VentasComponent.jsx";
 import BalanceWeb from "./components/BalanceWeb.jsx";
+import GlobalAiChat from "./components/GlobalAiChat.jsx";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
 
                   <Route path="/balance" element={<BalanceWeb />} />
                 </Routes>
+                <GlobalAiChat />
               </MainPage>
             </BrowserRouter>
           </SelectedProviderWrapper>

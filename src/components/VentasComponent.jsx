@@ -5,6 +5,7 @@ import VentasPage from "../pages/VentasPage";
 import "../style/Style-ventas.css";
 import TicketComponent from "./TicketComponent";
 import { useRef } from "react";
+import { toast } from "react-hot-toast";
 
 export default function VentasComponent({}) {
   const [prodPosibles, setProdPosibles] = useState([]);
@@ -13,6 +14,40 @@ export default function VentasComponent({}) {
     return guardados ? JSON.parse(guardados) : [];
   });
   const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleAiCartUpdate = (e) => {
+      const { filter, quantity } = e.detail;
+      setProductos((prev) => {
+        const item = prev.find(p => 
+          (p.articulo && p.articulo.toLowerCase().includes(filter.toLowerCase())) ||
+          (p.codigo && p.codigo.toLowerCase() === filter.toLowerCase())
+        );
+
+        if (item) {
+          toast.success(`Cantidad de ${item.articulo} actualizada a ${quantity}`);
+          return prev.map(p => p.codigo === item.codigo ? { ...p, cantidad: quantity } : p);
+        } else {
+          toast.error(`"${filter}" no está en el carrito`);
+          return prev;
+        }
+      });
+    };
+
+    window.addEventListener('ai-update-cart', handleAiCartUpdate);
+    
+    const handleAiClearCart = () => {
+      setProductos([]);
+      toast.success("Carrito vaciado");
+    };
+    window.addEventListener('ai-clear-cart', handleAiClearCart);
+
+    return () => {
+      window.removeEventListener('ai-update-cart', handleAiCartUpdate);
+      window.removeEventListener('ai-clear-cart', handleAiClearCart);
+    };
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("productos", JSON.stringify(productos));
   }, [productos]);

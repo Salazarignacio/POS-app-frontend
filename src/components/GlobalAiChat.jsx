@@ -1,0 +1,164 @@
+import React, { useState, useContext } from 'react';
+import { processAiAction } from '../api/AiAgentService';
+import { toast } from 'react-hot-toast';
+import { Spinner, Modal } from 'react-bootstrap';
+import { ProductContext } from '../context/ProductContext';
+import { update, getAll } from '../api/ProductoService';
+import ModalCreate from './ModalCreate';
+
+export default function GlobalAiChat() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const { setRenderProducts } = useContext(ProductContext);
+
+  // Para el Smart Create desde la IA Global
+  const [smartCreateData, setSmartCreateData] = useState(null);
+  const [showSmartModal, setShowSmartModal] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!prompt.trim()) return;
+
+    setLoading(true);
+    try {
+      // Obtenemos productos actuales para el contexto de la IA
+      const productos = await getAll();
+      const aiResponse = await processAiAction(prompt, productos);
+      console.log("Global IA Intention:", aiResponse);
+
+      if (aiResponse.action === 'update_price' || aiResponse.action === 'set_price' || aiResponse.action === 'update_stock') {
+        const isAll = aiResponse.filter.toLowerCase() === 'todos';
+        const filtered = isAll ? productos : productos.filter(p => 
+          (p.articulo && p.articulo.toLowerCase().includes(aiResponse.filter.toLowerCase())) ||
+          (p.categoria && p.categoria.toLowerCase().includes(aiResponse.filter.toLowerCase())) ||
+          (p.codigo && p.codigo.toLowerCase() === aiResponse.filter.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          toast.error(`No encontré productos con "${aiResponse.filter}"`);
+        } else {
+          let message = "";
+          const filterDisplay = isAll ? "TODOS los productos" : `${filtered.length} productos de "${aiResponse.filter}"`;
+          
+          if (aiResponse.action === 'update_price') {
+            message = `¿Actualizar ${filterDisplay} con un factor de ${aiResponse.percentage}?`;
+          } else if (aiResponse.action === 'set_price') {
+            message = `¿Fijar el precio en $${aiResponse.price} para ${filterDisplay}?`;
+          } else if (aiResponse.action === 'update_stock') {
+            message = aiResponse.type === 'set' 
+              ? `¿Poner stock en ${aiResponse.value} para ${filterDisplay}?`
+              : `¿Sumar ${aiResponse.value} al stock de ${filterDisplay}?`;
+          }
+
+          if (window.confirm(message)) {
+            const updatePromises = filtered.map(p => {
+              let updatedProd = { ...p };
+              if (aiResponse.action === 'update_price') {
+                updatedProd.precio = p.precio * aiResponse.percentage;
+              } else if (aiResponse.action === 'set_price') {
+                updatedProd.precio = aiResponse.price;
+              } else if (aiResponse.action === 'update_stock') {
+                const newStock = aiResponse.type === 'set' ? aiResponse.value : (p.stock || 0) + aiResponse.value;
+                updatedProd.stock = Math.max(0, newStock);
+              }
+              return update(p.id, updatedProd);
+            });
+
+            await Promise.all(updatePromises);
+            toast.success("Operación realizada con éxito");
+            setRenderProducts(prev => !prev);
+          }
+        }
+      } else if (aiResponse.action === 'create_product') {
+        setSmartCreateData(aiResponse.data);
+        setShowSmartModal(true);
+        setIsOpen(false); // Cerramos el chat para ver el modal
+      } else if (aiResponse.action === 'update_cart_quantity') {
+        // Despachamos evento personalizado para que VentasComponent lo escuche
+        const event = new CustomEvent('ai-update-cart', { 
+          detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
+        });
+        window.dispatchEvent(event);
+      } else if (aiResponse.action === 'clear_cart') {
+        if (window.confirm("¿Seguro que querés vaciar el carrito de ventas?")) {
+          const event = new CustomEvent('ai-clear-cart');
+          window.dispatchEvent(event);
+        }
+      } else if (aiResponse.action === 'filter_view') {
+        toast.info("Para filtrar, por favor ve a la sección de Edición.");
+      }
+      
+      setPrompt('');
+    } catch (error) {
+      toast.error("Error al procesar con IA");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Botón Flotante (Icono de IA) */}
+      <button 
+        className={`ai-floating-button ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+        title="Asistente IA"
+      >
+        {isOpen ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-robot"></i>}
+      </button>
+
+      {/* Ventana de Chat Flotante */}
+      {isOpen && (
+        <div className="ai-chat-popup">
+          <div className="ai-chat-header">
+            <i className="fa-solid fa-wand-magic-sparkles me-2"></i>
+            Asistente Inteligente
+          </div>
+          <div className="ai-chat-body">
+            <p className="small opacity-75 mb-3">
+              Pedime cambios de precios, stock o creá productos.
+            </p>
+            <form onSubmit={handleSubmit}>
+              <div className="position-relative">
+                <input
+                  autoFocus
+                  type="text"
+                  className="search-input w-100"
+                  placeholder="Ej: Sube 10% a Coca Cola..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  disabled={loading}
+                />
+                {loading && (
+                  <div className="position-absolute" style={{ right: '10px', top: '10px' }}>
+                    <Spinner animation="border" size="sm" variant="warning" />
+                  </div>
+                )}
+              </div>
+              <button 
+                type="submit" 
+                className="btn-mas w-100 mt-2" 
+                disabled={loading || !prompt.trim()}
+              >
+                {loading ? 'Procesando...' : 'Enviar'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para Smart Create desde la IA Global */}
+      <ModalCreate 
+        externalShow={showSmartModal} 
+        externalOnHide={() => {
+          setShowSmartModal(false);
+          setSmartCreateData(null);
+        }} 
+        initialData={smartCreateData}
+      />
+    </>
+  );
+}
