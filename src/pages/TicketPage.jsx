@@ -213,7 +213,7 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
           title="Cancelar Venta (F10)"
           disabled={prods.length === 0}
         >
-          Limpiar 
+          Limpiar Pantalla
         </Button>
       </div>
     </div>

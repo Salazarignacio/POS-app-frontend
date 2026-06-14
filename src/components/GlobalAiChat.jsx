@@ -256,6 +256,7 @@ export default function GlobalAiChat() {
                 type="submit" 
                 className="btn-mas w-100 mt-2" 
                 disabled={loading || !prompt.trim()}
+                style={{ marginLeft: 0 }}
               >
                 {loading ? 'Procesando...' : 'Enviar'}
               </button>
