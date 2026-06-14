@@ -16,42 +16,46 @@ export async function processAiAction(prompt, currentProducts) {
   })).slice(0, 50); // Limitamos a 50 para la prueba
 
   const systemPrompt = `Eres un asistente experto en gestión de inventario. 
-Analiza la petición del usuario y determina qué acción realizar sobre los productos.
-Debes responder ÚNICAMENTE con un objeto JSON válido.
+Tu tarea es analizar la petición del usuario, razonar la mejor acción y responder ÚNICAMENTE con un objeto JSON válido.
+
+ESTRUCTURA DE RESPUESTA:
+{
+  "razonamiento": "Breve explicación de por qué elegiste esta acción y cómo filtraste los productos",
+  "action": "nombre_de_la_accion",
+  "parámetros": ...
+}
 
 ACCIONES DISPONIBLES:
-1. update_price: Cambia el precio de productos filtrados usando un porcentaje.
-   - Parámetros: { action: "update_price", filter: "texto_filtro", percentage: 1.10 }
-2. set_price: Establece un precio FIJO y exacto para productos filtrados.
-   - Parámetros: { action: "set_price", filter: "texto_filtro_o_codigo", price: 1500 }
-3. filter_view: Filtra los productos que ve el usuario.
-   - Parámetros: { action: "filter_view", filter: "texto_filtro" }
-3. create_product: Prepara la creación de un nuevo producto.
-   - Parámetros: { action: "create_product", data: { articulo: "nombre", codigo: "cod", precio: 100, stock: 10, categoria: "cat" } }
-4. update_stock: Cambia el stock físico en la base de datos de productos filtrados.
-   - Parámetros: { action: "update_stock", filter: "texto_filtro", value: 10, type: "set" | "add" }
-5. update_cart_quantity: Cambia la cantidad de un producto que YA ESTÁ en el carrito de ventas actual.
-   - Parámetros: { action: "update_cart_quantity", filter: "nombre_o_codigo", quantity: 5 }
-6. clear_cart: Vacía completamente el carrito de ventas actual.
-   - Parámetros: { action: "clear_cart" }
-7. add_to_cart: Agrega un producto nuevo al carrito de ventas.
-   - Parámetros: { action: "add_to_cart", filter: "nombre_o_codigo", quantity: 1 }
-8. remove_from_cart: Elimina un producto específico del carrito de ventas.
-   - Parámetros: { action: "remove_from_cart", filter: "nombre_o_codigo" }
-9. apply_discount: Aplica un descuento al total de la venta (porcentaje o monto fijo).
-   - Parámetros: { action: "apply_discount", value: 10, type: "percentage" | "fixed" }
-10. checkout: Finaliza la venta, dispara la impresión o el cobro.
-    - Parámetros: { action: "checkout" }
+1. update_price: Cambia el precio usando un porcentaje. { "action": "update_price", "filter": "texto", "percentage": 1.10 }
+2. set_price: Establece un precio FIJO. { "action": "set_price", "filter": "texto", "price": 1500 }
+3. filter_view: Filtra lo que ve el usuario. { "action": "filter_view", "filter": "texto" }
+4. create_product: Prepara nuevo producto. { "action": "create_product", "data": { ... } }
+5. update_stock: Cambia stock. { "action": "update_stock", "filter": "texto", "value": 10, "type": "set" | "add" }
+6. clear_cart: Vacía el carrito. { "action": "clear_cart" }
+7. add_to_cart: Agrega al carrito. { "action": "add_to_cart", "filter": "texto", "quantity": 1 }
+8. remove_from_cart: Quita del carrito. { "action": "remove_from_cart", "filter": "texto" }
+9. apply_discount: Descuento total. { "action": "apply_discount", "value": 10, "type": "percentage" | "fixed" }
+10. checkout: Finaliza venta. { "action": "checkout" }
 
-NOTAS SOBRE FILTROS:
-- Si el usuario dice "todos", usa "todos" en el campo filter.
-- Si el usuario dice "ninguno", "vaciar" o "limpiar" referido al carrito, usa la acción clear_cart.
+EJEMPLOS DE RAZONAMIENTO (Few-Shot):
+Usuario: "Aumentá 15% a las galletitas"
+Respuesta: {
+  "razonamiento": "El usuario quiere un aumento porcentual. Identifico el factor 1.15 y el filtro 'galletitas'.",
+  "action": "update_price",
+  "filter": "galletitas",
+  "percentage": 1.15
+}
 
-PRODUCTOS ACTUALES (Muestra):
-${JSON.stringify(productSummary)}
+Usuario: "Vendé 3 cocas"
+Respuesta: {
+  "razonamiento": "Interpretado como agregar al carrito. Filtro 'coca' y cantidad 3.",
+  "action": "add_to_cart",
+  "filter": "coca",
+  "quantity": 3
+}
 
-EJEMPLO DE RESPUESTA:
-{ "action": "update_stock", "filter": "Invierno", "value": 0, "type": "set" }`;
+PRODUCTOS ACTUALES (Contexto):
+${JSON.stringify(productSummary)}`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
