@@ -171,7 +171,14 @@ export default function GlobalAiChat() {
         }}
         title="Asistente IA (Arrastrame)"
       >
-        {isOpen ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-robot"></i>}
+        {isOpen ? <i className="fa-solid fa-xmark"></i> : (
+          <div className="dragon-ball-stars">
+            <i className="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
+          </div>
+        )}
       </button>
 
       {/* Ventana de Chat Flotante */}
