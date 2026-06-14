@@ -261,14 +261,50 @@ input {
 }
 
 .btn-cancel {
-  /* ... existing ... */
+  height: 48px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(180deg, #94a3b8, #64748b) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  color: white !important;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-.btn-cancel:hover {
-  transform: translateY(-2px);
-  background-color: #fff1f1;
-  border-color: #ff4d4d;
-  color: #d32f2f;
+
+.btn-cancel::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5%;
+  width: 90%;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  border-radius: 12px 12px 50% 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-cancel:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.dark .btn-cancel {
+  background: linear-gradient(180deg, #475569, #334155) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 .producto-row {
@@ -648,34 +684,6 @@ img:hover {
   box-shadow: 
     0 10px 30px rgba(0,0,0,0.4),
     0 0 0 1px rgba(255,255,255,0.05) !important;
-}
-
-.btn-cancel {
-  height: 48px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-  border: 1.5px solid #ef4444 !important;
-  color: #ef4444;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  gap: 8px;
-}
-
-.btn-cancel:hover:not(:disabled) {
-  background-color: #fee2e2; /* Rojo más saturado y visible */
-  border-color: #ef4444;
-  color: #b91c1c; /* Texto más oscuro para contraste */
-  transform: translateY(-1px);
-}
-
-.dark .btn-cancel:hover:not(:disabled) {
-  background-color: rgba(239, 68, 68, 0.2); /* Mayor visibilidad en modo oscuro */
-  border-color: #f87171;
 }
 
 /* Estados Desactivados Unificados */
@@ -1473,4 +1481,3 @@ li {
   z-index: 10;
   background: var(--bg-contenedores);
 }
-
