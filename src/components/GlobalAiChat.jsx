@@ -15,7 +15,7 @@ export default function GlobalAiChat() {
 
   // DRAG LOGIC
   const [position, setPosition] = useState({ 
-    x: window.innerWidth - 85, 
+    x: 20, 
     y: window.innerHeight - 85 
   });
   const [isDragging, setIsDragging] = useState(false);
