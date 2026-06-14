@@ -185,7 +185,7 @@ export default function GlobalAiChat() {
             zIndex: 999
           }}
         >
-          ¡Pídeme un deseo! Puedo gestionar tu inventario por ti ✨
+          Pide un deseo! Puedo gestionar tu inventario y hacer tus tareas ✨
           <button className="close-greeting" onClick={() => setShowGreeting(false)}>×</button>
         </div>
       )}

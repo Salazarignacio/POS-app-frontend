@@ -1362,57 +1362,53 @@ li {
   transform: rotate(90deg);
 }
 
-/* 💬 BURBUJA DE SALUDO IA */
+/* 💬 BURBUJA DE SALUDO IA (REDESIGN MODERNO) */
 .ai-greeting-bubble {
-  background: white;
-  color: #333;
-  padding: 10px 15px;
-  border-radius: 15px;
-  border-bottom-left-radius: 2px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  font-size: 0.85rem;
-  font-weight: 600;
-  max-width: 200px;
-  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px);
+  color: #475569 !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  font-size: 0.75rem !important;
+  font-weight: 400 !important;
+  max-width: 220px;
+  animation: smoothPop 0.5s ease-out !important;
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  pointer-events: none; /* No interfiere con clics */
 }
 
 .ai-greeting-bubble::after {
   content: "";
   position: absolute;
-  left: -8px;
-  bottom: 10px;
-  border-width: 8px 8px 8px 0;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 6px 6px 6px 0;
   border-style: solid;
-  border-color: transparent white transparent transparent;
+  border-color: transparent rgba(255, 255, 255, 0.9) transparent transparent;
 }
 
 .dark .ai-greeting-bubble {
-  background: #262626;
-  color: #eee;
-  border-color: rgba(255,255,255,0.1);
+  background: rgba(31, 41, 55, 0.85) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 .dark .ai-greeting-bubble::after {
-  border-color: transparent #262626 transparent transparent;
+  border-color: transparent rgba(31, 41, 55, 0.85) transparent transparent;
 }
 
 .close-greeting {
-  background: none;
-  border: none;
-  color: #999;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0 0 0 5px;
-  line-height: 1;
+  display: none; /* Ocultamos el botón de cierre para un look más limpio */
 }
 
-@keyframes popIn {
-  from { transform: scale(0.5) translateX(-20px); opacity: 0; }
-  to { transform: scale(1) translateX(0); opacity: 1; }
+@keyframes smoothPop {
+  0% { transform: scale(0.95) translateX(-10px); opacity: 0; }
+  100% { transform: scale(1) translateX(0); opacity: 1; }
 }
 
 
