@@ -1474,7 +1474,54 @@ li {
   padding-right: 5px; /* Espacio para que la scrollbar no tape el contenido */
 }
 
-/* 🔦 ANIMACIÓN ESCANEO LÁSER IA */
+/* ✅ BOTÓN CONFIRMAR Y GUARDAR (COMPACTO) */
+.btn-confirm-save {
+  height: 55px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn-confirm-save::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5%;
+  width: 90%;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+  border-radius: 12px 12px 50% 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-confirm-save:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-confirm-save:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.dark .btn-confirm-save {
+  background: linear-gradient(135deg, #059669, #064e3b) !important;
+}
+
 .scanner-container {
   position: relative;
   overflow: hidden;

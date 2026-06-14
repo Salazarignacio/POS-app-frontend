@@ -787,13 +787,13 @@ ${JSON.stringify(extractedProducts)}`;
 
             <div className="ticket-actions pt-3 border-top">
               <button
-                className="btn-print py-3"
+                className="btn-confirm-save py-3"
                 onClick={handleConfirmImport}
                 disabled={loading}
-                style={{ height: "auto", gap: "10px" }}
+                style={{ gap: "10px" }}
               >
-                <i className="fa-solid fa-cloud-arrow-up fa-2x"></i>
-                <span style={{ fontSize: "1.1rem" }}>
+                <i className="fa-solid fa-cloud-arrow-up fa-xl"></i>
+                <span>
                   Confirmar y Guardar Todo
                 </span>
               </button>

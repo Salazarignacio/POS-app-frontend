@@ -55,10 +55,10 @@
 }
 .ticket-ventas {
   background: var(--bg-contenedores);
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
 
-  height: 78vh;
+  height: 88vh;
   box-shadow: var(--sh-contenedores);
   border: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow:
