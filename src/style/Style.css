@@ -1362,6 +1362,60 @@ li {
   transform: rotate(90deg);
 }
 
+/* 💬 BURBUJA DE SALUDO IA */
+.ai-greeting-bubble {
+  background: white;
+  color: #333;
+  padding: 10px 15px;
+  border-radius: 15px;
+  border-bottom-left-radius: 2px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  font-size: 0.85rem;
+  font-weight: 600;
+  max-width: 200px;
+  animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.ai-greeting-bubble::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  bottom: 10px;
+  border-width: 8px 8px 8px 0;
+  border-style: solid;
+  border-color: transparent white transparent transparent;
+}
+
+.dark .ai-greeting-bubble {
+  background: #262626;
+  color: #eee;
+  border-color: rgba(255,255,255,0.1);
+}
+
+.dark .ai-greeting-bubble::after {
+  border-color: transparent #262626 transparent transparent;
+}
+
+.close-greeting {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0 0 5px;
+  line-height: 1;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.5) translateX(-20px); opacity: 0; }
+  to { transform: scale(1) translateX(0); opacity: 1; }
+}
+
+
 .ai-chat-popup {
   position: fixed;
   bottom: 95px;

@@ -153,8 +153,43 @@ export default function GlobalAiChat() {
     }
   };
 
+  const [showGreeting, setShowGreeting] = useState(false);
+
+  useEffect(() => {
+    // Mostrar saludo a los 2 segundos de cargar la app
+    const timer = setTimeout(() => {
+      setShowGreeting(true);
+    }, 2000);
+
+    // Ocultarlo automáticamente a los 7 segundos
+    const hideTimer = setTimeout(() => {
+      setShowGreeting(false);
+    }, 9000);
+
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
+
   return (
     <>
+      {/* Saludo Inicial */}
+      {showGreeting && !isOpen && (
+        <div 
+          className="ai-greeting-bubble"
+          style={{ 
+            left: `${position.x + 70}px`, 
+            top: `${position.y}px`,
+            position: 'fixed',
+            zIndex: 999
+          }}
+        >
+          ¡Pídeme un deseo! Puedo gestionar tu inventario por ti ✨
+          <button className="close-greeting" onClick={() => setShowGreeting(false)}>×</button>
+        </div>
+      )}
+
       {/* Botón Flotante (Icono de IA) */}
       <button 
         className={`ai-floating-button ${isOpen ? 'active' : ''}`}
@@ -169,7 +204,7 @@ export default function GlobalAiChat() {
           right: 'auto',
           transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
         }}
-        title="Asistente IA (Arrastrame)"
+        title="Pide un deseo (Arrastrame)"
       >
         {isOpen ? <i className="fa-solid fa-xmark"></i> : (
           <div className="dragon-ball-stars">
@@ -194,11 +229,11 @@ export default function GlobalAiChat() {
         >
           <div className="ai-chat-header">
             <i className="fa-solid fa-wand-magic-sparkles me-2"></i>
-            Asistente Inteligente
+            Asistente de Deseos
           </div>
           <div className="ai-chat-body">
             <p className="small opacity-75 mb-3">
-              Pedime cambios de precios, stock o creá productos.
+              ¿Cuál es tu deseo para el inventario hoy?
             </p>
             <form onSubmit={handleSubmit}>
               <div className="position-relative">
@@ -206,7 +241,7 @@ export default function GlobalAiChat() {
                   autoFocus
                   type="text"
                   className="search-input w-100"
-                  placeholder="Ej: Sube 10% a Coca Cola..."
+                  placeholder="Ej: Aumentá 10% a las galletitas..."
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   disabled={loading}
