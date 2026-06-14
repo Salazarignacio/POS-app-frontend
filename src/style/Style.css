@@ -675,8 +675,8 @@ img:hover {
     0 16px 32px rgba(0,0,0,0.02),
     0 0 0 1px rgba(0,0,0,0.05) !important;
   border: none !important;
-  max-height: 85vh;
-  display: block !important; /* Asegura que ocupe todo el ancho */
+  max-height: 80vh;
+  /* display: block !important;  */
 }
 
 .dark .ticket-ventas {
