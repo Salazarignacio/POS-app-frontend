@@ -233,23 +233,31 @@ input {
   filter: brightness(1.1);
 }
 
-.btn-new {
-  /* ... existing ... */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.btn-new:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
-  filter: brightness(1.1);
+.btn-new, .btn-print, .btn-form-submit, .btn-mas, .ai-chat-header {
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-print {
-  /* ... existing ... */
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.btn-new::before, .btn-print::before, .btn-form-submit::before, .btn-mas::before, .ai-chat-header::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5%;
+  width: 90%;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  border-radius: 12px 12px 50% 50%;
+  pointer-events: none;
+  z-index: 1;
 }
-.btn-print:hover {
-  transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+
+.btn-new:hover, .btn-print:hover, .btn-form-submit:hover, .btn-mas:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+}
+
+.btn-new:active, .btn-print:active, .btn-form-submit:active, .btn-mas:active {
+  transform: translateY(0);
 }
 
 .btn-cancel {
