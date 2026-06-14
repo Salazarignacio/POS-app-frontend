@@ -68,100 +68,81 @@ export default function GlobalAiChat() {
   const [smartCreateData, setSmartCreateData] = useState(null);
   const [showSmartModal, setShowSmartModal] = useState(false);
 
+  const [history, setHistory] = useState([]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!prompt.trim()) return;
 
     setLoading(true);
     try {
-      // Obtenemos productos actuales para el contexto de la IA
       const productos = await getAll();
-      const aiResponse = await processAiAction(prompt, productos);
-      console.log("Global IA Intention:", aiResponse);
+      // Pasamos el historial actual
+      const aiResponse = await processAiAction(prompt, productos, history);
+      console.log("Global AI Full Response:", aiResponse);
 
-      if (aiResponse.action === 'update_price' || aiResponse.action === 'set_price' || aiResponse.action === 'update_stock') {
-        const isAll = aiResponse.filter.toLowerCase() === 'todos';
-        const filtered = isAll ? productos : productos.filter(p => 
-          (p.articulo && p.articulo.toLowerCase().includes(aiResponse.filter.toLowerCase())) ||
-          (p.categoria && p.categoria.toLowerCase().includes(aiResponse.filter.toLowerCase())) ||
-          (p.codigo && p.codigo.toLowerCase() === aiResponse.filter.toLowerCase())
-        );
-
-        if (filtered.length === 0) {
-          toast.error(`No encontré productos con "${aiResponse.filter}"`);
-        } else {
-          let message = "";
-          const filterDisplay = isAll ? "TODOS los productos" : `${filtered.length} productos de "${aiResponse.filter}"`;
+      // Si la IA devolvió acciones, las procesamos una por una
+      if (aiResponse.actions && Array.isArray(aiResponse.actions)) {
+        for (const actionObj of aiResponse.actions) {
+          const { action, params } = actionObj;
           
-          if (aiResponse.action === 'update_price') {
-            message = `¿Actualizar ${filterDisplay} con un factor de ${aiResponse.percentage}?`;
-          } else if (aiResponse.action === 'set_price') {
-            message = `¿Fijar el precio en $${aiResponse.price} para ${filterDisplay}?`;
-          } else if (aiResponse.action === 'update_stock') {
-            message = aiResponse.type === 'set' 
-              ? `¿Poner stock en ${aiResponse.value} para ${filterDisplay}?`
-              : `¿Sumar ${aiResponse.value} al stock de ${filterDisplay}?`;
-          }
+          if (action === 'update_price' || action === 'set_price' || action === 'update_stock') {
+            const isAll = params.filter?.toLowerCase() === 'todos';
+            const filtered = isAll ? productos : productos.filter(p => 
+              (p.articulo && p.articulo.toLowerCase().includes(params.filter.toLowerCase())) ||
+              (p.categoria && p.categoria.toLowerCase().includes(params.filter.toLowerCase())) ||
+              (p.codigo && p.codigo.toLowerCase() === params.filter.toLowerCase())
+            );
 
-          if (window.confirm(message)) {
-            const updatePromises = filtered.map(p => {
-              let updatedProd = { ...p };
-              if (aiResponse.action === 'update_price') {
-                updatedProd.precio = p.precio * aiResponse.percentage;
-              } else if (aiResponse.action === 'set_price') {
-                updatedProd.precio = aiResponse.price;
-              } else if (aiResponse.action === 'update_stock') {
-                const newStock = aiResponse.type === 'set' ? aiResponse.value : (p.stock || 0) + aiResponse.value;
-                updatedProd.stock = Math.max(0, newStock);
+            if (filtered.length === 0) {
+              toast.error(`No encontré productos con "${params.filter}"`);
+            } else {
+              let message = "";
+              if (action === 'update_price') message = `¿Actualizar ${filtered.length} productos con un factor de ${params.percentage}?`;
+              else if (action === 'set_price') message = `¿Fijar el precio en $${params.price} para ${filtered.length} productos?`;
+              else if (action === 'update_stock') message = params.type === 'set' ? `¿Poner stock en ${params.value}?` : `¿Sumar ${params.value} al stock?`;
+
+              if (window.confirm(message)) {
+                const updatePromises = filtered.map(p => {
+                  let updatedProd = { ...p };
+                  if (action === 'update_price') updatedProd.precio = p.precio * params.percentage;
+                  else if (action === 'set_price') updatedProd.precio = params.price;
+                  else if (action === 'update_stock') {
+                    const newStock = params.type === 'set' ? params.value : (p.stock || 0) + params.value;
+                    updatedProd.stock = Math.max(0, newStock);
+                  }
+                  return update(p.id, updatedProd);
+                });
+                await Promise.all(updatePromises);
+                toast.success("Operación realizada con éxito");
+                setRenderProducts(prev => !prev);
               }
-              return update(p.id, updatedProd);
-            });
-
-            await Promise.all(updatePromises);
-            toast.success("Operación realizada con éxito");
-            setRenderProducts(prev => !prev);
+            }
+          } else if (action === 'create_product') {
+            setSmartCreateData(params.data);
+            setShowSmartModal(true);
+            setIsOpen(false);
+          } else if (action === 'filter_view') {
+            const event = new CustomEvent('ai-filter-view', { detail: { action: 'filter_view', filter: params.filter } });
+            window.dispatchEvent(event);
+          } else if (action === 'add_to_cart') {
+            const event = new CustomEvent('ai-add-to-cart', { detail: { filter: params.filter, quantity: params.quantity || 1 } });
+            window.dispatchEvent(event);
+          } else if (action === 'clear_cart') {
+            window.dispatchEvent(new CustomEvent('ai-clear-cart'));
+          } else if (action === 'checkout') {
+            window.dispatchEvent(new CustomEvent('ai-checkout'));
           }
         }
-      } else if (aiResponse.action === 'create_product') {
-        setSmartCreateData(aiResponse.data);
-        setShowSmartModal(true);
-        setIsOpen(false); // Cerramos el chat para ver el modal
-      } else if (aiResponse.action === 'update_cart_quantity') {
-        // Despachamos evento personalizado para que VentasComponent lo escuche
-        const event = new CustomEvent('ai-update-cart', { 
-          detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
-        });
-        window.dispatchEvent(event);
-      } else if (aiResponse.action === 'add_to_cart') {
-        const event = new CustomEvent('ai-add-to-cart', { 
-          detail: { filter: aiResponse.filter, quantity: aiResponse.quantity } 
-        });
-        window.dispatchEvent(event);
-      } else if (aiResponse.action === 'remove_from_cart') {
-        const event = new CustomEvent('ai-remove-from-cart', { 
-          detail: { filter: aiResponse.filter } 
-        });
-        window.dispatchEvent(event);
-      } else if (aiResponse.action === 'apply_discount') {
-        const event = new CustomEvent('ai-apply-discount', { 
-          detail: { value: aiResponse.value, type: aiResponse.type } 
-        });
-        window.dispatchEvent(event);
-      } else if (aiResponse.action === 'checkout') {
-        const event = new CustomEvent('ai-checkout');
-        window.dispatchEvent(event);
-      } else if (aiResponse.action === 'clear_cart') {
-        if (window.confirm("¿Seguro que querés vaciar el carrito de ventas?")) {
-          const event = new CustomEvent('ai-clear-cart');
-          window.dispatchEvent(event);
-        }
-      } else if (aiResponse.action === 'filter_view') {
-        const event = new CustomEvent('ai-filter-view', { 
-          detail: { action: 'filter_view', filter: aiResponse.filter } 
-        });
-        window.dispatchEvent(event);
-        toast.success(`Filtrando por: ${aiResponse.filter}`);
       }
+
+      // Actualizamos el historial (limite de 6 mensajes para no saturar)
+      const newHistory = [
+        ...history,
+        { role: "user", content: prompt },
+        { role: "assistant", content: aiResponse.razonamiento || "Acción ejecutada" }
+      ].slice(-6);
+      setHistory(newHistory);
       
       setPrompt('');
     } catch (error) {
