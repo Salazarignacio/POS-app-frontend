@@ -675,7 +675,7 @@ img:hover {
     0 16px 32px rgba(0,0,0,0.02),
     0 0 0 1px rgba(0,0,0,0.05) !important;
   border: none !important;
-  height: 100% !important;
+  max-height: 85vh;
   display: block !important; /* Asegura que ocupe todo el ancho */
 }
 
@@ -1474,10 +1474,63 @@ li {
   padding-right: 5px; /* Espacio para que la scrollbar no tape el contenido */
 }
 
-/* Asegurar que el header se mantenga arriba al scrollear */
-.scroll .productos-header {
-  position: sticky;
+/* 🔦 ANIMACIÓN ESCANEO LÁSER IA */
+.scanner-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.laser-line {
+  position: absolute;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--btn-ppal);
+  box-shadow: 0 0 15px 2px var(--btn-ppal);
   z-index: 10;
-  background: var(--bg-contenedores);
+  animation: laser-scan 2.5s infinite ease-in-out;
+}
+
+.laser-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.2) 0%, transparent 100%);
+  z-index: 5;
+  animation: laser-scan 2.5s infinite ease-in-out;
+}
+
+.dark .laser-glow {
+  background: linear-gradient(to bottom, rgba(6, 182, 212, 0.2) 0%, transparent 100%);
+}
+
+@keyframes laser-scan {
+  0% { transform: translateY(-100px); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(500px); opacity: 0; }
+}
+
+.scan-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--btn-ppal);
+  animation: blink-text 1s infinite alternate;
+}
+
+@keyframes blink-text {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
 }

@@ -585,7 +585,17 @@ ${JSON.stringify(extractedProducts)}`;
         className="ticket-ventas d-flex flex-column"
         style={{ flex: 1.5, marginLeft: "20px" }}
       >
-        {extractedProducts.length === 0 ? (
+        {loading ? (
+          <div className="scanner-container h-100">
+            <div className="laser-line"></div>
+            <div className="laser-glow"></div>
+            <div className="text-center animate__animated animate__fadeIn">
+              <i className="fa-solid fa-microchip fa-4x mb-4 opacity-20"></i>
+              <h4 className="scan-text">Analizando Documento...</h4>
+              <p className="small opacity-50">Shenron está procesando tu deseo</p>
+            </div>
+          </div>
+        ) : extractedProducts.length === 0 ? (
           <div
             className="no-products d-flex flex-column align-items-center justify-content-center py-5 h-100 opacity-50"
             style={{ color: "var(--font-color)" }}
