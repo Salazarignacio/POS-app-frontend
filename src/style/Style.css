@@ -635,7 +635,7 @@ img:hover {
 }
 
 .btn-print img {
-  width: 170px !important; /* Agrandado para máximo impacto visual */
+  width: 10rem !important; /* Agrandado para máximo impacto visual */
   height: auto;
   transition: transform 0.25s ease;
 }
