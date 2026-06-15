@@ -483,28 +483,17 @@ ${JSON.stringify(extractedProducts)}`;
   };
 
   return (
-    <div className="ventas-container">
+    <div className="ia-carga-container">
       {/* PANEL IZQUIERDO: CONFIGURACIÓN Y CARGA */}
-      <div
-        className="productos-ventas p-4 d-flex flex-column gap-4"
-        style={{ flex: 1 }}
-      >
+      <div className="ia-carga-panel">
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-3">
-           
             <h2 className="section-title mb-0">IA Multimodal</h2>
           </div>
         </div>
 
         <div
-          className="ticket-info p-4 d-flex flex-column justify-content-center align-items-center text-center gap-3"
-          style={{
-            border: "2px dashed var(--btn-ppal)",
-            background: "var(--hover-color)",
-            cursor: "pointer",
-            borderRadius: "15px",
-            minHeight: "200px",
-          }}
+          className="ia-carga-upload"
           onClick={() => document.getElementById("file-upload").click()}
         >
           <input
@@ -569,10 +558,7 @@ ${JSON.stringify(extractedProducts)}`;
       </div>
 
       {/* PANEL DERECHO: RESULTADOS */}
-      <div
-        className="ticket-ventas d-flex flex-column"
-        style={{ flex: 1.5, marginLeft: "20px" }}
-      >
+      <div className="ia-carga-results">
         {loading ? (
           <div className="scanner-container h-100">
             <div className="laser-line"></div>
@@ -655,11 +641,9 @@ ${JSON.stringify(extractedProducts)}`;
                 {extractedProducts.map((p, idx) => (
                   <div
                     key={idx}
-                    className="ticket-info p-3 position-relative animate__animated animate__fadeInUp"
+                    className="ia-result-card animate__animated animate__fadeInUp"
                     style={{
                       animationDelay: `${idx * 0.05}s`,
-                      background: "var(--white-black)",
-                      borderRadius: "12px",
                     }}
                   >
                     <button
@@ -775,7 +759,7 @@ ${JSON.stringify(extractedProducts)}`;
               </div>
             </div>
 
-            <div className="ticket-actions pt-3 border-top">
+            <div className="ia-action-bar">
               <button
                 className="btn-confirm-save py-3"
                 onClick={handleConfirmImport}
