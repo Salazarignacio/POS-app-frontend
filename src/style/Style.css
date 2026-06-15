@@ -618,7 +618,7 @@ img:hover {
 .btn-print {
   background: var(--btn-ppal) !important;
   border: none !important;
-  height: 150px !important;
+  height: 17vh !important;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -631,11 +631,11 @@ img:hover {
   color: white;
   font-weight: 800;
   gap: 5px; /* Reducimos el gap para dar más espacio a la imagen */
-  padding: 10px 0;
+  padding:  0;
 }
 
 .btn-print img {
-  width: 140px !important; /* Agrandado para máximo impacto visual */
+  width: 170px !important; /* Agrandado para máximo impacto visual */
   height: auto;
   transition: transform 0.25s ease;
 }
