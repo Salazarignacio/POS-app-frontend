@@ -207,13 +207,13 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
         >
           <img src={printlogo} alt="Imprimir" />
         </Button>
-        <Button 
+        <Button
           className="btn-cancel w-100" 
           onClick={handleCancelarVenta}
           title="Cancelar Venta (F10)"
           disabled={prods.length === 0}
         >
-          Limpiar Pantalla
+          Cancelar Compra <i className="fa-solid fa-arrow-rotate-left"></i>
         </Button>
       </div>
     </div>
