@@ -534,7 +534,7 @@ ${JSON.stringify(extractedProducts)}`;
           ></i>
           <div>
             <h5 className="mb-1" style={{ color: "var(--font-color)" }}>
-              {file ? file.name : "Subir Lista de Precios"}
+              {file ? file.name : "Click o Arrastrar Lista de Precios"}
             </h5>
             <p className="small opacity-50 mb-0">JPG, PNG, PDF, DOCX o XLSX</p>
           </div>
