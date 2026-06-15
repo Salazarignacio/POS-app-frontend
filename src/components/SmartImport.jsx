@@ -491,19 +491,7 @@ ${JSON.stringify(extractedProducts)}`;
       >
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-3">
-            <div
-              className="p-3 rounded-circle text-white shadow-sm"
-              style={{
-                width: "50px",
-                height: "50px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "var(--btn-ppal)",
-              }}
-            >
-              <i className="fa-solid fa-robot fa-lg"></i>
-            </div>
+           
             <h2 className="section-title mb-0">IA Multimodal</h2>
           </div>
         </div>
@@ -592,7 +580,9 @@ ${JSON.stringify(extractedProducts)}`;
             <div className="text-center animate__animated animate__fadeIn">
               <i className="fa-solid fa-microchip fa-4x mb-4 opacity-20"></i>
               <h4 className="scan-text">Analizando Documento...</h4>
-              <p className="small opacity-50">Shenron está procesando tu deseo</p>
+              <p className="small opacity-50">
+                Shenron está procesando tu deseo
+              </p>
             </div>
           </div>
         ) : extractedProducts.length === 0 ? (
@@ -793,9 +783,7 @@ ${JSON.stringify(extractedProducts)}`;
                 style={{ gap: "10px" }}
               >
                 <i className="fa-solid fa-cloud-arrow-up fa-xl"></i>
-                <span>
-                  Confirmar y Guardar Todo
-                </span>
+                <span>Confirmar y Guardar Todo</span>
               </button>
               <button
                 className="btn-cancel"

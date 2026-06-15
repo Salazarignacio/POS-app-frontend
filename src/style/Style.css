@@ -77,10 +77,13 @@
 }
 
 /* MODO OSCURO */
-body.dark .tab-link {
-  background: #18181b;
-  color: #52525b;
-  border-color: rgba(255,255,255,0.05);
+body.dark .tab-link:hover:not(.tab-active) {
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+}
+
+.ai-chat-body p {
+  color: var(--font-color);
 }
 
 body.dark .tab-active {
@@ -346,19 +349,19 @@ a {
 .app-title {
   font-size: 1.9rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--font-color);
   margin-bottom: 24px;
 }
 
 .app-title span {
-  color: #6c7cff; /* mismo azul que botones */
+  color: #f59e0b; /* unificado a naranja */
   font-weight: 700;
 }
 /* h2 */
 .section-title {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--font-color);
 }
 
 /* App */
