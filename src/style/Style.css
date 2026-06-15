@@ -86,7 +86,7 @@ body.dark .tab-link {
 body.dark .tab-active {
   background: var(--bg-contenedores) !important;
   border-bottom: 3px solid var(--bg-contenedores);
-  color: #06b6d4 !important;
+  color: #f59e0b !important;
 }
 
 body.dark .panel-content {
@@ -159,17 +159,17 @@ body.dark .panel-content {
   --sh-contenedores:
     0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
 
-  --btn-ppal: linear-gradient(135deg, #06b6d4, #0891b2);
-  --btn-scnd: linear-gradient(135deg, #0891b2, #0e7490);
+  --btn-ppal: linear-gradient(135deg, #f59e0b, #d97706);
+  --btn-scnd: linear-gradient(135deg, #d97706, #b45309);
 
-  --hover-color: rgba(6, 182, 212, 0.12);
-  --hover-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.25);
+  --hover-color: rgba(245, 158, 11, 0.12);
+  --hover-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.25);
 
   --font-color: #e2e8f0;
   --white-black: #262626;
 
   --background: radial-gradient(circle at 20% 20%, #1a1a1a 0%, #0d0d0d 100%);
-  --spinner-color: #06b6d4;
+  --spinner-color: #f59e0b;
 }
 
 .custom-spinner {
@@ -662,7 +662,7 @@ img:hover {
 }
 
 .dark .btn-print:hover:not(:disabled) {
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
 }
 
 .btn-print:active:not(:disabled) {
@@ -1006,8 +1006,8 @@ li {
 }
 
 .dark .input-soft:focus {
-  border-color: #06b6d4 !important;
-  box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+  border-color: #f59e0b !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
 }
 
 /* --- Botón de Acción con Estados Elegantes --- */
@@ -1064,9 +1064,9 @@ li {
 }
 
 .dark .alert-info-custom {
-  background: rgba(6, 182, 212, 0.05);
-  border-color: rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
+  background: rgba(245, 158, 11, 0.05);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
 }
 
 /* --- Layout de Fila Doble (Precio y Stock) --- */
@@ -1567,7 +1567,7 @@ li {
 }
 
 .dark .laser-glow {
-  background: linear-gradient(to bottom, rgba(6, 182, 212, 0.2) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.2) 0%, transparent 100%);
 }
 
 @keyframes laser-scan {
