@@ -560,22 +560,24 @@ img:hover {
 }
 
 /* Balance section adjustments */
-.content:has(.balance-wrapper) {
+.panel-content:has(.balance-wrapper) {
   padding: 0;
   overflow: hidden;
 }
 
 .balance-wrapper {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: hidden;
 }
 
 .balance-iframe {
-  width: 100%;
-  height: 100%;
+  width: 125%;
+  height: 125%;
   border: none;
   display: block;
+  transform: scale(0.8);
+  transform-origin: 0 0;
 }
 
 /* EditPage */
