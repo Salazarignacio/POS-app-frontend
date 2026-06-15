@@ -74,6 +74,8 @@
   min-height: 0;
   width: 90vw;
   align-self: center;
+  display: flex; /* Added to allow children to center vertically */
+  flex-direction: column;
 }
 
 /* MODO OSCURO */
@@ -1600,9 +1602,11 @@ li {
   align-items: center; /* Vertical centering */
   justify-content: center;
   gap: 30px;
-  min-height: 75vh;
+  height: 100%; /* Occupy full parent height */
+  min-height: 70vh;
   width: 100%;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .ia-carga-panel {
