@@ -1615,7 +1615,7 @@ li {
 
 .ia-carga-upload {
   border: 2px dashed var(--btn-ppal);
-  background: var(--hover-color);
+  background: rgba(224, 218, 208, 0.74);
   cursor: pointer;
   border-radius: 20px;
   min-height: 250px;
@@ -1629,10 +1629,16 @@ li {
   padding: 30px;
 }
 
-.ia-carga-upload:hover {
+.ia-carga-upload:hover, .ia-carga-upload.is-dragging {
   background: rgba(245, 158, 11, 0.1);
   transform: translateY(-4px);
   border-style: solid;
+  border-color: #f59e0b;
+}
+
+.ia-carga-upload.is-dragging {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+  scale: 1.02;
 }
 
 .ia-carga-results {

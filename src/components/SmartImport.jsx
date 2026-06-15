@@ -14,14 +14,14 @@ export default function SmartImport() {
   const [extractedProducts, setExtractedProducts] = useState([]);
   const [importPrompt, setImportPrompt] = useState("");
   const [provider, setProvider] = useState("groq"); // 'gemini' o 'groq'
+  const [isDragging, setIsDragging] = useState(false);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   const groqKey = import.meta.env.VITE_GROQ_API_KEY;
   const apiUrl = import.meta.env.VITE_API_URL;
   const genAI = new GoogleGenerativeAI(apiKey);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+  const validateAndSetFile = (selectedFile) => {
     const allowedTypes = [
       "image/jpeg",
       "image/png",
@@ -38,6 +38,29 @@ export default function SmartImport() {
       setFile(selectedFile);
     } else {
       toast.error("Formato no soportado. Usa JPG, PNG, PDF, DOCX o XLSX.");
+    }
+  };
+
+  const handleFileChange = (e) => {
+    validateAndSetFile(e.target.files[0]);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      validateAndSetFile(droppedFile);
     }
   };
 
@@ -493,8 +516,11 @@ ${JSON.stringify(extractedProducts)}`;
         </div>
 
         <div
-          className="ia-carga-upload"
+          className={`ia-carga-upload ${isDragging ? "is-dragging" : ""}`}
           onClick={() => document.getElementById("file-upload").click()}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
         >
           <input
             id="file-upload"
