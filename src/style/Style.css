@@ -311,11 +311,7 @@ input {
   /* ... existing ... */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.producto-row:hover {
-  background-color: var(--hover-color);
-  box-shadow: var(--hover-shadow);
-  transform: translateX(4px);
-}
+
 
 li {
   color: var(--font-color);
@@ -857,7 +853,9 @@ li {
 
 .producto-row:hover {
   background-color: var(--hover-color);
-  box-shadow: var(--hover-shadow);
+  /* box-shadow: var(--hover-shadow); */
+    /* background: rgba(245, 158, 11, 0.08);
+  box-shadow: none; */
 }
 .producto-row {
   font-size: 0.9rem;
