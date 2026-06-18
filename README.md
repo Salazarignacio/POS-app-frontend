@@ -1,4 +1,4 @@
-🧾 Product Management POS – Frontend
+﻿# 🛒 Product Management POS – Frontend
 
 Aplicación frontend de gestión de productos y ventas, diseñada para funcionar como un punto de venta (POS) para pequeños comercios.
 
@@ -14,7 +14,7 @@ La aplicación consume una API REST externa desarrollada en Java.
 ⚙️ Tecnologías utilizadas
 
 *   **React** (Vite)
-*   **Google Gemini AI** & **Groq AI** (Multimodal Vision)
+*   **Google Gemini AI** & **Groq AI** (Llama 3.3 & Vision)
 *   **Mammoth.js** (Procesamiento de Word)
 *   **XLSX** (Procesamiento de Excel)
 *   **React Bootstrap** & **Hot Toast**
@@ -22,14 +22,23 @@ La aplicación consume una API REST externa desarrollada en Java.
 
 📦 Funcionalidades principales
 
-### 🤖 Carga Inteligente con IA (Novedad)
+### 🧠 Agente de IA "Cerebro" (Novedad)
+El sistema incluye un Agente de IA agéntico (Llama 3.3 vía Groq) capaz de ejecutar acciones complejas mediante lenguaje natural.
+*   **Control por Chat:** Modifica precios, aumenta stocks, filtra vistas o gestiona el carrito de ventas simplemente escribiendo comandos como *"Aumentá 10% a las cervezas"* o *"Limpiá el carrito"*.
+*   **Multi-acción:** Capacidad de procesar múltiples órdenes en un solo prompt.
+*   **Context Aware:** El agente conoce el inventario actual para realizar búsquedas y actualizaciones precisas.
+
+### 🖨️ Sistema de Impresión de Precios (Novedad)
+Funcionalidad diseñada para agilizar el etiquetado de góndolas en comercios físicos.
+*   **Etiquetas Térmicas:** Impresión optimizada para impresoras térmicas de etiquetas o tickets.
+*   **Diseño de Alto Impacto:** El nombre del artículo se imprime en tamaño estándar y el precio en tamaño extra grande (42px) para máxima visibilidad.
+*   **Impresión Múltiple:** Permite seleccionar varios productos y generar una tira continua de etiquetas de precios lista para cortar y pegar.
+
+### 🤖 Carga Inteligente con IA
 El sistema integra Inteligencia Artificial avanzada para automatizar la carga de inventario a partir de documentos externos.
 *   **Lectura Multiformato:** Procesa imágenes (JPG, PNG), documentos PDF, archivos de Word (.docx) y planillas de Excel (.xlsx).
 *   **Extracción Automática:** La IA analiza el archivo, identifica productos, categorías, precios y stock, devolviendo una lista editable.
-*   **Sincronización Inteligente (Upsert):** Al confirmar la carga, el sistema verifica automáticamente si el producto ya existe mediante su código:
-    *   **Actualización:** Si el producto existe, actualiza su precio y stock.
-    *   **Creación:** Si el producto es nuevo, lo registra en la base de datos.
-*   **Doble Motor de IA:** Permite alternar entre **Google Gemini** y **Groq (Llama 3.2 Vision)** para garantizar disponibilidad y velocidad.
+*   **Sincronización Inteligente (Upsert):** Al confirmar la carga, el sistema verifica automáticamente si el producto ya existe mediante su código.
 
 ### Gestión de productos
 *   Listado completo con renderizado inmediato.
@@ -55,14 +64,3 @@ Diseño enfocado en la operación sin mouse:
 *   **Modo Oscuro / Claro** integrado.
 *   Interfaz basada en contenedores modernos y animaciones sutiles.
 *   Feedback visual inmediato mediante notificaciones (Toasts).
-
-🌐 Configuración de entornos
-La aplicación es altamente configurable mediante un archivo `.env`:
-*   `VITE_API_URL`: Dirección de la API de productos.
-*   `VITE_GEMINI_API_KEY`: Clave para el motor de IA de Google.
-*   `VITE_GROQ_API_KEY`: Clave para el motor de IA de Groq.
-*   `VITE_BALANCE_WEB_URL`: URL personalizada para la sección de Balance (opcional).
-
-🛠 Estado del proyecto
-🟢 **Versión funcional completa**
-Implementa un ciclo de vida completo desde la carga masiva inteligente hasta la venta final, optimizando tiempos de gestión para el comerciante.
