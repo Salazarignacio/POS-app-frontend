@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+﻿import { Button } from "react-bootstrap";
 import printlogo from "../assets/printlogo.png";
 import { useState, useEffect } from "react";
 import { update } from "../api/ProductoService";
@@ -10,9 +10,9 @@ const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora })
       <p>Ignacio</p>
       <p>{fecha} - {hora}</p>
     </div>
-    
+
     <div className="ticket-divider">--------------------------------</div>
-    
+
     <div className="ticket-items">
       {prods.map((p, i) => (
         <div key={i} className="ticket-item-row">
@@ -26,9 +26,9 @@ const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora })
         </div>
       ))}
     </div>
-    
+
     <div className="ticket-divider">--------------------------------</div>
-    
+
     <div className="ticket-footer">
       <div className="footer-row">
         <span>Artículos:</span>
@@ -59,6 +59,7 @@ const TicketToPrint = ({ total, subtotal, discount, items, prods, fecha, hora })
 
 export default function TicketPage({ total, subtotal, discount, items, prods, setProductos }) {
   const [animarTotal, setAnimarTotal] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const handleCancelarVenta = () => {
     const ok = window.confirm("¿Cancelar la venta actual?");
@@ -70,16 +71,17 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
 
   const handlePrint = async () => {
     if (prods.length === 0) return;
-    
+
     const ok = window.confirm("¿Confirmar venta e imprimir ticket?");
     if (!ok) return;
+
+    setIsPrinting(true);
 
     // Actualizar stock en el backend
     try {
       for (const element of prods) {
         const nuevoStock = element.stock - element.cantidad;
-        
-        // Creamos una copia limpia para el backend restaurando el precio original
+
         const productToUpdate = {
           id: element.id,
           codigo: element.codigo,
@@ -93,12 +95,15 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
       }
     } catch (error) {
       console.error("Error al actualizar stock:", error);
-      alert("Error al actualizar stock, pero se procederá con la impresión.");
     }
 
-    window.print();
-    setProductos([]);
-    localStorage.removeItem("productos");
+    // Esperamos a que termine la animación antes de abrir el cuadro de diálogo de impresión
+    setTimeout(() => {
+      window.print();
+      setProductos([]);
+      localStorage.removeItem("productos");
+      setIsPrinting(false);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -185,33 +190,32 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
         </div>
       </div>
 
-      {/* Ticket oculto diseñado solo para impresión */}
       <div className="print-only">
-        <TicketToPrint 
-          total={total} 
+        <TicketToPrint
+          total={total}
           subtotal={subtotal}
           discount={discount}
-          items={items} 
-          prods={prods} 
-          fecha={fechaFormateada} 
-          hora={hora} 
+          items={items}
+          prods={prods}
+          fecha={fechaFormateada}
+          hora={hora}
         />
       </div>
 
       <div className="ticket-actions">
         <Button
-          className="btn-print w-100"
+          className={`btn-print w-100 ${isPrinting ? "animating-print" : ""}`}
           onClick={handlePrint}
           title="Imprimir (F9 / Ctrl+P)"
-          disabled={prods.length === 0}
+          disabled={prods.length === 0 || isPrinting}
         >
           <img src={printlogo} alt="Imprimir" />
         </Button>
         <Button
-          className="btn-cancel w-100" 
+          className="btn-cancel w-100"
           onClick={handleCancelarVenta}
           title="Cancelar Venta (F10)"
-          disabled={prods.length === 0}
+          disabled={prods.length === 0 || isPrinting}
         >
           Cancelar Compra <i className="fa-solid fa-arrow-rotate-left"></i>
         </Button>

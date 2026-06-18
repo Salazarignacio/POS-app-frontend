@@ -1732,3 +1732,51 @@ li {
     visibility: visible;
   }
 }
+
+/* ANIMACION IMPRESORA VENTAS */
+@keyframes paper-out {
+  0% {
+    height: 0;
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    height: 80px;
+    opacity: 1;
+    transform: translateX(-50%) translateY(50px);
+  }
+}
+
+.btn-print.animating-print {
+  overflow: hidden; /* Mantiene el papel dentro del boton naranja */
+}
+
+.btn-print.animating-print::after {
+  content: "••••••••";
+  letter-spacing: 2px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 5px;
+  color: #888;
+  font-size: 10px;
+  
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  width: 90px;
+  background: white;
+  border: 1px solid #ddd;
+  border-top: 3px solid #444; /* Boca de la impresora */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 1;
+  animation: paper-out 1s ease-in-out forwards;
+}
+
+.btn-print img {
+  position: relative;
+  z-index: 10; /* La impresora siempre arriba del papel */
+}
