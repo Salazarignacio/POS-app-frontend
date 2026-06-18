@@ -1698,15 +1698,19 @@ li {
   white-space: nowrap;
 }
 
-/* ESTILOS PARA ETIQUETAS DE PRECIOS */
+/* ESTILOS PARA ETIQUETAS DE PRECIOS (OPTIMIZADO PARA TIRA CONTINUA) */
 .printable-tag {
   font-family: 'Inter', sans-serif;
   text-align: center;
-  padding: 10px;
+  padding: 15px 0;
   width: 100%;
   max-width: 280px;
-  margin-bottom: 20px;
-  page-break-after: always;
+  border-bottom: 2px solid black; /* Linea divisoria para corte */
+  page-break-inside: avoid;
+}
+
+.printable-tag:last-child {
+  border-bottom: none;
 }
 
 .tag-articulo {
