@@ -1,8 +1,9 @@
-import { getAll, getByCode } from "../api/ProductoService";
-import { useState, useEffect, useContext } from "react";
+﻿import { getAll, getByCode } from "../api/ProductoService";
+import { useState, useEffect, useContext } from "react";   
 import EditPage from "../pages/EditPage";
 import { ProductContext } from "../context/ProductContext";
-import { SelectedIds } from "../context/SelectedIds";
+import { SelectedIds } from "../context/SelectedIds";      
+import PrintTagsProvider from "./PrintTagsProvider";
 
 export default function EditComponent() {
   const [productos, setProductos] = useState([]);
@@ -28,10 +29,10 @@ export default function EditComponent() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setLoading(true);
-      setSelectedIds([]); // Limpiamos selección al buscar o recargar
-      
-      const request = searchTerm 
-        ? getByCode(searchTerm) 
+      setSelectedIds([]); // Limpiamos selecciÃ³n al buscar o recargar
+
+      const request = searchTerm
+        ? getByCode(searchTerm)
         : getAll();
 
       request
@@ -63,19 +64,25 @@ export default function EditComponent() {
 
   return (
     <div className="edit">
-      <EditPage
-        productos={productos}
-        searchCode={searchCode}
-        loading={loading}
-        searchTerm={searchTerm}
-        handleSelectAll={handleSelectAll}
-        smartCreateData={smartCreateData}
-        showSmartModal={showSmartModal}
-        onCloseSmartModal={() => {
-          setShowSmartModal(false);
-          setSmartCreateData(null);
-        }}
-      ></EditPage>
+      <PrintTagsProvider>
+        {(printSingle, printMultiple) => (
+          <EditPage
+            productos={productos}
+            searchCode={searchCode}
+            loading={loading}
+            searchTerm={searchTerm}
+            handleSelectAll={handleSelectAll}
+            smartCreateData={smartCreateData}
+            showSmartModal={showSmartModal}
+            onCloseSmartModal={() => {
+              setShowSmartModal(false);
+              setSmartCreateData(null);
+            }}
+            printSingle={printSingle}
+            printMultiple={printMultiple}
+          />
+        )}
+      </PrintTagsProvider>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import ModalUpdate from "../components/ModalUpdate.jsx";
 import { SelectedIds } from "../context/SelectedIds.jsx";
 import { Button } from "react-bootstrap";
 
-export default function EditProductoPage({ props }) {
+export default function EditProductoPage({ props, onPrint }) {
   const { selectedIds, setSelectedIds } = useContext(SelectedIds); 
   const handleSelect = (id, checked) => {
     setSelectedIds((prev) => {
@@ -34,7 +34,7 @@ export default function EditProductoPage({ props }) {
         <span className="stock">{props.stock}</span>
 
         <div className="prod-edit-btn">
-          <Button variant="primary" className="btn-edit">
+          <Button variant="primary" className="btn-edit" onClick={onPrint}>
             <i className="fa-solid fa-print"></i>
           </Button>
           <ModalUpdate id={props.id}></ModalUpdate>

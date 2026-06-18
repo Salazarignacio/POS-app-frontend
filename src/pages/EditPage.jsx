@@ -3,7 +3,7 @@ import EditProductoPage from "./EditProductoPage";
 import ModalCreate from "../components/ModalCreate.jsx";
 import "../style/Style.css";
 import ModalUpdatePlural from "../components/ModalUpdatePlural.jsx"
-import ModalPrintPlural from "../components/ModalPrintPlural.jsx";
+import ModalPrintPlural from "../components/ModalPrintPlural.jsx"; 
 import Skeleton from "../reutilizable/Skeleton.jsx";
 import { useContext } from "react";
 import { SelectedIds } from "../context/SelectedIds.jsx";
@@ -17,7 +17,9 @@ export default function EditPage({
   handleSelectAll,
   smartCreateData,
   showSmartModal,
-  onCloseSmartModal
+  onCloseSmartModal,
+  printSingle,
+  printMultiple
 }) {
   const { selectedIds } = useContext(SelectedIds);
   const isAllSelected = productos.length > 0 && productos.every(p => selectedIds.includes(p.id));
@@ -43,7 +45,10 @@ export default function EditPage({
           initialData={smartCreateData}
         />
        <ModalUpdatePlural></ModalUpdatePlural>
-       <ModalPrintPlural></ModalPrintPlural>
+       <ModalPrintPlural printMultiple={() => {
+         const selectedProds = productos.filter(p => selectedIds.includes(p.id));
+         printMultiple(selectedProds);
+       }}></ModalPrintPlural>
       </div>
 
       <div className="scroll ">
@@ -71,14 +76,17 @@ export default function EditPage({
             <div className="text-center py-5">
               <i className="fa-solid fa-magnifying-glass fa-3x mb-3 opacity-25"></i>
               <h3 className="fw-bold opacity-50">Producto no existente</h3>
-              <p className="small opacity-40">Prueba con otro Código o crea uno nuevo</p>
+              <p className="small opacity-40">Prueba con otro código o crea uno nuevo</p>
             </div>
           </div>
         ) : (
           productos.map((element, a) => {
             return (
               <div key={a} className="">
-                <EditProductoPage props={element}></EditProductoPage>
+                <EditProductoPage 
+                  props={element} 
+                  onPrint={() => printSingle(element)}
+                ></EditProductoPage>
               </div>
             );
           })
@@ -87,4 +95,3 @@ export default function EditPage({
     </div>
   );
 }
-

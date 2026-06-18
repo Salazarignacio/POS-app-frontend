@@ -1697,3 +1697,34 @@ li {
   justify-content: center;
   white-space: nowrap;
 }
+
+/* ESTILOS PARA ETIQUETAS DE PRECIOS */
+.printable-tag {
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  padding: 10px;
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 20px;
+  page-break-after: always;
+}
+
+.tag-articulo {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: black;
+}
+
+.tag-precio {
+  font-size: 42px;
+  font-weight: 900;
+  color: black;
+}
+
+@media print {
+  .printable-tag {
+    visibility: visible;
+  }
+}
