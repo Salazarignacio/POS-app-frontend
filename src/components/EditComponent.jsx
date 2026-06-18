@@ -3,13 +3,14 @@ import { useState, useEffect, useContext } from "react";
 import EditPage from "../pages/EditPage";
 import { ProductContext } from "../context/ProductContext";
 import { SelectedIds } from "../context/SelectedIds";      
-import PrintTagsProvider from "./PrintTagsProvider";
+import { usePrint } from "./PrintTagsProvider";
 
 export default function EditComponent() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { renderProducts, setRenderProducts } = useContext(ProductContext);
+  const { renderProducts } = useContext(ProductContext);
   const { setSelectedProducts } = useContext(SelectedIds);
+  const { printSingle, printMultiple } = usePrint();
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -29,7 +30,7 @@ export default function EditComponent() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setLoading(true);
-      // Ya no limpiamos la selección al buscar para permitir selección acumulativa
+      setSelectedProducts([]); 
 
       const request = searchTerm
         ? getByCode(searchTerm)
@@ -47,7 +48,7 @@ export default function EditComponent() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, renderProducts]);
+  }, [searchTerm, renderProducts, setSelectedProducts]);
 
   const searchCode = (e) => {
     setSearchTerm(e.target.value);
@@ -55,45 +56,30 @@ export default function EditComponent() {
 
   const handleSelectAll = (checked) => {
     if (checked) {
-      setSelectedProducts((prev) => {
-        // Combinamos los productos actuales con los ya seleccionados sin duplicados por ID
-        const newSelection = [...prev];
-        productos.forEach(prod => {
-          if (!newSelection.some(p => p.id === prod.id)) {
-            newSelection.push(prod);
-          }
-        });
-        return newSelection;
-      });
+      const allIds = productos.map((p) => p.id);
+      setSelectedProducts(allIds);
     } else {
-      // Si desmarcamos "Todos", solo quitamos los que están actualmente visibles
-      setSelectedProducts((prev) => 
-        prev.filter(p => !productos.some(visible => visible.id === p.id))
-      );
+      setSelectedProducts([]);
     }
   };
 
   return (
     <div className="edit">
-      <PrintTagsProvider>
-        {(printSingle, printMultiple) => (
-          <EditPage
-            productos={productos}
-            searchCode={searchCode}
-            loading={loading}
-            searchTerm={searchTerm}
-            handleSelectAll={handleSelectAll}
-            smartCreateData={smartCreateData}
-            showSmartModal={showSmartModal}
-            onCloseSmartModal={() => {
-              setShowSmartModal(false);
-              setSmartCreateData(null);
-            }}
-            printSingle={printSingle}
-            printMultiple={printMultiple}
-          />
-        )}
-      </PrintTagsProvider>
+      <EditPage
+        productos={productos}
+        searchCode={searchCode}
+        loading={loading}
+        searchTerm={searchTerm}
+        handleSelectAll={handleSelectAll}
+        smartCreateData={smartCreateData}
+        showSmartModal={showSmartModal}
+        onCloseSmartModal={() => {
+          setShowSmartModal(false);
+          setSmartCreateData(null);
+        }}
+        printSingle={printSingle}
+        printMultiple={printMultiple}
+      />
     </div>
   );
 }

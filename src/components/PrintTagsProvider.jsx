@@ -1,10 +1,13 @@
-﻿import { useContext, useState, useEffect } from "react";
-import { ProductContext } from "../context/ProductContext";
-import { SelectedIds } from "../context/SelectedIds";
+﻿import { useContext, useState, useEffect, createContext } from "react";
+import { SelectedIds } from "../context/SelectedIds";      
 
-export default function PrintTagsProvider({ children }) {
-  const [tagsToPrint, setTagsToPrint] = useState([]);
-  const { setSelectedProducts } = useContext(SelectedIds);
+const PrintContext = createContext();
+
+export const usePrint = () => useContext(PrintContext);
+
+export default function PrintTagsProvider({ children }) {  
+  const [tagsToPrint, setTagsToPrint] = useState([]);      
+  const { setSelectedIds } = useContext(SelectedIds); 
 
   const printSingle = (product) => {
     setTagsToPrint([product]);
@@ -15,19 +18,31 @@ export default function PrintTagsProvider({ children }) {
   };
 
   useEffect(() => {
+    const handleAiPrint = (e) => {
+      const { products } = e.detail;
+      if (products && products.length > 0) {
+        printMultiple(products);
+      }
+    };
+
+    window.addEventListener('ai-print-tags', handleAiPrint);
+    return () => window.removeEventListener('ai-print-tags', handleAiPrint);
+  }, []);
+
+  useEffect(() => {
     if (tagsToPrint.length > 0) {
       setTimeout(() => {
         window.print();
         setTagsToPrint([]);
-        setSelectedProducts([]); // Limpiar selección después de imprimir
+        if (setSelectedIds) setSelectedIds([]); 
       }, 100);
     }
-  }, [tagsToPrint, setSelectedProducts]);
+  }, [tagsToPrint, setSelectedIds]);
 
   return (
-    <>
-      {children(printSingle, printMultiple)}
-      
+    <PrintContext.Provider value={{ printSingle, printMultiple }}>
+      {typeof children === 'function' ? children(printSingle, printMultiple) : children}
+
       <div className="print-only">
         {tagsToPrint.map((prod, index) => (
           <div key={index} className="printable-tag">
@@ -36,6 +51,6 @@ export default function PrintTagsProvider({ children }) {
           </div>
         ))}
       </div>
-    </>
+    </PrintContext.Provider>
   );
 }

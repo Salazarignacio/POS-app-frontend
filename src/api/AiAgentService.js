@@ -1,4 +1,4 @@
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY || import.meta.env.VITE_GROQ_API_KEY;
+﻿const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY || import.meta.env.VITE_GROQ_API_KEY;
 
 export async function processAiAction(prompt, currentProducts, history = []) {
   if (!GROQ_API_KEY) {
@@ -8,9 +8,9 @@ export async function processAiAction(prompt, currentProducts, history = []) {
   // --- 1. RAG DINÁMICO (CLIENT-SIDE) ---
   // Filtramos los productos más relevantes basados en el prompt para no saturar el contexto
   const keywords = prompt.toLowerCase().split(' ').filter(w => w.length > 2);
-  let relevantProducts = currentProducts.filter(p => 
-    keywords.some(k => 
-      p.articulo?.toLowerCase().includes(k) || 
+  let relevantProducts = currentProducts.filter(p =>
+    keywords.some(k =>
+      p.articulo?.toLowerCase().includes(k) ||
       p.categoria?.toLowerCase().includes(k) ||
       p.codigo?.toLowerCase().includes(k)
     )
@@ -57,17 +57,19 @@ ACCIONES DISPONIBLES:
 - clear_cart: {}
 - checkout: {}
 - filter_view: { "filter": "texto" }
+- print_labels: { "filter": "texto" }
 
 CONTEXTO DE PRODUCTOS RELEVANTES:
 ${JSON.stringify(productContext)}
 
 EJEMPLO DE MULTI-ACCIÓN:
-Usuario: "Aumentá 10% a Coca y filtrame las cervezas"
+Usuario: "Aumentá 10% a Coca, filtrame las cervezas e imprimí etiquetas de Arcor"
 Respuesta: {
-  "razonamiento": "El usuario quiere dos cosas: cambio de precio y cambio de vista.",
+  "razonamiento": "El usuario quiere tres cosas: cambio de precio, cambio de vista e impresión de etiquetas.",
   "actions": [
     { "action": "update_price", "params": { "filter": "Coca", "percentage": 1.10 } },
-    { "action": "filter_view", "params": { "filter": "cervezas" } }
+    { "action": "filter_view", "params": { "filter": "cervezas" } },
+    { "action": "print_labels", "params": { "filter": "Arcor" } }
   ]
 }`;
 
@@ -102,4 +104,3 @@ Respuesta: {
     throw error;
   }
 }
-

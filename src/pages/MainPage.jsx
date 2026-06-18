@@ -46,7 +46,7 @@ export default function MainPage({ children }) {
           title="Ventas (F1)"
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
-          <span className="tab-label">Ventas <small className="shortcut-hint">F1</small></span>
+          <span className="tab-label">Ventas</span>
         </NavLink>
 
         <NavLink
@@ -54,7 +54,7 @@ export default function MainPage({ children }) {
           title="Edición (F2)"
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
-          <span className="tab-label">Edición <small className="shortcut-hint">F2</small></span>
+          <span className="tab-label">Edición </span>
         </NavLink>
 
         <NavLink
@@ -62,7 +62,7 @@ export default function MainPage({ children }) {
           title="Balance (F3)"
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
-          <span className="tab-label">Balance <small className="shortcut-hint">F3</small></span>
+          <span className="tab-label">Balance</span>
         </NavLink>
 
         <NavLink
@@ -70,7 +70,7 @@ export default function MainPage({ children }) {
           title="IA Carga (F4)"
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
-          <span className="tab-label">IA Carga <small className="shortcut-hint">F4</small></span>
+          <span className="tab-label">IA Carga</span>
         </NavLink>
       </nav>
 

@@ -1,14 +1,15 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage.jsx";
 import EditComponent from "./components/EditComponent.jsx";
 import SmartImport from "./components/SmartImport.jsx";
-import DeleteProductoBDC from "./components/DeleteProductBDC.jsx";
+import DeleteProductoBDC from "./components/DeleteProductBDC.jsx";    
 import "./style/Style.css";
 import { ProductProviderWrapper } from "./context/ProductContext.jsx";
-import { SelectedProviderWrapper } from "./context/SelectedIds.jsx";
-import VentasComponent from "./components/VentasComponent.jsx";
+import { SelectedProviderWrapper } from "./context/SelectedIds.jsx";  
+import VentasComponent from "./components/VentasComponent.jsx";       
 import BalanceWeb from "./components/BalanceWeb.jsx";
 import GlobalAiChat from "./components/GlobalAiChat.jsx";
+import PrintTagsProvider from "./components/PrintTagsProvider.jsx";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -32,19 +33,21 @@ function App() {
       <div className="app">
         <ProductProviderWrapper>
           <SelectedProviderWrapper>
-            <BrowserRouter>
-              <MainPage>
-                <Routes>
-                  <Route path="/edicion" element={<EditComponent />} />
-                  <Route path="/import" element={<SmartImport />} />
-                  <Route path="/destroy" element={<DeleteProductoBDC />} />
-                  <Route path="/" element={<VentasComponent />} />
+            <PrintTagsProvider>
+              <BrowserRouter>
+                <MainPage>
+                  <Routes>
+                    <Route path="/edicion" element={<EditComponent />} />
+                    <Route path="/import" element={<SmartImport />} />
+                    <Route path="/destroy" element={<DeleteProductoBDC />} />
+                    <Route path="/" element={<VentasComponent />} />
 
-                  <Route path="/balance" element={<BalanceWeb />} />
-                </Routes>
-                <GlobalAiChat />
-              </MainPage>
-            </BrowserRouter>
+                    <Route path="/balance" element={<BalanceWeb />} />
+                  </Routes>
+                  <GlobalAiChat />
+                </MainPage>
+              </BrowserRouter>
+            </PrintTagsProvider>
           </SelectedProviderWrapper>
         </ProductProviderWrapper>
       </div>

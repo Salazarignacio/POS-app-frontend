@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+﻿import React, { useState, useContext, useRef, useEffect } from 'react';
 import { processAiAction } from '../api/AiAgentService';
 import { toast } from 'react-hot-toast';
 import { Spinner, Modal } from 'react-bootstrap';
@@ -98,9 +98,9 @@ export default function GlobalAiChat() {
               toast.error(`No encontré productos con "${params.filter}"`);
             } else {
               let message = "";
-              if (action === 'update_price') message = `¿Actualizar ${filtered.length} productos con un factor de ${params.percentage}?`;
-              else if (action === 'set_price') message = `¿Fijar el precio en $${params.price} para ${filtered.length} productos?`;
-              else if (action === 'update_stock') message = params.type === 'set' ? `¿Poner stock en ${params.value}?` : `¿Sumar ${params.value} al stock?`;
+              if (action === 'update_price') message = `Â¿Actualizar ${filtered.length} productos con un factor de ${params.percentage}?`;
+              else if (action === 'set_price') message = `Â¿Fijar el precio en $${params.price} para ${filtered.length} productos?`;
+              else if (action === 'update_stock') message = params.type === 'set' ? `Â¿Poner stock en ${params.value}?` : `Â¿Sumar ${params.value} al stock?`;
 
               if (window.confirm(message)) {
                 const updatePromises = filtered.map(p => {
@@ -132,6 +132,19 @@ export default function GlobalAiChat() {
             window.dispatchEvent(new CustomEvent('ai-clear-cart'));
           } else if (action === 'checkout') {
             window.dispatchEvent(new CustomEvent('ai-checkout'));
+          } else if (action === 'print_labels') {
+            const filtered = productos.filter(p => 
+              (p.articulo && p.articulo.toLowerCase().includes(params.filter.toLowerCase())) ||
+              (p.categoria && p.categoria.toLowerCase().includes(params.filter.toLowerCase())) ||
+              (p.codigo && p.codigo.toLowerCase() === params.filter.toLowerCase())
+            );
+            if (filtered.length === 0) {
+              toast.error(`No encontré productos con "" para imprimir`);
+            } else {
+              if (window.confirm(`¿Deseas imprimir etiquetas para  productos?`)) {
+                window.dispatchEvent(new CustomEvent('ai-print-tags', { detail: { products: filtered } }));
+              }
+            }
           }
         }
       }
@@ -140,7 +153,7 @@ export default function GlobalAiChat() {
       const newHistory = [
         ...history,
         { role: "user", content: prompt },
-        { role: "assistant", content: aiResponse.razonamiento || "Acción ejecutada" }
+        { role: "assistant", content: aiResponse.razonamiento || "AcciÃ³n ejecutada" }
       ].slice(-6);
       setHistory(newHistory);
       
@@ -161,7 +174,7 @@ export default function GlobalAiChat() {
       setShowGreeting(true);
     }, 2000);
 
-    // Ocultarlo automáticamente a los 7 segundos
+    // Ocultarlo automÃ¡ticamente a los 7 segundos
     const hideTimer = setTimeout(() => {
       setShowGreeting(false);
     }, 9000);
@@ -186,7 +199,7 @@ export default function GlobalAiChat() {
           }}
         >
           Pide un deseo! Puedo gestionar tu inventario y hacer tus tareas ✨
-          <button className="close-greeting" onClick={() => setShowGreeting(false)}>×</button>
+          <button className="close-greeting" onClick={() => setShowGreeting(false)}>Ã—</button>
         </div>
       )}
 
@@ -233,7 +246,7 @@ export default function GlobalAiChat() {
           </div>
           <div className="ai-chat-body">
             <p className="small opacity-75 mb-3">
-              ¿Cuál es tu deseo para el inventario hoy?
+              Â¿Cuál es tu deseo para el inventario hoy?
             </p>
             <form onSubmit={handleSubmit}>
               <div className="position-relative">
@@ -277,3 +290,4 @@ export default function GlobalAiChat() {
     </>
   );
 }
+
