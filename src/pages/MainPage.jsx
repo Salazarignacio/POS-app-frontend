@@ -15,7 +15,7 @@ export default function MainPage({ children }) {
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
            {/* <img src={ventasicon} alt="Ventas" className="tab-icon" />  */}
-          <span className="tab-label">Ventas</span>
+          <span className="tab-label">Ventas (F1)</span>
         </NavLink>
 
         <NavLink
@@ -23,7 +23,7 @@ export default function MainPage({ children }) {
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
            {/* <img src={editicon} alt="Edición" className="tab-icon" />  */}
-          <span className="tab-label">Edición</span>
+          <span className="tab-label">Edición (F2)</span>
         </NavLink>
 
         <NavLink
@@ -31,7 +31,7 @@ export default function MainPage({ children }) {
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
           {/* <img src={balanceicon} alt="Balance" className="tab-icon" /> */}
-          <span className="tab-label">Balance</span>
+          <span className="tab-label">Balance (F3)</span>
         </NavLink>
 
         <NavLink
@@ -39,7 +39,7 @@ export default function MainPage({ children }) {
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
           {/* <img src={aiicon} alt="IA Carga" className="tab-icon" /> */}
-          <span className="tab-label">IA Carga</span>
+          <span className="tab-label">IA Carga (F4)</span>
         </NavLink>
       </nav>
 

@@ -1702,10 +1702,10 @@ li {
 .printable-tag {
   font-family: 'Inter', sans-serif;
   text-align: center;
-  padding: 15px 0;
+  padding: 40px 0; /* Más margen entre etiquetas */
   width: 100%;
-  max-width: 280px;
-  border-bottom: 2px solid black; /* Linea divisoria para corte */
+  max-width: 320px; /* Un poco más ancho para texto más grande */
+  border-bottom: 2px dashed black; /* Linea de corte discontinua */
   page-break-inside: avoid;
 }
 
@@ -1714,15 +1714,16 @@ li {
 }
 
 .tag-articulo {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 22px; /* Más grande */
+  font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   color: black;
+  padding: 0 10px;
 }
 
 .tag-precio {
-  font-size: 42px;
+  font-size: 64px; /* Mucho más grande */
   font-weight: 900;
   color: black;
 }
