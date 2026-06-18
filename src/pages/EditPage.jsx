@@ -1,18 +1,19 @@
-import Loading from "../reutilizable/Loading.jsx";
+﻿import Loading from "../reutilizable/Loading.jsx";
 import EditProductoPage from "./EditProductoPage";
 import ModalCreate from "../components/ModalCreate.jsx";
 import "../style/Style.css";
 import ModalUpdatePlural from "../components/ModalUpdatePlural.jsx"
+import ModalPrintPlural from "../components/ModalPrintPlural.jsx";
 import Skeleton from "../reutilizable/Skeleton.jsx";
 import { useContext } from "react";
 import { SelectedIds } from "../context/SelectedIds.jsx";
 
 
-export default function EditPage({ 
-  productos, 
-  searchCode, 
-  loading, 
-  searchTerm, 
+export default function EditPage({
+  productos,
+  searchCode,
+  loading,
+  searchTerm,
   handleSelectAll,
   smartCreateData,
   showSmartModal,
@@ -36,12 +37,13 @@ export default function EditPage({
         />
 
         <ModalCreate />
-        <ModalCreate 
-          externalShow={showSmartModal} 
-          externalOnHide={onCloseSmartModal} 
+        <ModalCreate
+          externalShow={showSmartModal}
+          externalOnHide={onCloseSmartModal}
           initialData={smartCreateData}
         />
-       <ModalUpdatePlural></ModalUpdatePlural> 
+       <ModalUpdatePlural></ModalUpdatePlural>
+       <ModalPrintPlural></ModalPrintPlural>
       </div>
 
       <div className="scroll ">
@@ -61,7 +63,7 @@ export default function EditPage({
           <span className="header-item">Precio</span>
           <span className="header-item">Stock</span>
           <span className="header-item">Acciones</span>
-        </div> 
+        </div>
         {loading ? (
           <Skeleton count={8} />
         ) : productos.length < 1 ? (
@@ -69,7 +71,7 @@ export default function EditPage({
             <div className="text-center py-5">
               <i className="fa-solid fa-magnifying-glass fa-3x mb-3 opacity-25"></i>
               <h3 className="fw-bold opacity-50">Producto no existente</h3>
-              <p className="small opacity-40">Prueba con otro código o crea uno nuevo</p>
+              <p className="small opacity-40">Prueba con otro Código o crea uno nuevo</p>
             </div>
           </div>
         ) : (
@@ -85,3 +87,4 @@ export default function EditPage({
     </div>
   );
 }
+

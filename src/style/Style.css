@@ -1,4 +1,4 @@
-/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
+﻿/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -44,12 +44,12 @@
   opacity: 0.7;
 }
 
-/* PESTAÑA ACTIVA */
+/* PESTAÃ‘A ACTIVA */
 .tab-active {
-  background: #fcfbfb;; /* Tono arena cálido y profesional */
+  background: #fcfbfb;; /* Tono arena cÃ¡lido y profesional */
   color: #f59e0b !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaña al panel */
+  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaÃ±a al panel */
   position: relative;
   z-index: 20;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
@@ -62,7 +62,7 @@
 /* PANEL PRINCIPAL */
 .panel-content {
   flex: 1;
-  background: #fcfbfb; /* Mismo tono que la pestaña activa */
+  background: #fcfbfb; /* Mismo tono que la pestaÃ±a activa */
   border-radius: 0 24px 24px 24px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
@@ -157,7 +157,7 @@ body.dark .panel-content {
   --spinner-color: #f59e0b;
 }
 
-/* 🌙 DARK MODE */
+/* ðŸŒ™ DARK MODE */
 .dark {
   --bg-contenedores: linear-gradient(180deg, #1e1e1e 0%, #121212 100%);
 
@@ -539,7 +539,7 @@ img:hover {
   transform: scale(1.05);
 }
 
-/* Tooltip sutil (opcional si quieres agregar nombres después) */
+/* Tooltip sutil (opcional si quieres agregar nombres despuÃ©s) */
 .botones a::after {
   content: "";
   position: absolute;
@@ -646,18 +646,18 @@ img:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   color: white;
   font-weight: 800;
-  gap: 5px; /* Reducimos el gap para dar más espacio a la imagen */
+  gap: 5px; /* Reducimos el gap para dar mÃ¡s espacio a la imagen */
   padding:  0;
 }
 
 .btn-print img {
-  width: 10rem !important; /* Agrandado para máximo impacto visual */
+  width: 10rem !important; /* Agrandado para mÃ¡ximo impacto visual */
   height: auto;
   transition: transform 0.25s ease;
 }
 
 .btn-print:hover:not(:disabled) img {
-  transform: scale(1.04); /* Un crecimiento muy leve para no salirse del botón */
+  transform: scale(1.04); /* Un crecimiento muy leve para no salirse del botÃ³n */
 }
 
 .btn-print:hover:not(:disabled) {
@@ -679,7 +679,7 @@ img:hover {
   background: #ffffff !important;
   border-radius: 12px;
   padding: 20px !important;
-  /* Sombreado de contorno para efecto de elevación sutil */
+  /* Sombreado de contorno para efecto de elevaciÃ³n sutil */
   box-shadow: 
     0 2px 4px rgba(0,0,0,0.02),
     0 4px 8px rgba(0,0,0,0.02),
@@ -777,7 +777,7 @@ li {
 }
 
 .prod-edit-btn {
-  width: 8rem;
+  width: 11rem;
   display: flex;
   justify-content: space-between;
 }
@@ -928,11 +928,11 @@ li {
 
 .productos-header .header-item:last-child {
   text-align: center;
-  width: 8rem; /* Coincide con .prod-edit-btn */
+  width: 11rem; /* Coincide con .prod-edit-btn */
 }
 
 /* ============================================================
-   SISTEMA DE DISEÑO: PILL & DEPTH (REFINADO PROFESIONAL)
+   SISTEMA DE DISEÃ‘O: PILL & DEPTH (REFINADO PROFESIONAL)
    ============================================================ */
 
 .modal-content {
@@ -958,7 +958,7 @@ li {
   border: none;
 }
 
-/* Título con tipografía refinada */
+/* TÃ­tulo con tipografÃ­a refinada */
 .modal-title {
   font-weight: 700;
   font-size: 1.15rem;
@@ -971,7 +971,7 @@ li {
   padding: 0.5rem 1.25rem 1.25rem;
 }
 
-/* --- Inputs con Contraste y Definición --- */
+/* --- Inputs con Contraste y DefiniciÃ³n --- */
 
 .form-label {
   font-size: 0.7rem;
@@ -986,7 +986,7 @@ li {
 .input-soft {
   background-color: #ffffff !important;
   color: var(--font-color) !important;
-  border: 1.5px solid #cbd5e1 !important; /* Borde más definido para Light Mode */
+  border: 1.5px solid #cbd5e1 !important; /* Borde mÃ¡s definido para Light Mode */
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 0.9rem;
@@ -1001,7 +1001,7 @@ li {
 }
 
 .input-soft:hover {
-  border-color: #94a3b8 !important; /* Borde más oscuro al pasar el mouse */
+  border-color: #94a3b8 !important; /* Borde mÃ¡s oscuro al pasar el mouse */
 }
 
 .input-soft:focus {
@@ -1015,7 +1015,7 @@ li {
   box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
 }
 
-/* --- Botón de Acción con Estados Elegantes --- */
+/* --- BotÃ³n de AcciÃ³n con Estados Elegantes --- */
 
 .btn-form-submit {
   height: 54px;
@@ -1027,12 +1027,12 @@ li {
   margin-top: 1rem;
   border: none !important;
   color: white !important;
-  transition: all 0.25s ease !important; /* Transición más rápida y natural */
+  transition: all 0.25s ease !important; /* TransiciÃ³n mÃ¡s rÃ¡pida y natural */
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .btn-form-submit:not(:disabled):hover {
-  transform: translateY(-1.5px); /* Elevación mínima profesional */
+  transform: translateY(-1.5px); /* ElevaciÃ³n mÃ­nima profesional */
   box-shadow: 0 6px 12px -2px rgba(245, 158, 11, 0.25);
   filter: brightness(1.08); /* Brillo muy sutil */
 }
@@ -1044,7 +1044,7 @@ li {
   border: 1px solid #e2e8f0 !important;
   box-shadow: none;
   cursor: not-allowed;
-  opacity: 1; /* Quitamos opacidad para que se vea nítido pero 'apagado' */
+  opacity: 1; /* Quitamos opacidad para que se vea nÃ­tido pero 'apagado' */
 }
 
 .dark .btn-form-submit:disabled {
@@ -1162,7 +1162,7 @@ li {
 
 
 
-/* Botón */
+/* BotÃ³n */
 .btn-primary-soft {
   background-color: #6c7cff;
   border: none;
@@ -1175,8 +1175,8 @@ li {
   width: 80px;
 }
 
-/* --- CONFIGURACIÓN DE IMPRESIÓN --- */
-/* --- CONFIGURACIÓN DE IMPRESIÓN --- */
+/* --- CONFIGURACIÃ“N DE IMPRESIÃ“N --- */
+/* --- CONFIGURACIÃ“N DE IMPRESIÃ“N --- */
 .print-only {
   display: none;
 }
@@ -1201,7 +1201,7 @@ li {
     width: 100%;
   }
 
-  /* Estilo del Ticket Térmico - Reforzado para legibilidad */
+  /* Estilo del Ticket TÃ©rmico - Reforzado para legibilidad */
   .printable-ticket {
     font-family: 'Courier New', Courier, monospace;
     font-size: 14px; /* Aumentado de 12px */
@@ -1210,7 +1210,7 @@ li {
     color: black;
     width: 100%;
     max-width: 280px;
-    font-weight: 600; /* Más grueso en general */
+    font-weight: 600; /* MÃ¡s grueso en general */
   }
 
   .ticket-header {
@@ -1221,7 +1221,7 @@ li {
   }
 
   .ticket-header h2 {
-    font-size: 18px; /* Más grande */
+    font-size: 18px; /* MÃ¡s grande */
     margin: 0;
     font-weight: 900; /* Extra grueso */
     text-transform: uppercase;
@@ -1248,7 +1248,7 @@ li {
 
   .item-main {
     display: flex;
-    font-weight: 900; /* Nombres más gruesos */
+    font-weight: 900; /* Nombres mÃ¡s gruesos */
     font-size: 20px;
   }
 
@@ -1278,7 +1278,7 @@ li {
   }
 
   .footer-row.total {
-    font-size: 30px; /* Mucho más grande */
+    font-size: 30px; /* Mucho mÃ¡s grande */
     font-weight: 900;
     border-top: 2px solid black;
     padding-top: 10px;
@@ -1350,7 +1350,7 @@ li {
   overflow: hidden;
 }
 
-/* BRILLO ESFÉRICO (GLOSS) */
+/* BRILLO ESFÃ‰RICO (GLOSS) */
 .ai-floating-button::before {
   content: "";
   position: absolute;
@@ -1394,7 +1394,7 @@ li {
   transform: rotate(90deg);
 }
 
-/* 💬 BURBUJA DE SALUDO IA (REDESIGN MODERNO) */
+/* ðŸ’¬ BURBUJA DE SALUDO IA (REDESIGN MODERNO) */
 .ai-greeting-bubble {
   background: rgba(255, 255, 255, 0.9) !important;
   backdrop-filter: blur(10px);
@@ -1435,7 +1435,7 @@ li {
 }
 
 .close-greeting {
-  display: none; /* Ocultamos el botón de cierre para un look más limpio */
+  display: none; /* Ocultamos el botÃ³n de cierre para un look mÃ¡s limpio */
 }
 
 @keyframes smoothPop {
@@ -1481,16 +1481,16 @@ li {
   border-color: rgba(255, 255, 255, 0.05);
 }
 
-/* 📜 CLASE SCROLL PARA SECCIÓN EDICIÓN */
+/* ðŸ“œ CLASE SCROLL PARA SECCIÃ“N EDICIÃ“N */
 .scroll {
   width: 100%;
-  max-height: 70vh; /* Altura máxima para activar el scroll */
+  max-height: 70vh; /* Altura mÃ¡xima para activar el scroll */
   overflow-y: auto !important;
   overflow-x: hidden;
   padding-right: 5px; /* Espacio para que la scrollbar no tape el contenido */
 }
 
-/* ✅ BOTÓN CONFIRMAR Y GUARDAR (COMPACTO) */
+/* âœ… BOTÃ“N CONFIRMAR Y GUARDAR (COMPACTO) */
 .btn-confirm-save {
   height: 55px;
   width: 100%;
@@ -1688,3 +1688,12 @@ li {
 }
 
 
+
+.btn-mas, .btn-vacio {
+  min-width: 180px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}

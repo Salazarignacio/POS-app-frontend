@@ -1,14 +1,15 @@
-import { useContext } from "react";
+﻿import { useContext } from "react";
 import DeleteProductoBDC from "../components/DeleteProductBDC.jsx";
 import ModalUpdate from "../components/ModalUpdate.jsx";
 import { SelectedIds } from "../context/SelectedIds.jsx";
+import { Button } from "react-bootstrap";
 
 export default function EditProductoPage({ props }) {
-  const { selectedIds, setSelectedIds } = useContext(SelectedIds);
+  const { selectedIds, setSelectedIds } = useContext(SelectedIds); 
   const handleSelect = (id, checked) => {
     setSelectedIds((prev) => {
       if (checked) {
-        if (prev.includes(id)) return prev; 
+        if (prev.includes(id)) return prev;
         return [...prev, id];
       } else {
         return prev.filter((p) => p !== id);
@@ -33,6 +34,9 @@ export default function EditProductoPage({ props }) {
         <span className="stock">{props.stock}</span>
 
         <div className="prod-edit-btn">
+          <Button variant="primary" className="btn-edit">
+            <i className="fa-solid fa-print"></i>
+          </Button>
           <ModalUpdate id={props.id}></ModalUpdate>
           <DeleteProductoBDC id={props.id} />
         </div>

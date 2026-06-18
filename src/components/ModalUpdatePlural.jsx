@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+﻿import { Button } from "react-bootstrap";
 import { SelectedIds } from "../context/SelectedIds";
 import { useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -25,7 +25,7 @@ export default function UpdatePlural() {
         selectedIds.map(async (id) => {
           const original = await getById(id);
 
-          // 👇 Construimos solo los campos no vacíos
+          // ðŸ‘‡ Construimos solo los campos no vacíos
           const filteredData = Object.fromEntries(
             Object.entries(dataSinCodigo).filter(
               ([_, value]) => value !== "" && value !== null,
@@ -42,7 +42,7 @@ export default function UpdatePlural() {
       );
 
       setRenderProducts((prev) => !prev);
-      setSelectedIds([]); // Limpiamos la selección después de actualizar
+      setSelectedIds([]); // Limpiamos la selecciÃ³n despuÃ©s de actualizar
       toast.success("Productos actualizados correctamente");
       handleClose();
     } catch (error) {
@@ -73,3 +73,4 @@ export default function UpdatePlural() {
     </>
   );
 }
+
