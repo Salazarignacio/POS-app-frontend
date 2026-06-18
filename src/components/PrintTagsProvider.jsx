@@ -1,8 +1,10 @@
 ﻿import { useContext, useState, useEffect } from "react";
 import { ProductContext } from "../context/ProductContext";
+import { SelectedIds } from "../context/SelectedIds";
 
 export default function PrintTagsProvider({ children }) {
   const [tagsToPrint, setTagsToPrint] = useState([]);
+  const { setSelectedProducts } = useContext(SelectedIds);
 
   const printSingle = (product) => {
     setTagsToPrint([product]);
@@ -17,9 +19,10 @@ export default function PrintTagsProvider({ children }) {
       setTimeout(() => {
         window.print();
         setTagsToPrint([]);
+        setSelectedProducts([]); // Limpiar selección después de imprimir
       }, 100);
     }
-  }, [tagsToPrint]);
+  }, [tagsToPrint, setSelectedProducts]);
 
   return (
     <>

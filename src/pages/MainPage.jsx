@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { SelectedIds } from "../context/SelectedIds";
 import "../style/Style.css";
 import ventasicon from "../assets/ventas.png";
 import editicon from "../assets/edit.png";
@@ -8,6 +9,13 @@ import aiicon from "../assets/ia.png";
 
 export default function MainPage({ children }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { setSelectedProducts } = useContext(SelectedIds);
+
+  // Limpiar selección al cambiar de sección
+  useEffect(() => {
+    setSelectedProducts([]);
+  }, [location.pathname, setSelectedProducts]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
