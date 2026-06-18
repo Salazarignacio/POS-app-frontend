@@ -3,9 +3,9 @@ import { createContext, useState } from "react";
 const SelectedIds = createContext();
 
 function SelectedProviderWrapper(props) {
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   return (
-    <SelectedIds.Provider value={{ selectedIds, setSelectedIds }}>
+    <SelectedIds.Provider value={{ selectedProducts, setSelectedProducts }}>
       {props.children}
     </SelectedIds.Provider>
   );

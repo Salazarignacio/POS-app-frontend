@@ -1,6 +1,5 @@
 ﻿import { useContext, useState, useEffect } from "react";
 import { ProductContext } from "../context/ProductContext";
-import { SelectedIds } from "../context/SelectedIds";
 
 export default function PrintTagsProvider({ children }) {
   const [tagsToPrint, setTagsToPrint] = useState([]);

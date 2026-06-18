@@ -9,7 +9,7 @@ export default function EditComponent() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const { renderProducts, setRenderProducts } = useContext(ProductContext);
-  const { setSelectedIds } = useContext(SelectedIds);
+  const { setSelectedProducts } = useContext(SelectedIds);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -29,7 +29,7 @@ export default function EditComponent() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setLoading(true);
-      setSelectedIds([]); // Limpiamos selecciÃ³n al buscar o recargar
+      // Ya no limpiamos la selección al buscar para permitir selección acumulativa
 
       const request = searchTerm
         ? getByCode(searchTerm)
@@ -55,10 +55,21 @@ export default function EditComponent() {
 
   const handleSelectAll = (checked) => {
     if (checked) {
-      const allIds = productos.map((p) => p.id);
-      setSelectedIds(allIds);
+      setSelectedProducts((prev) => {
+        // Combinamos los productos actuales con los ya seleccionados sin duplicados por ID
+        const newSelection = [...prev];
+        productos.forEach(prod => {
+          if (!newSelection.some(p => p.id === prod.id)) {
+            newSelection.push(prod);
+          }
+        });
+        return newSelection;
+      });
     } else {
-      setSelectedIds([]);
+      // Si desmarcamos "Todos", solo quitamos los que están actualmente visibles
+      setSelectedProducts((prev) => 
+        prev.filter(p => !productos.some(visible => visible.id === p.id))
+      );
     }
   };
 

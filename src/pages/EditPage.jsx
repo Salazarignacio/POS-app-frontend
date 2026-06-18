@@ -21,8 +21,8 @@ export default function EditPage({
   printSingle,
   printMultiple
 }) {
-  const { selectedIds } = useContext(SelectedIds);
-  const isAllSelected = productos.length > 0 && productos.every(p => selectedIds.includes(p.id));
+  const { selectedProducts } = useContext(SelectedIds);
+  const isAllSelected = productos.length > 0 && productos.every(p => selectedProducts.some(sel => sel.id === p.id));
 
   return (
     <div className="edit-page">
@@ -46,8 +46,7 @@ export default function EditPage({
         />
        <ModalUpdatePlural></ModalUpdatePlural>
        <ModalPrintPlural printMultiple={() => {
-         const selectedProds = productos.filter(p => selectedIds.includes(p.id));
-         printMultiple(selectedProds);
+         printMultiple(selectedProducts);
        }}></ModalPrintPlural>
       </div>
 

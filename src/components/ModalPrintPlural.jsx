@@ -3,8 +3,8 @@ import { SelectedIds } from "../context/SelectedIds";
 import { useContext } from "react";
 
 export default function ModalPrintPlural({ printMultiple }) {
-  const { selectedIds } = useContext(SelectedIds);
-  const isEmpty = selectedIds.length < 2;
+  const { selectedProducts } = useContext(SelectedIds);
+  const isEmpty = selectedProducts.length < 2; // Habilitar solo con 2 o más
 
   return (
     <>

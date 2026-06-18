@@ -9,8 +9,8 @@ import { toast } from "react-hot-toast";
 
 export default function UpdatePlural() {
   const { setRenderProducts } = useContext(ProductContext);
-  const { selectedIds, setSelectedIds } = useContext(SelectedIds);
-  const isEmpty = selectedIds.length < 2;
+  const { selectedProducts, setSelectedProducts } = useContext(SelectedIds);
+  const isEmpty = selectedProducts.length < 2;
 
   const [show, setShow] = useState(false);
 
@@ -22,8 +22,8 @@ export default function UpdatePlural() {
       const { codigo, ...dataSinCodigo } = formData;
 
       await Promise.all(
-        selectedIds.map(async (id) => {
-          const original = await getById(id);
+        selectedProducts.map(async (product) => {
+          const original = await getById(product.id);
 
           // ðŸ‘‡ Construimos solo los campos no vacíos
           const filteredData = Object.fromEntries(
@@ -37,12 +37,12 @@ export default function UpdatePlural() {
             ...filteredData,
           };
 
-          return update(id, merged);
+          return update(product.id, merged);
         }),
       );
 
       setRenderProducts((prev) => !prev);
-      setSelectedIds([]); // Limpiamos la selecciÃ³n despuÃ©s de actualizar
+      setSelectedProducts([]); // Limpiamos la selecciÃ³n despuÃ©s de actualizar
       toast.success("Productos actualizados correctamente");
       handleClose();
     } catch (error) {

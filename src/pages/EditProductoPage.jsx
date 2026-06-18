@@ -5,14 +5,14 @@ import { SelectedIds } from "../context/SelectedIds.jsx";
 import { Button } from "react-bootstrap";
 
 export default function EditProductoPage({ props, onPrint }) {
-  const { selectedIds, setSelectedIds } = useContext(SelectedIds); 
-  const handleSelect = (id, checked) => {
-    setSelectedIds((prev) => {
+  const { selectedProducts, setSelectedProducts } = useContext(SelectedIds); 
+  const handleSelect = (product, checked) => {
+    setSelectedProducts((prev) => {
       if (checked) {
-        if (prev.includes(id)) return prev;
-        return [...prev, id];
+        if (prev.some((p) => p.id === product.id)) return prev;
+        return [...prev, product];
       } else {
-        return prev.filter((p) => p !== id);
+        return prev.filter((p) => p.id !== product.id);
       }
     });
   };
@@ -23,8 +23,8 @@ export default function EditProductoPage({ props, onPrint }) {
         <span className="check">
           <input
             type="checkbox"
-            checked={selectedIds.includes(props.id)}
-            onChange={(e) => handleSelect(props.id, e.target.checked)}
+            checked={selectedProducts.some((p) => p.id === props.id)}
+            onChange={(e) => handleSelect(props, e.target.checked)}
           />
         </span>
         <span className="codigo">{props.codigo}</span>
