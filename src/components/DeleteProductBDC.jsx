@@ -1,11 +1,10 @@
-import { useContext } from "react";
+﻿import { useContext } from "react";
 import { destroy } from "../api/ProductoService";
 import { Button } from "react-bootstrap";
 import { ProductContext } from "../context/ProductContext";
-import deleteBtn from "../assets/btndelete.png";
 
 
-export default function DeleteProductoBDC({ id }) {
+export default function DeleteProductoBDC({ id }) {        
   const { setRenderProducts } = useContext(ProductContext);
 
   const destroyBD = (id) => {
@@ -17,7 +16,7 @@ export default function DeleteProductoBDC({ id }) {
   };
   return (
     <>
-      <Button className="btn-edit" onClick={() => destroyBD(id)}>
+      <Button className="btn-edit" onClick={() => destroyBD(id)} title="Eliminar Producto">
         <i className="fa-regular fa-trash-can"></i>
       </Button>
     </>

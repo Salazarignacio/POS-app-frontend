@@ -1,10 +1,10 @@
-import { useContext } from "react";
+﻿import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 import { Button } from "react-bootstrap";
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { update, getById } from "../api/ProductoService";
-import UpdatePageForm from "../pages/UpdatePageForm.jsx";
+import { update, getById } from "../api/ProductoService";  
+import UpdatePageForm from "../pages/UpdatePageForm.jsx";  
 
 
 export default function ModalUpdate({ id }) {
@@ -31,7 +31,7 @@ export default function ModalUpdate({ id }) {
   };
   return (
     <>
-      <Button variant="primary" className="btn-edit" onClick={handleShow}>
+      <Button variant="primary" className="btn-edit" onClick={handleShow} title="Editar Producto">
         <i className="fa-regular fa-pen-to-square"></i>
       </Button>
 

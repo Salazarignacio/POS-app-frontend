@@ -34,7 +34,7 @@ export default function EditProductoPage({ props, onPrint }) {
         <span className="stock">{props.stock}</span>
 
         <div className="prod-edit-btn">
-          <Button variant="primary" className="btn-edit" onClick={onPrint}>
+          <Button variant="primary" className="btn-edit" onClick={onPrint} title="Imprimir Etiqueta">
             <i className="fa-solid fa-print"></i>
           </Button>
           <ModalUpdate id={props.id}></ModalUpdate>
