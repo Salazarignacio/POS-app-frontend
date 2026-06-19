@@ -12,6 +12,8 @@ export default function SmartImport() {
   const [loading, setLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState("");
   const [extractedProducts, setExtractedProducts] = useState([]);
+  const [dbMatches, setDbMatches] = useState({});
+  const [importProgress, setImportProgress] = useState({ current: 0, total: 0 });
   const [importPrompt, setImportPrompt] = useState("");
   const [provider, setProvider] = useState("groq"); // 'gemini' o 'groq'
   const [isDragging, setIsDragging] = useState(false);
@@ -244,8 +246,13 @@ Salida: [{"codigo": "null", "articulo": "Alfajor Havanna x12 unidades", "categor
         products = await processWithGroq(file, instruction, extractedText);
       }
 
-      setExtractedProducts(Array.isArray(products) ? products : []);
-      toast.success(`Se detectaron ${products.length || 0} productos`);
+      const sanitized = (Array.isArray(products) ? products : []).map((p) => ({
+        ...p,
+        _tempId: Math.random().toString(36).substring(7),
+      }));
+      setExtractedProducts(sanitized);
+      toast.success(`Se detectaron ${sanitized.length || 0} productos`);
+      checkProductMatches(sanitized);
     } catch (error) {
       console.error("Error al procesar:", error);
       toast.error(error.message || "Error al procesar.");
@@ -265,6 +272,10 @@ Salida: [{"codigo": "null", "articulo": "Alfajor Havanna x12 unidades", "categor
     }
 
     setExtractedProducts(updatedProducts);
+
+    if (field === "codigo" || field === "articulo") {
+      checkSingleMatch(updatedProducts[index]._tempId, updatedProducts[index].articulo, updatedProducts[index].codigo);
+    }
   };
 
   const handleRemoveProduct = (index) => {
@@ -339,12 +350,14 @@ ${JSON.stringify(extractedProducts)}`;
         // Aseguramos que los números sean números
         const sanitizedProducts = products.map((p) => ({
           ...p,
+          _tempId: Math.random().toString(36).substring(7),
           precio: parseFloat(p.precio) || 0,
           stock: parseInt(p.stock) || 0,
         }));
         setExtractedProducts(sanitizedProducts);
         toast.success("¡Lista actualizada correctamente!");
         setImportPrompt("");
+        checkProductMatches(sanitizedProducts);
       } else {
         throw new Error("La IA no devolvió una lista válida");
       }
@@ -356,72 +369,179 @@ ${JSON.stringify(extractedProducts)}`;
     }
   };
 
+  const checkProductMatches = async (products) => {
+    const matches = {};
+    await Promise.all(
+      products.map(async (p) => {
+        try {
+          let hasCode = p.codigo && p.codigo.trim() !== "" && p.codigo !== "null" && p.codigo.toLowerCase() !== "null";
+          let query = hasCode ? p.codigo.toString().trim() : p.articulo?.trim();
+          
+          if (query) {
+            const res = await fetch(`${apiUrl}/codigo/${encodeURIComponent(query)}`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data && data.length > 0) {
+                let bestMatch = null;
+                if (hasCode) {
+                  bestMatch = data.find(dbP => dbP.codigo && dbP.codigo.toString().trim() === p.codigo.toString().trim());
+                }
+                if (!bestMatch) {
+                  bestMatch = data.find(dbP => dbP.articulo && normalizeName(dbP.articulo) === normalizeName(p.articulo));
+                }
+                if (bestMatch) {
+                  matches[p._tempId] = bestMatch;
+                }
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Error matching product:", err);
+        }
+      })
+    );
+    setDbMatches(matches);
+  };
+
+  const checkSingleMatch = async (tempId, articulo, codigo) => {
+    try {
+      let hasCode = codigo && codigo.trim() !== "" && codigo !== "null" && codigo.toLowerCase() !== "null";
+      let query = hasCode ? codigo.toString().trim() : articulo?.trim();
+      if (!query) {
+        setDbMatches(prev => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        return;
+      }
+
+      const res = await fetch(`${apiUrl}/codigo/${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.length > 0) {
+          let bestMatch = null;
+          if (hasCode) {
+            bestMatch = data.find(dbP => dbP.codigo && dbP.codigo.toString().trim() === codigo.toString().trim());
+          }
+          if (!bestMatch) {
+            bestMatch = data.find(dbP => dbP.articulo && normalizeName(dbP.articulo) === normalizeName(articulo));
+          }
+          
+          setDbMatches(prev => {
+            const next = { ...prev };
+            if (bestMatch) {
+              next[tempId] = bestMatch;
+            } else {
+              delete next[tempId];
+            }
+            return next;
+          });
+          return;
+        }
+      }
+      setDbMatches(prev => {
+        const next = { ...prev };
+        delete next[tempId];
+        return next;
+      });
+    } catch (err) {
+      console.error("Error single matching:", err);
+    }
+  };
+
+  const normalizeName = (str) => {
+    if (!str) return "";
+    return str
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  };
+
   const handleConfirmImport = async () => {
     if (extractedProducts.length === 0) return;
     setLoading(true);
 
+    // Filtrar solo los que tienen el nombre del artículo obligatoriamente
+    const validProducts = extractedProducts.filter((p) => p.articulo?.trim());
+    setImportProgress({ current: 0, total: validProducts.length });
+
     const saveProducts = async () => {
       let savedCount = 0;
       let errorCount = 0;
-
-      // Filtrar solo los que tienen los campos obligatorios (nombre y código)
-      const validProducts = extractedProducts.filter(
-        (p) => p.articulo?.trim() && p.codigo?.trim(),
-      );
+      const skippedBarcodeLess = [];
 
       if (validProducts.length === 0) {
         throw new Error(
-          "No hay productos válidos para guardar (faltan Artículo o Código)",
+          "No hay productos válidos para guardar (falta el nombre del Artículo)",
         );
       }
 
+      let idx = 0;
       for (const product of validProducts) {
         try {
-          // Limpiar y asegurar tipos de datos antes de enviar
           const cleanProduct = {
             articulo: product.articulo.trim(),
-            codigo: product.codigo.trim(),
+            codigo: product.codigo ? product.codigo.toString().trim() : "",
             categoria: product.categoria?.trim() || "",
             precio: product.precio
-              ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, "")) ||
-                0
+              ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, "")) || 0
               : 0,
             stock: product.stock
-              ? parseInt(product.stock.toString().replace(/[^0-9]/g, ""), 10) ||
-                0
+              ? parseInt(product.stock.toString().replace(/[^0-9]/g, ""), 10) || 0
               : 0,
           };
 
-          // 1. Verificar si el producto ya existe por su código
-          const checkResponse = await fetch(
-            `${apiUrl}/codigo/${cleanProduct.codigo}`,
-          );
-          const existingProducts = await checkResponse.json();
+          let hasCode = cleanProduct.codigo && cleanProduct.codigo !== "null" && cleanProduct.codigo.toLowerCase() !== "null";
+          let existingProduct = dbMatches[product._tempId] || null;
+
+          // Búsqueda de coincidencia en BD de respaldo para evitar duplicados si no estaba en dbMatches
+          if (!existingProduct) {
+            let query = hasCode ? cleanProduct.codigo : cleanProduct.articulo;
+            if (query) {
+              try {
+                const res = await fetch(`${apiUrl}/codigo/${encodeURIComponent(query)}`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data && data.length > 0) {
+                    if (hasCode) {
+                      existingProduct = data.find(dbP => dbP.codigo && dbP.codigo.toString().trim() === cleanProduct.codigo);
+                    }
+                    if (!existingProduct) {
+                      existingProduct = data.find(dbP => dbP.articulo && normalizeName(dbP.articulo) === normalizeName(cleanProduct.articulo));
+                    }
+                  }
+                }
+              } catch (err) {
+                console.error("Error doing fallback lookup:", err);
+              }
+            }
+          }
 
           let response;
-          // 2. Si existe (la API devuelve una lista), buscamos el ID exacto y actualizamos
-          if (checkResponse.ok && existingProducts.length > 0) {
-            // Buscamos coincidencia exacta de código para estar seguros
-            const existing = existingProducts.find(
-              (p) => p.codigo === cleanProduct.codigo,
-            );
-
-            if (existing) {
-              response = await fetch(`${apiUrl}/${existing.id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(cleanProduct),
-              });
-            } else {
-              // Caso borde: existe algo parecido pero no el código exacto
-              response = await fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(cleanProduct),
-              });
-            }
+          if (existingProduct) {
+            // Actualizar existente. Conservamos el código de barras existente si el nuevo viene vacío
+            const mergedProduct = {
+              ...cleanProduct,
+              codigo: cleanProduct.codigo || existingProduct.codigo || ""
+            };
+            response = await fetch(`${apiUrl}/${existingProduct.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(mergedProduct),
+            });
           } else {
-            // 3. Si no existe, creamos uno nuevo
+            // Si no existe en la BD y no tiene código de barras, va a revisión de pendientes
+            if (!hasCode) {
+              console.log(`Saltando producto nuevo sin código de barras para revisión: ${cleanProduct.articulo}`);
+              skippedBarcodeLess.push(product);
+              continue;
+            }
+
+            // Crear nuevo (tiene código de barras)
             response = await fetch(apiUrl, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -429,15 +549,22 @@ ${JSON.stringify(extractedProducts)}`;
             });
           }
 
-          if (response.ok) {
+          if (response && response.ok) {
             savedCount++;
-          } else {
+          } else if (response) {
             errorCount++;
           }
         } catch (error) {
           console.error("Error procesando producto:", error);
           errorCount++;
+        } finally {
+          idx++;
+          setImportProgress({ current: idx, total: validProducts.length });
         }
+      }
+
+      if (skippedBarcodeLess.length > 0) {
+        setPendingProducts((prev) => [...prev, ...skippedBarcodeLess]);
       }
 
       if (errorCount > 0) {
@@ -454,8 +581,127 @@ ${JSON.stringify(extractedProducts)}`;
         success: (count) => {
           setExtractedProducts([]);
           setFile(null);
-          return `¡Éxito! Se guardaron ${count} productos correctamente.`;
+          return `¡Éxito! Se procesaron ${count} productos correctamente.`;
         },
+        error: (err) => `Error: ${err.message}`,
+      })
+      .finally(() => {
+        setLoading(false);
+        setImportProgress({ current: 0, total: 0 });
+      });
+  };
+
+  const [pendingProducts, setPendingProducts] = useState([]);
+
+  const handlePendingEditChange = (index, field, value) => {
+    const updatedProducts = [...pendingProducts];
+    if (field === "codigo") {
+      updatedProducts[index][field] = value.toString().replace(/\D/g, "");
+    } else {
+      updatedProducts[index][field] = value;
+    }
+    setPendingProducts(updatedProducts);
+  };
+
+  const handleRemovePendingProduct = (index) => {
+    setPendingProducts(pendingProducts.filter((_, i) => i !== index));
+  };
+
+  const handleConfirmPending = async () => {
+    if (pendingProducts.length === 0) return;
+    setLoading(true);
+
+    const savePending = async () => {
+      let savedCount = 0;
+      let errorCount = 0;
+      let remainingPending = [];
+
+      for (const product of pendingProducts) {
+        try {
+          const cleanProduct = {
+            articulo: product.articulo.trim(),
+            codigo: product.codigo ? product.codigo.toString().trim() : "",
+            categoria: product.categoria?.trim() || "",
+            precio: product.precio
+              ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, "")) || 0
+              : 0,
+            stock: product.stock
+              ? parseInt(product.stock.toString().replace(/[^0-9]/g, ""), 10) || 0
+              : 0,
+          };
+
+          let hasCode = cleanProduct.codigo && cleanProduct.codigo !== "null" && cleanProduct.codigo.toLowerCase() !== "null";
+          let existingProduct = null;
+
+          let query = hasCode ? cleanProduct.codigo : cleanProduct.articulo;
+          if (query) {
+            try {
+              const res = await fetch(`${apiUrl}/codigo/${encodeURIComponent(query)}`);
+              if (res.ok) {
+                const data = await res.json();
+                if (data && data.length > 0) {
+                  if (hasCode) {
+                    existingProduct = data.find(dbP => dbP.codigo && dbP.codigo.toString().trim() === cleanProduct.codigo);
+                  }
+                  if (!existingProduct) {
+                    existingProduct = data.find(dbP => dbP.articulo && normalizeName(dbP.articulo) === normalizeName(cleanProduct.articulo));
+                  }
+                }
+              }
+            } catch (err) {
+              console.error("Error looking up pending product matching:", err);
+            }
+          }
+
+          let response;
+          if (existingProduct) {
+            const mergedProduct = {
+              ...cleanProduct,
+              codigo: cleanProduct.codigo || existingProduct.codigo || ""
+            };
+            response = await fetch(`${apiUrl}/${existingProduct.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(mergedProduct),
+            });
+          } else {
+            if (!hasCode) {
+              remainingPending.push(product);
+              continue;
+            }
+
+            response = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(cleanProduct),
+            });
+          }
+
+          if (response && response.ok) {
+            savedCount++;
+          } else {
+            errorCount++;
+            remainingPending.push(product);
+          }
+        } catch (error) {
+          console.error("Error procesando pendiente:", error);
+          errorCount++;
+          remainingPending.push(product);
+        }
+      }
+
+      setPendingProducts(remainingPending);
+
+      if (errorCount > 0) {
+        throw new Error(`Se guardaron ${savedCount} productos. ${errorCount} fallaron.`);
+      }
+      return savedCount;
+    };
+
+    toast
+      .promise(savePending(), {
+        loading: "Guardando pendientes en la base de datos...",
+        success: (count) => `¡Éxito! Se guardaron ${count} productos correctamente.`,
         error: (err) => `Error: ${err.message}`,
       })
       .finally(() => setLoading(false));
@@ -591,13 +837,36 @@ ${JSON.stringify(extractedProducts)}`;
             <div className="laser-glow"></div>
             <div className="text-center animate__animated animate__fadeIn">
               <i className="fa-solid fa-microchip fa-4x mb-4 opacity-20"></i>
-              <h4 className="scan-text">Analizando Documento...</h4>
-              <p className="small opacity-50">
-                Shenron está procesando tu deseo
+              <h4 className="scan-text">
+                {importProgress.total > 0 
+                  ? `Guardando Productos... (${importProgress.current} de ${importProgress.total})` 
+                  : "Analizando Documento..."
+                }
+              </h4>
+              
+              {importProgress.total > 0 && (
+                <div className="progress-container mx-auto mt-4 animate__animated animate__zoomIn" style={{ maxWidth: "300px", background: "rgba(255,255,255,0.1)", borderRadius: "10px", height: "10px", overflow: "hidden" }}>
+                  <div 
+                    className="progress-bar-fill" 
+                    style={{ 
+                      width: `${(importProgress.current / importProgress.total) * 100}%`, 
+                      background: "var(--btn-ppal)", 
+                      height: "100%", 
+                      transition: "width 0.2s ease" 
+                    }}
+                  ></div>
+                </div>
+              )}
+              
+              <p className="small opacity-50 mt-2">
+                {importProgress.total > 0
+                  ? "Subiendo datos al inventario..."
+                  : "Shenron está procesando tu deseo"
+                }
               </p>
             </div>
           </div>
-        ) : extractedProducts.length === 0 ? (
+        ) : extractedProducts.length === 0 && pendingProducts.length === 0 ? (
           <div
             className="no-products d-flex flex-column align-items-center justify-content-center py-5 h-100 opacity-50"
             style={{ color: "var(--font-color)" }}
@@ -624,186 +893,373 @@ ${JSON.stringify(extractedProducts)}`;
             </div>
 
             {/* COMANDO DE IA PARA LA LISTA (NUEVO) */}
-            <div
-              className="mb-4 p-3 rounded-3"
-              style={{
-                background: "var(--hover-color)",
-                border: "1px solid var(--btn-ppal)",
-              }}
-            >
-              <label
-                className="form-label d-block mb-2"
-                style={{ fontSize: "0.8rem", fontWeight: 800 }}
+            {extractedProducts.length > 0 && (
+              <div
+                className="mb-4 p-3 rounded-3"
+                style={{
+                  background: "var(--hover-color)",
+                  border: "1px solid var(--btn-ppal)",
+                }}
               >
-                <i className="fa-solid fa-wand-magic-sparkles me-1"></i>
-                Modificar esta lista con IA
-              </label>
-              <form onSubmit={handleApplyAiToImport} className="d-flex gap-2">
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="Ej: 'Sube un 15% a todos' o 'Pon stock 0'..."
-                  value={importPrompt}
-                  onChange={(e) => setImportPrompt(e.target.value)}
-                  style={{ flex: 1 }}
-                />
-                <button
-                  type="submit"
-                  className="btn-mas"
-                  disabled={loading || !importPrompt.trim()}
-                  style={{ width: "auto", padding: "0 20px", height: "42px" }}
+                <label
+                  className="form-label d-block mb-2"
+                  style={{ fontSize: "0.8rem", fontWeight: 800 }}
                 >
-                  {loading ? (
-                    <Spinner animation="border" size="sm" />
-                  ) : (
-                    "Aplicar"
-                  )}
-                </button>
-              </form>
-            </div>
+                  <i className="fa-solid fa-wand-magic-sparkles me-1"></i>
+                  Modificar esta lista con IA
+                </label>
+                <form onSubmit={handleApplyAiToImport} className="d-flex gap-2">
+                  <input
+                    type="text"
+                    className="search-input"
+                    placeholder="Ej: 'Sube un 15% a todos' o 'Pon stock 0'..."
+                    value={importPrompt}
+                    onChange={(e) => setImportPrompt(e.target.value)}
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="submit"
+                    className="btn-mas"
+                    disabled={loading || !importPrompt.trim()}
+                    style={{ width: "auto", padding: "0 20px", height: "42px" }}
+                  >
+                    {loading ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "Aplicar"
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
 
             <div className="scroll flex-grow-1 mb-4 pe-2">
-              <div className="d-flex flex-column gap-3">
-                {extractedProducts.map((p, idx) => (
-                  <div
-                    key={idx}
-                    className="ia-result-card animate__animated animate__fadeInUp"
-                    style={{
-                      animationDelay: `${idx * 0.05}s`,
-                    }}
-                  >
-                    <button
-                      className="position-absolute top-0 end-0 m-2 btn-edit"
-                      style={{
-                        height: "30px",
-                        width: "30px",
-                        color: "#ef4444",
-                        padding: 0,
-                      }}
-                      onClick={() => handleRemoveProduct(idx)}
-                    >
-                      <i className="fa-solid fa-xmark"></i>
-                    </button>
+              {extractedProducts.length > 0 && (
+                <div className="d-flex flex-column gap-3">
+                  {extractedProducts.map((p, idx) => {
+                    const match = dbMatches[p._tempId];
+                    const hasCode = p.codigo && p.codigo.trim() !== "" && p.codigo !== "null" && p.codigo.toLowerCase() !== "null";
 
-                    <div className="row g-2">
-                      <div className="col-12">
-                        <label
-                          className="form-label mb-1"
-                          style={{ fontSize: "0.65rem" }}
+                    let status = "nuevo";
+                    if (match) {
+                      status = "actualizacion";
+                    } else if (!hasCode) {
+                      status = "sin_codigo";
+                    }
+
+                    return (
+                      <div
+                        key={idx}
+                        className="ia-result-card animate__animated animate__fadeInUp position-relative"
+                        style={{
+                          animationDelay: `${idx * 0.05}s`,
+                          border: status === "sin_codigo" ? "1px dashed var(--bs-warning)" : "1px solid var(--hover-color)"
+                        }}
+                      >
+                        <button
+                          className="position-absolute top-0 end-0 m-2 btn-edit"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            color: "#ef4444",
+                            padding: 0,
+                          }}
+                          onClick={() => handleRemoveProduct(idx)}
                         >
-                          Artículo
-                        </label>
-                        <input
-                          type="text"
-                          className="search-input w-100"
-                          value={p.articulo || ""}
-                          onChange={(e) =>
-                            handleEditChange(idx, "articulo", e.target.value)
-                          }
-                          style={{ height: "35px" }}
-                        />
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          {status === "actualizacion" && (
+                            <span className="badge text-white px-2 py-1 rounded" style={{ fontSize: "0.7rem", fontWeight: "bold", background: "#0d6efd" }}>
+                              <i className="fa-solid fa-arrows-rotate me-1"></i> Actualizar Existente
+                            </span>
+                          )}
+                          {status === "nuevo" && (
+                            <span className="badge text-white px-2 py-1 rounded" style={{ fontSize: "0.7rem", fontWeight: "bold", background: "#198754" }}>
+                              <i className="fa-solid fa-plus me-1"></i> Crear Nuevo
+                            </span>
+                          )}
+                          {status === "sin_codigo" && (
+                            <span className="badge text-dark px-2 py-1 rounded" style={{ fontSize: "0.7rem", fontWeight: "bold", background: "#ffc107" }}>
+                              <i className="fa-solid fa-triangle-exclamation me-1"></i> Sin Código
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="row g-2">
+                          <div className="col-12">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Artículo
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100"
+                              value={p.articulo || ""}
+                              onChange={(e) =>
+                                handleEditChange(idx, "articulo", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Código
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100"
+                              value={p.codigo || ""}
+                              onChange={(e) =>
+                                handleEditChange(idx, "codigo", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Categoría
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100"
+                              value={p.categoria || ""}
+                              onChange={(e) =>
+                                handleEditChange(idx, "categoria", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Precio
+                            </label>
+                            <input
+                              type="number"
+                              className="search-input w-100"
+                              value={p.precio || 0}
+                              onChange={(e) =>
+                                handleEditChange(idx, "precio", parseFloat(e.target.value))
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Stock
+                            </label>
+                            <input
+                              type="number"
+                              className="search-input w-100"
+                              value={p.stock || 0}
+                              onChange={(e) =>
+                                handleEditChange(idx, "stock", parseInt(e.target.value))
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Comparativa Visual de Cambios */}
+                        {status === "actualizacion" && match && (
+                          <div className="ia-card-diff mt-3 p-2 rounded-2 animate__animated animate__fadeIn" style={{ background: "rgba(13, 110, 253, 0.08)", border: "1px solid rgba(13, 110, 253, 0.15)", fontSize: "0.75rem" }}>
+                            <div className="small text-muted d-flex flex-column gap-1">
+                              {parseFloat(p.precio || 0) !== parseFloat(match.precio || 0) && (
+                                <div className="d-flex align-items-center justify-content-between">
+                                  <span>Precio:</span>
+                                  <strong>
+                                    ${match.precio.toLocaleString()} ➔ ${parseFloat(p.precio || 0).toLocaleString()}
+                                    {match.precio > 0 && (
+                                      <span className={`ms-1 ${parseFloat(p.precio || 0) > match.precio ? "text-success" : "text-danger"}`}>
+                                        ({parseFloat(p.precio || 0) > match.precio ? "+" : ""}{(((parseFloat(p.precio || 0) - match.precio) / match.precio) * 100).toFixed(0)}%)
+                                      </span>
+                                    )}
+                                  </strong>
+                                </div>
+                              )}
+                              {parseInt(p.stock || 0) !== parseInt(match.stock || 0) && (
+                                <div className="d-flex align-items-center justify-content-between">
+                                  <span>Stock:</span>
+                                  <strong>
+                                    {match.stock} ➔ {parseInt(p.stock || 0)}
+                                    <span className={`ms-1 ${parseInt(p.stock || 0) > match.stock ? "text-success" : "text-danger"}`}>
+                                      ({parseInt(p.stock || 0) > match.stock ? "+" : ""}{parseInt(p.stock || 0) - match.stock})
+                                    </span>
+                                  </strong>
+                                </div>
+                              )}
+                              {parseFloat(p.precio || 0) === parseFloat(match.precio || 0) && parseInt(p.stock || 0) === parseInt(match.stock || 0) && (
+                                <div className="text-center opacity-75 py-1">Sin cambios detectados</div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="col-6">
-                        <label
-                          className="form-label mb-1"
-                          style={{ fontSize: "0.65rem" }}
-                        >
-                          Código
-                        </label>
-                        <input
-                          type="text"
-                          className="search-input w-100"
-                          value={p.codigo || ""}
-                          onChange={(e) =>
-                            handleEditChange(idx, "codigo", e.target.value)
-                          }
-                          style={{ height: "35px" }}
-                        />
-                      </div>
-                      <div className="col-6">
-                        <label
-                          className="form-label mb-1"
-                          style={{ fontSize: "0.65rem" }}
-                        >
-                          Categoría
-                        </label>
-                        <input
-                          type="text"
-                          className="search-input w-100"
-                          value={p.categoria || ""}
-                          onChange={(e) =>
-                            handleEditChange(idx, "categoria", e.target.value)
-                          }
-                          style={{ height: "35px" }}
-                        />
-                      </div>
-                      <div className="col-6">
-                        <label
-                          className="form-label mb-1"
-                          style={{ fontSize: "0.65rem" }}
-                        >
-                          Precio
-                        </label>
-                        <input
-                          type="number"
-                          className="search-input w-100"
-                          value={p.precio || 0}
-                          onChange={(e) =>
-                            handleEditChange(
-                              idx,
-                              "precio",
-                              parseFloat(e.target.value),
-                            )
-                          }
-                          style={{ height: "35px" }}
-                        />
-                      </div>
-                      <div className="col-6">
-                        <label
-                          className="form-label mb-1"
-                          style={{ fontSize: "0.65rem" }}
-                        >
-                          Stock
-                        </label>
-                        <input
-                          type="number"
-                          className="search-input w-100"
-                          value={p.stock || 0}
-                          onChange={(e) =>
-                            handleEditChange(
-                              idx,
-                              "stock",
-                              parseInt(e.target.value),
-                            )
-                          }
-                          style={{ height: "35px" }}
-                        />
-                      </div>
-                    </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* SECCIÓN 2: PRODUCTOS SIN CÓDIGO (PENDIENTES DE REVISIÓN) */}
+              {pendingProducts.length > 0 && (
+                <div className="mt-5 pt-4 border-top animate__animated animate__fadeIn">
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <h4 className="ticket-title text-warning mb-0" style={{ fontSize: "1.1rem" }}>
+                      <i className="fa-solid fa-triangle-exclamation me-2"></i>
+                      Revisión de Productos sin Código
+                    </h4>
+                    <span className="badge bg-warning text-dark rounded-pill px-3">
+                      {pendingProducts.length} pendientes
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <p className="small opacity-75 mb-4">
+                    Estos productos no coinciden con ningún registro existente por nombre y no tienen código de barras. Asigna un código para guardarlos o descártalos.
+                  </p>
+
+                  <div className="d-flex flex-column gap-3 mb-4">
+                    {pendingProducts.map((p, idx) => (
+                      <div
+                        key={idx}
+                        className="ia-result-card border-warning position-relative"
+                        style={{ border: "1px solid var(--bs-warning)" }}
+                      >
+                        <button
+                          className="position-absolute top-0 end-0 m-2 btn-edit"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            color: "#ef4444",
+                            padding: 0,
+                          }}
+                          onClick={() => handleRemovePendingProduct(idx)}
+                        >
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
+
+                        <div className="row g-2">
+                          <div className="col-12">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Artículo
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100"
+                              value={p.articulo || ""}
+                              onChange={(e) =>
+                                handlePendingEditChange(idx, "articulo", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem", fontWeight: "bold", color: "var(--bs-warning)" }}>
+                              Código (Requerido)
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100 border-warning"
+                              placeholder="Escribe el código..."
+                              value={p.codigo || ""}
+                              onChange={(e) =>
+                                handlePendingEditChange(idx, "codigo", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Categoría
+                            </label>
+                            <input
+                              type="text"
+                              className="search-input w-100"
+                              value={p.categoria || ""}
+                              onChange={(e) =>
+                                handlePendingEditChange(idx, "categoria", e.target.value)
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Precio
+                            </label>
+                            <input
+                              type="number"
+                              className="search-input w-100"
+                              value={p.precio || 0}
+                              onChange={(e) =>
+                                handlePendingEditChange(idx, "precio", parseFloat(e.target.value))
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                          <div className="col-6">
+                            <label className="form-label mb-1" style={{ fontSize: "0.65rem" }}>
+                              Stock
+                            </label>
+                            <input
+                              type="number"
+                              className="search-input w-100"
+                              value={p.stock || 0}
+                              onChange={(e) =>
+                                handlePendingEditChange(idx, "stock", parseInt(e.target.value))
+                              }
+                              style={{ height: "35px" }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="d-flex gap-3 mb-4">
+                    <button
+                      className="btn-confirm-save py-3 flex-grow-1"
+                      onClick={handleConfirmPending}
+                      disabled={loading || pendingProducts.every(p => !p.codigo?.trim())}
+                      style={{ gap: "10px", background: "var(--bs-warning)", color: "#000" }}
+                    >
+                      <i className="fa-solid fa-floppy-disk fa-xl"></i>
+                      <span>Guardar Pendientes Resueltos</span>
+                    </button>
+                    <button
+                      className="btn-cancel"
+                      onClick={() => setPendingProducts([])}
+                      disabled={loading}
+                      style={{ height: "54px" }}
+                    >
+                      Descartar Pendientes
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="ia-action-bar">
-              <button
-                className="btn-confirm-save py-3"
-                onClick={handleConfirmImport}
-                disabled={loading}
-                style={{ gap: "10px" }}
-              >
-                <i className="fa-solid fa-cloud-arrow-up fa-xl"></i>
-                <span>Confirmar y Guardar Todo</span>
-              </button>
-              <button
-                className="btn-cancel"
-                onClick={() => setExtractedProducts([])}
-                disabled={loading}
-                style={{ height: "45px" }}
-              >
-                Descartar resultados
-              </button>
-            </div>
+            {extractedProducts.length > 0 && (
+              <div className="ia-action-bar">
+                <button
+                  className="btn-confirm-save py-3"
+                  onClick={handleConfirmImport}
+                  disabled={loading}
+                  style={{ gap: "10px" }}
+                >
+                  <i className="fa-solid fa-cloud-arrow-up fa-xl"></i>
+                  <span>Confirmar y Guardar Todo</span>
+                </button>
+                <button
+                  className="btn-cancel"
+                  onClick={() => {
+                    setExtractedProducts([]);
+                    setFile(null);
+                  }}
+                  disabled={loading}
+                  style={{ height: "45px" }}
+                >
+                  Descartar resultados
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
