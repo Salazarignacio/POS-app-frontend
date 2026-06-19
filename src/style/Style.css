@@ -1,4 +1,4 @@
-﻿/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
+/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -1800,4 +1800,75 @@ li {
 .btn-print img {
   position: relative;
   z-index: 10; /* La impresora siempre arriba del papel */
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN - LAPTOP AND PORTABLE DEVICES
+   ============================================================ */
+@media (max-width: 1400px) {
+  .app-layout {
+    width: 96vw;
+    padding: 20px 0px 10px 0px;
+  }
+  
+  .panel-content {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .edit-page {
+    width: 100%;
+  }
+  
+  .productos-edit {
+    width: 100%;
+  }
+  
+  .productos-header, .producto-row {
+    padding: 10px 15px;
+    gap: 8px;
+  }
+  
+  .searchBar input.search-input {
+    width: auto !important;
+    flex-grow: 1;
+    margin-right: 15px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .tab-link {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .ia-carga-container {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    gap: 20px;
+    padding: 10px;
+  }
+  .ia-carga-panel {
+    max-width: 100%;
+  }
+  .ia-carga-results {
+    height: auto;
+    min-height: 70vh;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabs-header {
+    flex-wrap: wrap;
+  }
+  .tab-link {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border-radius: 12px 12px 0 0;
+  }
 }

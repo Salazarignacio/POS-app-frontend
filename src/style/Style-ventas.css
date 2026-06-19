@@ -552,3 +552,57 @@ background-color: red; */
 @page {
   margin: 0;
 }
+
+/* ============================================================
+   RESPONSIVE DESIGN - LAPTOP AND TABLET VIEW
+   ============================================================ */
+@media (max-width: 1400px) {
+  .ventas-container {
+    width: 100%;
+    gap: 15px;
+  }
+  
+  .carrito-titulos, .carrito-container {
+    width: 100%;
+    padding: 10px 15px;
+    gap: 8px;
+  }
+  
+  .buscador {
+    width: 100%;
+  }
+  
+  .container-one {
+    max-width: 100%;
+    min-width: 60%;
+  }
+  
+  .btn-print {
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .ventas-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .productos-ventas {
+    width: 100%;
+  }
+  
+  .ticket-ventas {
+    width: 100%;
+    border-left: none;
+    border-top: 2px dashed var(--white-black);
+    padding-top: 20px;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .container-one {
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
