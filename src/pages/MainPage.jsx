@@ -1,6 +1,7 @@
 import { useEffect, useContext } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { SelectedIds } from "../context/SelectedIds";
+import { SmartImportContext } from "../context/SmartImportContext";
 import "../style/Style.css";
 import ventasicon from "../assets/ventas.png";
 import editicon from "../assets/edit.png";
@@ -11,6 +12,7 @@ export default function MainPage({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { setSelectedProducts } = useContext(SelectedIds);
+  const { loading: aiLoading } = useContext(SmartImportContext);
 
   // Limpiar selección al cambiar de sección
   useEffect(() => {
@@ -70,7 +72,12 @@ export default function MainPage({ children }) {
           title="IA Carga (F4)"
           className={({ isActive }) => `tab-link ${isActive ? "tab-active" : ""}`}
         >
-          <span className="tab-label">IA Carga</span>
+          <span className="tab-label d-flex align-items-center gap-2">
+            IA Carga
+            {aiLoading && (
+              <span className="spinner-border spinner-border-sm text-primary" style={{ width: "12px", height: "12px", borderWidth: "2px" }} role="status"></span>
+            )}
+          </span>
         </NavLink>
       </nav>
 

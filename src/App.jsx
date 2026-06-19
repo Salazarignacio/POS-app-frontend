@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainPage from "./pages/MainPage.jsx";
 import EditComponent from "./components/EditComponent.jsx";
 import SmartImport from "./components/SmartImport.jsx";
@@ -10,6 +10,7 @@ import VentasComponent from "./components/VentasComponent.jsx";
 import BalanceWeb from "./components/BalanceWeb.jsx";
 import GlobalAiChat from "./components/GlobalAiChat.jsx";
 import PrintTagsProvider from "./components/PrintTagsProvider.jsx";
+import { SmartImportProvider } from "./context/SmartImportContext.jsx";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -34,19 +35,21 @@ function App() {
         <ProductProviderWrapper>
           <SelectedProviderWrapper>
             <PrintTagsProvider>
-              <BrowserRouter>
-                <MainPage>
-                  <Routes>
-                    <Route path="/edicion" element={<EditComponent />} />
-                    <Route path="/import" element={<SmartImport />} />
-                    <Route path="/destroy" element={<DeleteProductoBDC />} />
-                    <Route path="/" element={<VentasComponent />} />
+              <SmartImportProvider>
+                <BrowserRouter>
+                  <MainPage>
+                    <Routes>
+                      <Route path="/edicion" element={<EditComponent />} />
+                      <Route path="/import" element={<SmartImport />} />
+                      <Route path="/destroy" element={<DeleteProductoBDC />} />
+                      <Route path="/" element={<VentasComponent />} />
 
-                    <Route path="/balance" element={<BalanceWeb />} />
-                  </Routes>
-                  <GlobalAiChat />
-                </MainPage>
-              </BrowserRouter>
+                      <Route path="/balance" element={<BalanceWeb />} />
+                    </Routes>
+                    <GlobalAiChat />
+                  </MainPage>
+                </BrowserRouter>
+              </SmartImportProvider>
             </PrintTagsProvider>
           </SelectedProviderWrapper>
         </ProductProviderWrapper>
