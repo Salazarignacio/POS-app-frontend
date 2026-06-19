@@ -1,4 +1,4 @@
-﻿import { getAll, getByCode } from "../api/ProductoService";
+import { getAll, getByCode } from "../api/ProductoService";
 import { useState, useEffect, useContext } from "react";   
 import EditPage from "../pages/EditPage";
 import { ProductContext } from "../context/ProductContext";
@@ -9,8 +9,8 @@ export default function EditComponent() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const { renderProducts } = useContext(ProductContext);
-  const { setSelectedProducts } = useContext(SelectedIds);
-  const { printSingle, printMultiple } = usePrint();
+  const { selectedProducts, setSelectedProducts } = useContext(SelectedIds);
+  const { printSingle, printMultiple: providerPrintMultiple } = usePrint();
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -30,7 +30,6 @@ export default function EditComponent() {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setLoading(true);
-      setSelectedProducts([]); 
 
       const request = searchTerm
         ? getByCode(searchTerm)
@@ -48,25 +47,50 @@ export default function EditComponent() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, renderProducts, setSelectedProducts]);
+  }, [searchTerm, renderProducts]);
 
   const searchCode = (e) => {
     setSearchTerm(e.target.value);
   };
 
+  // Mostrar los seleccionados al principio, y luego el resto de los productos filtrados/buscados sin duplicar
+  const displayedProducts = [
+    ...selectedProducts,
+    ...productos.filter((p) => !selectedProducts.some((sel) => sel.id == p.id))
+  ];
+
   const handleSelectAll = (checked) => {
     if (checked) {
-      const allIds = productos.map((p) => p.id);
-      setSelectedProducts(allIds);
+      setSelectedProducts((prev) => {
+        const next = [...prev];
+        displayedProducts.forEach((p) => {
+          if (!next.some((sel) => sel.id == p.id)) {
+            next.push(p);
+          }
+        });
+        return next;
+      });
     } else {
-      setSelectedProducts([]);
+      setSelectedProducts((prev) => {
+        return prev.filter((sel) => !displayedProducts.some((p) => p.id == sel.id));
+      });
     }
+  };
+
+  const handlePrintMultiple = (products) => {
+    providerPrintMultiple(products);
+    setSelectedProducts([]);
+    setSearchTerm("");
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
   };
 
   return (
     <div className="edit">
       <EditPage
-        productos={productos}
+        productos={displayedProducts}
         searchCode={searchCode}
         loading={loading}
         searchTerm={searchTerm}
@@ -78,7 +102,8 @@ export default function EditComponent() {
           setSmartCreateData(null);
         }}
         printSingle={printSingle}
-        printMultiple={printMultiple}
+        printMultiple={handlePrintMultiple}
+        clearSearch={clearSearch}
       />
     </div>
   );

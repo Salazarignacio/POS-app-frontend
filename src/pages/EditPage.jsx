@@ -1,4 +1,4 @@
-﻿import Loading from "../reutilizable/Loading.jsx";
+import Loading from "../reutilizable/Loading.jsx";
 import EditProductoPage from "./EditProductoPage";
 import ModalCreate from "../components/ModalCreate.jsx";
 import "../style/Style.css";
@@ -19,15 +19,17 @@ export default function EditPage({
   showSmartModal,
   onCloseSmartModal,
   printSingle,
-  printMultiple
+  printMultiple,
+  clearSearch
 }) {
   const { selectedProducts } = useContext(SelectedIds);
-  const isAllSelected = productos.length > 0 && productos.every(p => selectedProducts.some(sel => sel.id === p.id));
+  const isAllSelected = productos.length > 0 && productos.every(p => selectedProducts.some(sel => sel.id == p.id));
 
   return (
     <div className="edit-page">
       <div className="searchBar">
         <input
+          value={searchTerm}
           onChange={searchCode}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -44,7 +46,7 @@ export default function EditPage({
           externalOnHide={onCloseSmartModal}
           initialData={smartCreateData}
         />
-       <ModalUpdatePlural></ModalUpdatePlural>
+       <ModalUpdatePlural clearSearch={clearSearch}></ModalUpdatePlural>
        <ModalPrintPlural printMultiple={() => {
          printMultiple(selectedProducts);
        }}></ModalPrintPlural>

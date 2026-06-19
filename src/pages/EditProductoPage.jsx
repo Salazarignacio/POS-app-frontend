@@ -1,4 +1,4 @@
-﻿import { useContext } from "react";
+import { useContext } from "react";
 import DeleteProductoBDC from "../components/DeleteProductBDC.jsx";
 import ModalUpdate from "../components/ModalUpdate.jsx";
 import { SelectedIds } from "../context/SelectedIds.jsx";
@@ -9,10 +9,10 @@ export default function EditProductoPage({ props, onPrint }) {
   const handleSelect = (product, checked) => {
     setSelectedProducts((prev) => {
       if (checked) {
-        if (prev.some((p) => p.id === product.id)) return prev;
+        if (prev.some((p) => p.id == product.id)) return prev;
         return [...prev, product];
       } else {
-        return prev.filter((p) => p.id !== product.id);
+        return prev.filter((p) => p.id != product.id);
       }
     });
   };
@@ -23,7 +23,7 @@ export default function EditProductoPage({ props, onPrint }) {
         <span className="check">
           <input
             type="checkbox"
-            checked={selectedProducts.some((p) => p.id === props.id)}
+            checked={selectedProducts.some((p) => p.id == props.id)}
             onChange={(e) => handleSelect(props, e.target.checked)}
           />
         </span>

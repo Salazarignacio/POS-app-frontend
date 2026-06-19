@@ -1,4 +1,4 @@
-﻿import { useContext, useState, useEffect, createContext } from "react";
+import { useContext, useState, useEffect, createContext } from "react";
 import { SelectedIds } from "../context/SelectedIds";      
 
 const PrintContext = createContext();
@@ -7,7 +7,7 @@ export const usePrint = () => useContext(PrintContext);
 
 export default function PrintTagsProvider({ children }) {  
   const [tagsToPrint, setTagsToPrint] = useState([]);      
-  const { setSelectedIds } = useContext(SelectedIds); 
+  const { setSelectedProducts } = useContext(SelectedIds); 
 
   const printSingle = (product) => {
     setTagsToPrint([product]);
@@ -34,10 +34,10 @@ export default function PrintTagsProvider({ children }) {
       setTimeout(() => {
         window.print();
         setTagsToPrint([]);
-        if (setSelectedIds) setSelectedIds([]); 
+        if (setSelectedProducts) setSelectedProducts([]); 
       }, 100);
     }
-  }, [tagsToPrint, setSelectedIds]);
+  }, [tagsToPrint, setSelectedProducts]);
 
   return (
     <PrintContext.Provider value={{ printSingle, printMultiple }}>

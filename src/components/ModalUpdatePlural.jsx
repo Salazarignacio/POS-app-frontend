@@ -1,4 +1,4 @@
-﻿import { Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { SelectedIds } from "../context/SelectedIds";
 import { useContext, useState } from "react";
 import { Modal } from "react-bootstrap";
@@ -7,7 +7,7 @@ import UpdatePageForm from "../pages/UpdatePageForm";
 import { ProductContext } from "../context/ProductContext";
 import { toast } from "react-hot-toast";
 
-export default function UpdatePlural() {
+export default function UpdatePlural({ clearSearch }) {
   const { setRenderProducts } = useContext(ProductContext);
   const { selectedProducts, setSelectedProducts } = useContext(SelectedIds);
   const isEmpty = selectedProducts.length < 2;
@@ -25,7 +25,7 @@ export default function UpdatePlural() {
         selectedProducts.map(async (product) => {
           const original = await getById(product.id);
 
-          // ðŸ‘‡ Construimos solo los campos no vacíos
+          // 👇 Construimos solo los campos no vacíos
           const filteredData = Object.fromEntries(
             Object.entries(dataSinCodigo).filter(
               ([_, value]) => value !== "" && value !== null,
@@ -42,7 +42,8 @@ export default function UpdatePlural() {
       );
 
       setRenderProducts((prev) => !prev);
-      setSelectedProducts([]); // Limpiamos la selecciÃ³n despuÃ©s de actualizar
+      setSelectedProducts([]); // Limpiamos la selección después de actualizar
+      if (clearSearch) clearSearch();
       toast.success("Productos actualizados correctamente");
       handleClose();
     } catch (error) {
