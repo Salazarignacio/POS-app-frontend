@@ -1,4 +1,4 @@
-/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
+﻿/* LAYOUT GENERAL CON SOLAPAS DE CARPETA */
 .app-layout {
   display: flex;
   flex-direction: column;
@@ -869,11 +869,11 @@ li {
 }
 
 .producto-row {
-  font-size: 0, 2rem; /* ~14.4px */
+  font-size: 0.9rem;
   font-weight: 400;
   color: var(--font-color);
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr 1fr 0.5fr 0.5fr 0.5fr;
+  grid-template-columns: 0.3fr 1.5fr 3.5fr 1.2fr auto;
   align-items: center;
   gap: 12px;
 
@@ -889,9 +889,6 @@ li {
 
 .producto-row:hover {
   background-color: var(--hover-color);
-  /* box-shadow: var(--hover-shadow); */
-    /* background: rgba(245, 158, 11, 0.08);
-  box-shadow: none; */
 }
 .producto-row {
   font-size: 0.9rem;
@@ -901,11 +898,9 @@ li {
   display: grid;
   grid-template-columns:
     0.3fr /* checkbox */
-    1.2fr /* codigo */
-    2.2fr /* nombre */
-    1.5fr /* categoria */
-    1fr /* precio */
-    0.8fr /* stock */
+    1.5fr /* codigo */
+    3.5fr /* nombre */
+    1.2fr /* precio */
     auto; /* botones */
 
   align-items: center;
@@ -919,11 +914,9 @@ li {
   display: grid;
   grid-template-columns:
     0.3fr /* checkbox space */
-    1.2fr /* codigo */
-    2.2fr /* nombre */
-    1.5fr /* categoria */
-    1fr /* precio */
-    0.8fr /* stock */
+    1.5fr /* codigo */
+    3.5fr /* nombre */
+    1.2fr /* precio */
     auto; /* botones */
 
   align-items: center;
@@ -1803,7 +1796,74 @@ li {
 }
 
 /* ============================================================
-   RESPONSIVE DESIGN - LAPTOP AND PORTABLE DEVICES
+   FLEXBOX SCROLL CONTAINMENT (PREVENT LAYOUT BLOWOUT)
+   ============================================================ */
+.app-layout {
+  height: 100vh;
+  overflow: hidden; /* Evita scroll en la raíz de la página */
+}
+
+.panel-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden; /* Obliga a que los scrolls ocurran adentro */
+}
+
+.edit {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+}
+
+.edit-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.edit-page .scroll {
+  height: auto;
+  max-height: calc(120vh - 280px) !important;
+  overflow-y: auto !important;
+}
+
+.ia-carga-container {
+  height: 100% !important;
+  min-height: 0;
+  overflow-y: auto !important;
+  align-items: stretch;
+}
+
+.ia-carga-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 550px;
+  justify-content: center;
+}
+
+.ia-carga-results {
+  height: 100% !important;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ia-carga-results .scroll {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN - LAPTOP, TABLET AND MOBILE DEVICES
    ============================================================ */
 @media (max-width: 1400px) {
   .app-layout {
@@ -1848,17 +1908,110 @@ li {
   .ia-carga-container {
     flex-direction: column;
     align-items: stretch;
-    height: auto;
+    height: 100% !important; /* Constrain height to enable internal scroll */
     gap: 20px;
     padding: 10px;
+    overflow-y: auto !important;
   }
   .ia-carga-panel {
     max-width: 100%;
   }
   .ia-carga-results {
-    height: auto;
+    height: auto !important;
     min-height: 70vh;
     padding: 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .searchBar {
+    display: flex;
+    flex-wrap: wrap;
+    height: auto !important;
+    gap: 10px;
+    position: static;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+  
+  .searchBar input.search-input {
+    width: 100% !important;
+    flex-basis: 100%;
+    margin-right: 0 !important;
+  }
+  
+  .searchBar > button {
+    flex: 1;
+    min-width: 150px;
+    margin-left: 0 !important;
+  }
+}
+
+/* TABLET & MOBILE CARD VIEW FOR PRODUCT LIST (< 900px) */
+@media (max-width: 900px) {
+  .productos-header {
+    display: none !important;
+  }
+  
+  .productos-edit {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  .producto-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 15px !important;
+    margin-bottom: 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 16px !important;
+    background: var(--white-black) !important;
+    gap: 10px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02) !important;
+  }
+  
+  .dark .producto-row {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .producto-row span {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-align: right !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .producto-row span.check {
+    justify-content: flex-start !important;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.05) !important;
+    padding-bottom: 8px !important;
+  }
+  
+  .dark .producto-row span.check {
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  /* Labels */
+  .producto-row span.codigo::before { content: "Código:"; font-weight: 700; color: var(--font-color); opacity: 0.7; }
+  .producto-row span.nombre::before { content: "Artículo:"; font-weight: 700; color: var(--font-color); opacity: 0.7; }
+  .producto-row span.categoria::before { content: "Categoría:"; font-weight: 700; color: var(--font-color); opacity: 0.7; }
+  .producto-row span.precio::before { content: "Precio:"; font-weight: 700; color: var(--font-color); opacity: 0.7; }
+  .producto-row span.stock::before { content: "Stock:"; font-weight: 700; color: var(--font-color); opacity: 0.7; }
+  
+  .producto-row .prod-edit-btn {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+    margin-top: 8px !important;
+    padding-top: 10px !important;
+    border-top: 1px dashed rgba(0, 0, 0, 0.05) !important;
+    width: 100% !important;
+  }
+  
+  .dark .producto-row .prod-edit-btn {
+    border-top-color: rgba(255, 255, 255, 0.05) !important;
   }
 }
 

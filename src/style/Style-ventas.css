@@ -83,8 +83,9 @@
 
 .container-one {
   position: relative;
-  max-width: 70%;
-  min-width: 55%;
+  flex: 1;
+  min-width: 0;
+  margin-right: 15px;
 }
 
 .loading {
@@ -554,6 +555,32 @@ background-color: red; */
 }
 
 /* ============================================================
+   FLEXBOX SCROLL CONTAINMENT (PREVENT LAYOUT BLOWOUT IN SALES)
+   ============================================================ */
+.ventas-container {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+}
+
+.productos-ventas {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.productos-ventas .scroll {
+  height: auto;
+  max-height: calc(100vh - 290px) !important;
+  overflow-y: auto !important;
+}
+
+.ticket-ventas {
+  height: 100% !important; /* let it fill panel height alongside cart */
+}
+
+/* ============================================================
    RESPONSIVE DESIGN - LAPTOP AND TABLET VIEW
    ============================================================ */
 @media (max-width: 1400px) {
@@ -572,11 +599,6 @@ background-color: red; */
     width: 100%;
   }
   
-  .container-one {
-    max-width: 100%;
-    min-width: 60%;
-  }
-  
   .btn-print {
     font-size: 0.9rem !important;
   }
@@ -586,23 +608,28 @@ background-color: red; */
   .ventas-container {
     flex-direction: column;
     width: 100%;
-  }
-  
-  .productos-ventas {
-    width: 100%;
-  }
-  
-  .ticket-ventas {
-    width: 100%;
-    border-left: none;
-    border-top: 2px dashed var(--white-black);
-    padding-top: 20px;
     height: auto;
     min-height: auto;
   }
   
-  .container-one {
-    max-width: 100%;
-    min-width: 100%;
+  .productos-ventas {
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    margin-bottom: 20px;
+  }
+
+  .productos-ventas .scroll {
+    max-height: 40vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .ticket-ventas {
+    width: 100%;
+    height: auto !important;
+    border-left: none;
+    border-top: 2px dashed var(--white-black);
+    padding-top: 20px;
+    min-height: auto;
   }
 }
