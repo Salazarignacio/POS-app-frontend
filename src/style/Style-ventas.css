@@ -472,9 +472,10 @@ background-color: red; */
     width: 80mm; /* Ancho estándar de ticketera */
     margin: 0;
     padding: 10px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 600; /* Le da más cuerpo/grosor a toda la tipografía */
     font-size: 13px;
-    line-height: 1.4;
+    line-height: 1.35;
     color: #000;
     background: #fff;
     box-sizing: border-box;
@@ -491,9 +492,9 @@ background-color: red; */
 
   .ticket-subtitle {
     font-size: 11px;
-    font-weight: bold;
+    font-weight: 800;
     text-align: center;
-    border: 1px solid black;
+    border: 2px solid black;
     padding: 2px 5px;
     margin: 5px auto;
     width: fit-content;
@@ -510,7 +511,7 @@ background-color: red; */
 
   .ticket-store-info p {
     margin: 1px 0;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .ticket-meta-info {
@@ -528,7 +529,7 @@ background-color: red; */
   }
 
   .ticket-divider-dashed {
-    border-bottom: 1.5px dashed black;
+    border-bottom: 2px dashed black;
     margin: 8px 0;
     width: 100%;
   }
@@ -537,7 +538,7 @@ background-color: red; */
     display: flex;
     justify-content: space-between;
     font-size: 11px;
-    font-weight: bold;
+    font-weight: 800;
     color: black;
     letter-spacing: 0.5px;
   }
@@ -556,7 +557,7 @@ background-color: red; */
   }
 
   .item-row-top {
-    font-weight: bold;
+    font-weight: 700;
   }
 
   .item-row-bottom {
@@ -566,11 +567,11 @@ background-color: red; */
   }
 
   .item-qty-price {
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .item-subtotal {
-    font-weight: bold;
+    font-weight: 800;
   }
 
   .ticket-footer {
@@ -584,12 +585,13 @@ background-color: red; */
     display: flex;
     justify-content: space-between;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 700;
     color: black;
   }
 
   .discount-row {
-    color: red;
+    color: black; /* Las ticketeras térmicas de BN no imprimen rojo; forzar contraste total */
+    font-weight: 800;
   }
 
   .footer-row-total {
@@ -597,7 +599,7 @@ background-color: red; */
     justify-content: space-between;
     font-size: 18px;
     font-weight: 900;
-    border-top: 1.5px solid black;
+    border-top: 2px solid black;
     padding-top: 6px;
     margin-top: 6px;
     color: black;
@@ -611,12 +613,13 @@ background-color: red; */
 
   .thanks-title {
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 800;
     margin: 0;
   }
 
   .thanks-subtitle {
     font-size: 11px;
+    font-weight: 600;
     margin: 2px 0 0 0;
   }
 
@@ -634,7 +637,7 @@ background-color: red; */
 
   .ticket-transaction-id {
     font-size: 10px;
-    font-weight: bold;
+    font-weight: 800;
     margin-top: 4px;
     letter-spacing: 1.5px;
     color: black;
