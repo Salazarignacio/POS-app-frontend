@@ -271,9 +271,15 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
           className={`w-100 mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
           disabled={!isValid}
         >
-          {isMultiple
-            ? "Actualizar productos seleccionados"
-            : "Actualizar producto"}
+          {isMultiple ? (
+            <>
+              Actualizar productos seleccionados <i className="fa-solid fa-floppy-disk ms-2"></i>
+            </>
+          ) : (
+            <>
+              Actualizar producto <i className="fa-solid fa-floppy-disk ms-2"></i>
+            </>
+          )}
         </Button>
       </Form>
     </div>

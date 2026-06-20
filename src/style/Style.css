@@ -988,45 +988,60 @@ li {
 /* --- Inputs con Contraste y DefiniciÃ³n --- */
 
 .form-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--font-color);
-  margin-bottom: 0.4rem;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: #64748b !important; /* Muted Slate en Light Mode */
+  margin-bottom: 0.45rem !important;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  opacity: 0.7;
+  letter-spacing: 0.05em;
+  opacity: 1;
+}
+
+body.dark .form-label {
+  color: #94a3b8 !important; /* Muted Slate en Dark Mode */
 }
 
 .input-soft {
-  background-color: #ffffff !important;
-  color: var(--font-color) !important;
-  border: 1.5px solid #cbd5e1 !important; /* Borde mÃ¡s definido para Light Mode */
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.02); 
+  background-color: #f1f5f9 !important; /* Gris suave de fondo */
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  padding: 11px 16px !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important; 
 }
 
-.dark .input-soft {
-  background-color: #27272a !important;
-  border-color: #3f3f46 !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+body.dark .input-soft {
+  background-color: #18181b !important; /* Zinc oscuro */
+  border-color: #27272a !important;
+  color: #f4f4f5 !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
 }
 
 .input-soft:hover {
-  border-color: #94a3b8 !important; /* Borde mÃ¡s oscuro al pasar el mouse */
+  border-color: #94a3b8 !important;
+  background-color: #e2e8f0 !important;
+}
+
+body.dark .input-soft:hover {
+  border-color: #3f3f46 !important;
+  background-color: #202024 !important;
 }
 
 .input-soft:focus {
+  background-color: #ffffff !important;
   border-color: #f59e0b !important;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 4px 10px rgba(0, 0, 0, 0.03) !important;
+  outline: none !important;
 }
 
-.dark .input-soft:focus {
+body.dark .input-soft:focus {
+  background-color: #09090b !important;
   border-color: #f59e0b !important;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  outline: none !important;
 }
 
 /* --- BotÃ³n de AcciÃ³n con Estados Elegantes --- */
@@ -1141,7 +1156,7 @@ li {
 
 .dark .price-options .form-check-input:checked + .form-check-label {
   background: #18181b;
-  color: #06b6d4;
+  color: #f59e0b;
 }
 
 @media (max-width: 576px) {
