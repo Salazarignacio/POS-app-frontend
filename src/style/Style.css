@@ -180,10 +180,10 @@ body.dark .panel-content {
 
 /* 🌙 DARK MODE */
 .dark {
-  --bg-contenedores: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --bg-contenedores: #1e293b;
 
   --sh-contenedores:
-    0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
 
   --btn-ppal: linear-gradient(135deg, #f59e0b, #d97706);
   --btn-scnd: linear-gradient(135deg, #d97706, #b45309);
@@ -194,7 +194,7 @@ body.dark .panel-content {
   --font-color: #f8fafc;
   --white-black: #334155;
 
-  --background: radial-gradient(circle at 20% 20%, #475569 0%, #334155 60%, #0f172a 100%);
+  --background: #334155;
   --spinner-color: #f59e0b;
 }
 
