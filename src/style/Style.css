@@ -178,12 +178,12 @@ body.dark .panel-content {
   --spinner-color: #f59e0b;
 }
 
-/* ðŸŒ™ DARK MODE */
+/* 🌙 DARK MODE */
 .dark {
-  --bg-contenedores: linear-gradient(180deg, #1e1e1e 0%, #121212 100%);
+  --bg-contenedores: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
 
   --sh-contenedores:
-    0 8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
+    0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
 
   --btn-ppal: linear-gradient(135deg, #f59e0b, #d97706);
   --btn-scnd: linear-gradient(135deg, #d97706, #b45309);
@@ -191,10 +191,10 @@ body.dark .panel-content {
   --hover-color: rgba(245, 158, 11, 0.12);
   --hover-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.25);
 
-  --font-color: #e2e8f0;
-  --white-black: #262626;
+  --font-color: #f8fafc;
+  --white-black: #334155;
 
-  --background: radial-gradient(circle at 20% 20%, #1a1a1a 0%, #0d0d0d 100%);
+  --background: radial-gradient(circle at 20% 20%, #475569 0%, #334155 60%, #0f172a 100%);
   --spinner-color: #f59e0b;
 }
 
@@ -713,7 +713,7 @@ img:hover {
 }
 
 .dark .ticket-ventas {
-  background: #1e1e1e !important;
+  background: #1e293b !important;
   box-shadow: 
     0 10px 30px rgba(0,0,0,0.4),
     0 0 0 1px rgba(255,255,255,0.05) !important;
@@ -734,9 +734,9 @@ img:hover {
 
 .dark .btn-print:disabled,
 .dark .btn-cancel:disabled {
-  background: #27272a !important;
-  border-color: #3f3f46 !important;
-  color: #52525b !important;
+  background: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #475569 !important;
 }
 
 /* Botones del edit product */
@@ -1014,9 +1014,9 @@ body.dark .form-label {
 }
 
 body.dark .input-soft {
-  background-color: #18181b !important; /* Zinc oscuro */
-  border-color: #27272a !important;
-  color: #f4f4f5 !important;
+  background-color: #0f172a !important; /* Slate 900 */
+  border-color: #334155 !important; /* Slate 700 */
+  color: #cbd5e1 !important;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
 }
 
@@ -1026,8 +1026,8 @@ body.dark .input-soft {
 }
 
 body.dark .input-soft:hover {
-  border-color: #3f3f46 !important;
-  background-color: #202024 !important;
+  border-color: #475569 !important; /* Slate 600 */
+  background-color: #1e293b !important; /* Slate 800 */
 }
 
 .input-soft:focus {
@@ -1038,7 +1038,7 @@ body.dark .input-soft:hover {
 }
 
 body.dark .input-soft:focus {
-  background-color: #09090b !important;
+  background-color: #0f172a !important; /* Slate 900 */
   border-color: #f59e0b !important;
   box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
   outline: none !important;
@@ -1077,9 +1077,9 @@ body.dark .input-soft:focus {
 }
 
 .dark .btn-form-submit:disabled {
-  background: #27272a !important;
-  color: #52525b !important;
-  border-color: #3f3f46 !important;
+  background: #0f172a !important;
+  color: #475569 !important;
+  border-color: #1e293b !important;
 }
 
 /* --- Refinamiento de Alertas Pill --- */
@@ -1123,8 +1123,8 @@ body.dark .input-soft:focus {
 }
 
 .dark .price-options {
-  background: #27272a;
-  border-color: #3f3f46;
+  background: #0f172a;
+  border-color: #334155;
 }
 
 .price-options .form-check {
@@ -1155,7 +1155,7 @@ body.dark .input-soft:focus {
 }
 
 .dark .price-options .form-check-input:checked + .form-check-label {
-  background: #18181b;
+  background: #1e293b;
   color: #f59e0b;
 }
 
