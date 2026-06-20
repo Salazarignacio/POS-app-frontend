@@ -36,6 +36,7 @@
 .tab-link:hover:not(.tab-active) {
   background: rgba(0, 0, 0, 0.03); /* Fondo muy sutil al pasar el mouse */
   color: #1e293b;
+  transform: translateY(-2px);
 }
 
 .tab-icon {

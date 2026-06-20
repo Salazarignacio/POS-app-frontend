@@ -729,3 +729,18 @@ background-color: red; */
     min-height: auto;
   }
 }
+
+/* MICRO-INTERACCION: Hover del boton eliminar del carrito */
+.carrito-container .btn-edit {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.carrito-container .btn-edit:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.carrito-container .btn-edit:hover i {
+  color: #ef4444 !important;
+  transform: scale(1.15) rotate(8deg);
+  opacity: 1 !important;
+}
