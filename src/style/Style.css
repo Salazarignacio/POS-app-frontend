@@ -198,6 +198,31 @@ body.dark .panel-content {
   --spinner-color: #f59e0b;
 }
 
+.dark .search-input {
+  border-color: #334155 !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.dark .search-input:hover {
+  border-color: #475569 !important;
+  background-color: #1e293b !important;
+}
+
+.dark .search-input:focus {
+  border-color: #f59e0b !important;
+  background-color: #0f172a !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.dark .producto-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .productos-header {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+}
+
 .custom-spinner {
   color: var(--spinner-color) !important;
 }
@@ -650,7 +675,7 @@ img:hover {
 
 .search-input:focus {
   border-color: var(--btn-scnd);
-  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 .btn-print {
   background: var(--btn-ppal) !important;
