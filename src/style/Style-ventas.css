@@ -471,77 +471,173 @@ background-color: red; */
     top: 0;
     width: 80mm; /* Ancho estándar de ticketera */
     margin: 0;
-    padding: 0;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 14px;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.4;
     color: #000;
     background: #fff;
+    box-sizing: border-box;
   }
 
-  .ticket-header {
+  .ticket-brand {
+    font-size: 20px;
+    font-weight: 900;
     text-align: center;
-    margin-bottom: 5px;
+    margin: 0 0 2px 0;
+    color: black;
+    letter-spacing: 0.5px;
   }
 
-  .ticket-header h2 {
-    margin: 0;
-    font-size: 18px;
-  }
-
-  .ticket-header p {
-    margin: 2px 0;
-  }
-
-  .ticket-divider {
+  .ticket-subtitle {
+    font-size: 11px;
+    font-weight: bold;
     text-align: center;
-    margin: 5px 0;
-    letter-spacing: -1px;
+    border: 1px solid black;
+    padding: 2px 5px;
+    margin: 5px auto;
+    width: fit-content;
+    color: black;
+    letter-spacing: 0.5px;
   }
 
-  .ticket-items {
+  .ticket-store-info {
+    font-size: 11px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: black;
+  }
+
+  .ticket-store-info p {
+    margin: 1px 0;
+    font-weight: 500;
+  }
+
+  .ticket-meta-info {
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 6px;
+    color: black;
+  }
+
+  .ticket-meta-info > div {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ticket-divider-dashed {
+    border-bottom: 1.5px dashed black;
+    margin: 8px 0;
     width: 100%;
   }
 
-  .ticket-item-row {
-    margin-bottom: 2px; /* Reducción de sangría vertical */
-    display: flex;
-    flex-direction: column;
-  }
-
-  .item-main {
-    display: flex;
-    font-weight: bold;
-    font-size: 18px;
-  }
-
-  .item-prices {
+  .ticket-table-header {
     display: flex;
     justify-content: space-between;
-    padding-left: 20px;
-    font-size: 16px;
+    font-size: 11px;
+    font-weight: bold;
+    color: black;
+    letter-spacing: 0.5px;
+  }
+
+  .ticket-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ticket-item-row {
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    color: black;
+  }
+
+  .item-row-top {
+    font-weight: bold;
+  }
+
+  .item-row-bottom {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .item-qty-price {
+    font-weight: 500;
+  }
+
+  .item-subtotal {
+    font-weight: bold;
   }
 
   .ticket-footer {
-    margin-top: 10px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .footer-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 2px;
-  }
-
-  .footer-row.total {
-    font-size: 26px;
+    font-size: 12px;
     font-weight: bold;
-    border-top: 2px solid #000;
-    padding-top: 5px;
+    color: black;
   }
 
-  .thanks {
+  .discount-row {
+    color: red;
+  }
+
+  .footer-row-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 900;
+    border-top: 1.5px solid black;
+    padding-top: 6px;
+    margin-top: 6px;
+    color: black;
+  }
+
+  .thanks-section {
     text-align: center;
+    margin: 15px 0 10px 0;
+    color: black;
+  }
+
+  .thanks-title {
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .thanks-subtitle {
+    font-size: 11px;
+    margin: 2px 0 0 0;
+  }
+
+  .ticket-barcode-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 15px;
-    font-style: italic;
+  }
+
+  .ticket-barcode {
+    width: 75%;
+    height: 25px;
+  }
+
+  .ticket-transaction-id {
+    font-size: 10px;
+    font-weight: bold;
+    margin-top: 4px;
+    letter-spacing: 1.5px;
+    color: black;
   }
 
   /* Eliminar cabeceras/pies de página del navegador */
