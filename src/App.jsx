@@ -44,7 +44,7 @@ function App() {
                       <Route path="/destroy" element={<DeleteProductoBDC />} />
                       <Route path="/" element={<VentasComponent />} />
 
-                      <Route path="/balance" element={<BalanceWeb />} />
+                      <Route path="/balance" element={<BalanceWeb isDarkMode={dark} />} />
                     </Routes>
                     <GlobalAiChat />
                   </MainPage>
