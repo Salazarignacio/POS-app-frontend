@@ -152,7 +152,7 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
         )}
       </div>
 
-      <div>
+      <div className="create-product-btn-wrapper">
         <ModalCreate />
       </div>
     </div>

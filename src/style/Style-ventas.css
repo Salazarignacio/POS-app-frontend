@@ -923,4 +923,12 @@ background-color: red; */
     width: 45px !important;
     height: 38px !important;
   }
+
+  .create-product-btn-wrapper {
+    display: none !important;
+  }
+
+  .container-one {
+    margin-right: 0 !important;
+  }
 }
