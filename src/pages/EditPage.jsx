@@ -5,7 +5,7 @@ import "../style/Style.css";
 import ModalUpdatePlural from "../components/ModalUpdatePlural.jsx"
 import ModalPrintPlural from "../components/ModalPrintPlural.jsx"; 
 import Skeleton from "../reutilizable/Skeleton.jsx";
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { SelectedIds } from "../context/SelectedIds.jsx";
 
 
@@ -24,11 +24,21 @@ export default function EditPage({
 }) {
   const { selectedProducts } = useContext(SelectedIds);
   const isAllSelected = productos.length > 0 && productos.every(p => selectedProducts.some(sel => sel.id == p.id));
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    // Retrasar ligeramente para asegurar que la navegación de React Router haya finalizado el renderizado
+    const timer = setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="edit-page">
       <div className="searchBar">
         <input
+          ref={searchInputRef}
           value={searchTerm}
           onChange={searchCode}
           onKeyDown={(e) => {
