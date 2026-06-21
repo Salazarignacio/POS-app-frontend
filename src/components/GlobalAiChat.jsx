@@ -75,6 +75,113 @@ export default function GlobalAiChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
+  const [isListening, setIsListening] = useState(false);
+
+  const startListening = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error("Tu navegador no soporta reconocimiento de voz");
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = "es-ES";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setIsListening(true);
+    };
+
+    recognition.onresult = (event) => {
+      const speechToText = event.results[0][0].transcript;
+      setPrompt(speechToText);
+    };
+
+    recognition.onerror = (event) => {
+      console.error(event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  const renderMessageContent = (content) => {
+    if (!content) return null;
+
+    // Detectar si hay una tabla markdown
+    const lines = content.split('\n');
+    const tableLines = lines.filter(line => line.trim().startsWith('|') && line.trim().endsWith('|'));
+    
+    if (tableLines.length >= 3) {
+      const headerRow = tableLines[0].split('|').map(c => c.trim()).filter(Boolean);
+      const dataRows = tableLines.slice(2).map(row => 
+        row.split('|').map(c => c.trim()).filter(c => c !== undefined)
+      ).filter(row => row.length > 0);
+
+      const cleanRows = dataRows.map(row => row.slice(0, headerRow.length));
+
+      return (
+        <div className="table-responsive my-2">
+          <table className="table table-sm table-bordered m-0" style={{ fontSize: '0.78rem', color: 'inherit', borderColor: 'rgba(255,255,255,0.15)' }}>
+            <thead>
+              <tr style={{ backgroundColor: 'rgba(0,0,0,0.1)' }}>
+                {headerRow.map((col, idx) => (
+                  <th key={idx} style={{ padding: '4px 8px', fontWeight: 'bold' }}>{col}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {cleanRows.map((row, rowIdx) => (
+                <tr key={rowIdx}>
+                  {row.map((cell, cellIdx) => (
+                    <td key={cellIdx} style={{ padding: '4px 8px' }}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // Procesar texto normal, listas y negritas
+    return lines.map((line, idx) => {
+      let cleanLine = line.trim();
+      if (cleanLine.startsWith('|') && cleanLine.endsWith('|')) return null;
+
+      const isBullet = cleanLine.startsWith('- ') || cleanLine.startsWith('* ');
+      if (isBullet) {
+        cleanLine = cleanLine.substring(2);
+      }
+
+      const parts = cleanLine.split(/\*\*([^*]+)\*\*/g);
+      const formattedLine = parts.map((part, partIdx) => {
+        if (partIdx % 2 === 1) {
+          return <strong key={partIdx}>{part}</strong>;
+        }
+        return part;
+      });
+
+      if (isBullet) {
+        return (
+          <li key={idx} style={{ marginLeft: '12px', marginBottom: '4px', listStyleType: 'disc' }}>
+            {formattedLine}
+          </li>
+        );
+      }
+
+      return (
+        <p key={idx} style={{ margin: '0 0 4px 0', minHeight: '1em' }}>
+          {formattedLine}
+        </p>
+      );
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!prompt.trim()) return;
@@ -280,6 +387,16 @@ export default function GlobalAiChat() {
 
   return (
     <>
+      <style>{`
+        @keyframes pulse-mic {
+          0% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.18); opacity: 1; color: #ef4444; }
+          100% { transform: scale(1); opacity: 0.8; }
+        }
+        .btn-mic.listening {
+          animation: pulse-mic 1s infinite ease-in-out !important;
+        }
+      `}</style>
       {/* Saludo Inicial */}
       {showGreeting && !isOpen && (
         <div 
@@ -375,7 +492,7 @@ export default function GlobalAiChat() {
                     wordBreak: 'break-word',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                   }}>
-                    {msg.content}
+                    {renderMessageContent(msg.content)}
                   </div>
                 ))
               )}
@@ -391,11 +508,32 @@ export default function GlobalAiChat() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   disabled={loading}
+                  style={{ paddingRight: '40px' }}
                 />
-                {loading && (
+                {loading ? (
                   <div className="position-absolute" style={{ right: '10px', top: '10px' }}>
                     <Spinner animation="border" size="sm" variant="warning" />
                   </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={startListening}
+                    className={`position-absolute btn-mic ${isListening ? 'listening' : ''}`}
+                    style={{ 
+                      right: '10px', 
+                      top: '8px', 
+                      background: 'none', 
+                      border: 'none', 
+                      color: isListening ? '#ef4444' : 'var(--font-color)', 
+                      opacity: isListening ? 1 : 0.6,
+                      cursor: 'pointer',
+                      fontSize: '1.1rem',
+                      padding: '2px',
+                    }}
+                    title="Hablar por voz"
+                  >
+                    <i className={`fa-solid ${isListening ? 'fa-microphone-lines' : 'fa-microphone'}`}></i>
+                  </button>
                 )}
               </div>
               <button 

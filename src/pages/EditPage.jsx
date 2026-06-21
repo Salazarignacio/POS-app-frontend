@@ -65,7 +65,9 @@ export default function EditPage({
           </span> {/* Placeholder para el checkbox */}
           <span className="header-item">Código</span>
           <span className="header-item">Nombre</span>
+          <span className="header-item categoria">Categoría</span>
           <span className="header-item">Precio</span>
+          <span className="header-item stock">Stock</span>
           <span className="header-item">Acciones</span>
         </div>
         {loading ? (
