@@ -31,6 +31,16 @@ export default function GlobalAiChat() {
     dragStartTime.current = Date.now();
   };
 
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    setIsDragging(true);
+    dragOffset.current = {
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y
+    };
+    dragStartTime.current = Date.now();
+  };
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
@@ -41,18 +51,35 @@ export default function GlobalAiChat() {
       setPosition({ x: newX, y: newY });
     };
 
-    const handleMouseUp = () => {
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      if (e.cancelable) e.preventDefault();
+      
+      const touch = e.touches[0];
+      const newX = Math.min(Math.max(10, touch.clientX - dragOffset.current.x), window.innerWidth - 70);
+      const newY = Math.min(Math.max(10, touch.clientY - dragOffset.current.y), window.innerHeight - 70);
+      
+      setPosition({ x: newX, y: newY });
+    };
+
+    const handleDragEnd = () => {
       setIsDragging(false);
     };
 
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleDragEnd);
+      window.addEventListener('touchcancel', handleDragEnd);
     }
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleDragEnd);
+      window.removeEventListener('touchcancel', handleDragEnd);
     };
   }, [isDragging]);
 
@@ -424,6 +451,7 @@ export default function GlobalAiChat() {
       <button 
         className={`ai-floating-button ${isOpen ? 'active' : ''}`}
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
         onClick={toggleChat}
         style={{ 
           left: `${position.x}px`, 
