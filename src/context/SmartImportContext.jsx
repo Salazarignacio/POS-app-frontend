@@ -260,6 +260,7 @@ REGLAS DE EXTRACCIÓN:
 1. Si un dato no está, usa null o 0 para stock/precio.
 2. Limpia los nombres de símbolos raros pero mantén la marca si existe.
 3. No incluyas texto extra, solo el JSON.
+4. El "codigo" debe ser puramente numérico; nunca incluyas guiones ("-"), espacios u otros caracteres especiales en él.
 
 EJEMPLO DE FORMATO ESPERADO:
 Entrada: "Cod 101 - Coca Cola 1.5L - $1200.50 (Stock: 45)"
@@ -314,6 +315,7 @@ Salida: [{"codigo": "null", "articulo": "Alfajor Havanna x12 unidades", "categor
 
       const sanitized = (Array.isArray(products) ? products : []).map((p) => ({
         ...p,
+        codigo: p.codigo ? p.codigo.toString().replace(/-/g, "").trim() : "",
         _tempId: Math.random().toString(36).substring(7),
       }));
       setExtractedProducts(sanitized);
@@ -341,6 +343,7 @@ REGLAS CRÍTICAS:
 2. NO incluyas explicaciones ni texto fuera del JSON.
 3. Mantén las propiedades: codigo, articulo, categoria, precio, stock.
 4. Si la petición pide cambiar categoría, precio o stock de "todos", aplícalo a cada objeto del array.
+5. El "codigo" debe ser puramente numérico; nunca incluyas guiones ("-"), espacios u otros caracteres especiales en él.
 
 LISTA A MODIFICAR:
 ${JSON.stringify(extractedProducts)}`;
@@ -390,6 +393,7 @@ ${JSON.stringify(extractedProducts)}`;
       if (Array.isArray(products) && products.length > 0) {
         const sanitizedProducts = products.map((p) => ({
           ...p,
+          codigo: p.codigo ? p.codigo.toString().replace(/-/g, "").trim() : "",
           _tempId: Math.random().toString(36).substring(7),
           precio: parseFloat(p.precio) || 0,
           stock: parseInt(p.stock) || 0,
@@ -432,7 +436,7 @@ ${JSON.stringify(extractedProducts)}`;
         try {
           const cleanProduct = {
             articulo: product.articulo.trim(),
-            codigo: product.codigo ? product.codigo.toString().trim() : "",
+            codigo: product.codigo ? product.codigo.toString().replace(/-/g, "").trim() : "",
             categoria: product.categoria?.trim() || "",
             precio: product.precio
               ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, "")) || 0
@@ -547,7 +551,7 @@ ${JSON.stringify(extractedProducts)}`;
         try {
           const cleanProduct = {
             articulo: product.articulo.trim(),
-            codigo: product.codigo ? product.codigo.toString().trim() : "",
+            codigo: product.codigo ? product.codigo.toString().replace(/-/g, "").trim() : "",
             categoria: product.categoria?.trim() || "",
             precio: product.precio
               ? parseFloat(product.precio.toString().replace(/[^0-9.]/g, "")) || 0

@@ -481,7 +481,24 @@ export default function SmartImport() {
             <div className="laser-line"></div>
             <div className="laser-glow"></div>
             <div className="text-center animate__animated animate__fadeIn">
-              <i className="fa-solid fa-microchip fa-4x mb-4 opacity-20"></i>
+              <div className="position-relative d-inline-block mb-4">
+                <Spinner
+                  animation="border"
+                  className="custom-spinner"
+                  style={{
+                    width: "4.5rem",
+                    height: "4.5rem",
+                    borderWidth: "5px",
+                  }}
+                />
+                <i
+                  className="fa-solid fa-microchip fa-2xl position-absolute top-50 start-50 translate-middle animate__animated animate__pulse animate__infinite"
+                  style={{
+                    color: "var(--spinner-color)",
+                    opacity: 0.8,
+                  }}
+                ></i>
+              </div>
               <h4 className="scan-text">
                 {importProgress.total > 0 
                   ? `Guardando Productos... (${importProgress.current} de ${importProgress.total})` 

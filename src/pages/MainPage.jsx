@@ -75,7 +75,7 @@ export default function MainPage({ children }) {
           <span className="tab-label d-flex align-items-center gap-2">
             IA Carga
             {aiLoading && (
-              <span className="spinner-border spinner-border-sm text-primary" style={{ width: "12px", height: "12px", borderWidth: "2px" }} role="status"></span>
+              <span className="spinner-border spinner-border-sm custom-spinner" style={{ width: "12px", height: "12px", borderWidth: "2px" }} role="status"></span>
             )}
           </span>
         </NavLink>
