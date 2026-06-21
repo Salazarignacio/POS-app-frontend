@@ -2163,6 +2163,10 @@ body.dark .input-soft:focus {
     overflow-y: auto !important;
   }
 
+  input, select, textarea, .search-input, .sell-input, .sell-input-cantidad {
+    font-size: 16px !important;
+  }
+
   .ia-carga-container {
     flex-direction: column;
     align-items: stretch;
