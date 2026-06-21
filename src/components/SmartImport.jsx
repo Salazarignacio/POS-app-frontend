@@ -576,7 +576,13 @@ export default function SmartImport() {
                   <i className="fa-solid fa-wand-magic-sparkles me-1"></i>
                   Modificar esta lista con IA
                 </label>
-                <form onSubmit={handleApplyAiToImport} className="d-flex gap-2">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleApplyAiToImport();
+                  }}
+                  className="d-flex gap-2"
+                >
                   <input
                     type="text"
                     className="search-input"
@@ -665,7 +671,13 @@ export default function SmartImport() {
                 <i className="fa-solid fa-wand-magic-sparkles me-1"></i>
                 Modificar esta lista con IA
               </label>
-              <form onSubmit={handleApplyAiToImport} className="d-flex gap-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleApplyAiToImport();
+                }}
+                className="d-flex gap-2"
+              >
                 <input
                   type="text"
                   className="search-input"
