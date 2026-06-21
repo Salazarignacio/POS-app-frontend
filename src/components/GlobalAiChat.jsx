@@ -396,6 +396,13 @@ export default function GlobalAiChat() {
         .btn-mic.listening {
           animation: pulse-mic 1s infinite ease-in-out !important;
         }
+        @keyframes msg-pop {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .ai-message-bubble {
+          animation: msg-pop 0.22s ease-out forwards;
+        }
       `}</style>
       {/* Saludo Inicial */}
       {showGreeting && !isOpen && (
@@ -481,7 +488,7 @@ export default function GlobalAiChat() {
                 </p>
               ) : (
                 history.map((msg, index) => (
-                  <div key={index} style={{ 
+                  <div key={index} className="ai-message-bubble" style={{ 
                     alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
                     backgroundColor: msg.role === 'user' ? '#f59e0b' : 'var(--white-black)',
                     color: msg.role === 'user' ? 'white' : 'var(--font-color)',

@@ -45,12 +45,11 @@
   opacity: 0.7;
 }
 
-/* PESTAÃ‘A ACTIVA */
 .tab-active {
-  background: #fcfbfb;; /* Tono arena cÃ¡lido y profesional */
+  background: #fcfbfb; /* Tono arena cálido y profesional */
   color: #f59e0b !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaÃ±a al panel */
+  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaña al panel */
   position: relative;
   z-index: 20;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
@@ -123,19 +122,18 @@ body.dark .panel-content {
 /* SCROLLBAR PERSONALIZADA */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -144,11 +142,11 @@ body.dark .panel-content {
 
 /* Modo oscuro scrollbar */
 .dark ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
