@@ -166,6 +166,7 @@ export function SmartImportProvider({ children }) {
 
   const checkProductMatches = async (products) => {
     const matches = {};
+    let updatedSome = false;
     await Promise.all(
       products.map(async (p) => {
         try {
@@ -186,6 +187,10 @@ export function SmartImportProvider({ children }) {
                 }
                 if (bestMatch) {
                   matches[p._tempId] = bestMatch;
+                  if (!hasCode && bestMatch.codigo) {
+                    p.codigo = bestMatch.codigo;
+                    updatedSome = true;
+                  }
                 }
               }
             }
@@ -196,6 +201,9 @@ export function SmartImportProvider({ children }) {
       })
     );
     setDbMatches((prev) => ({ ...prev, ...matches }));
+    if (updatedSome) {
+      setExtractedProducts([...products]);
+    }
   };
 
   const checkSingleMatch = async (tempId, articulo, codigo) => {
@@ -222,7 +230,6 @@ export function SmartImportProvider({ children }) {
           if (!bestMatch) {
             bestMatch = data.find(dbP => dbP.articulo && normalizeName(dbP.articulo) === normalizeName(articulo));
           }
-          
           setDbMatches(prev => {
             const next = { ...prev };
             if (bestMatch) {
@@ -232,6 +239,13 @@ export function SmartImportProvider({ children }) {
             }
             return next;
           });
+          if (bestMatch && !hasCode && bestMatch.codigo) {
+            setExtractedProducts(prevProducts =>
+              prevProducts.map(p =>
+                p._tempId === tempId ? { ...p, codigo: bestMatch.codigo } : p
+              )
+            );
+          }
           return;
         }
       }

@@ -2237,6 +2237,11 @@ body.dark .input-soft:focus {
     font-size: 0.95rem !important;
   }
   
+  .producto-row span.categoria,
+  .producto-row span.stock {
+    display: flex !important;
+  }
+  
   .producto-row span.check {
     justify-content: flex-start !important;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.05) !important;
