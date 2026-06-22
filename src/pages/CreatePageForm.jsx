@@ -257,13 +257,16 @@ export default function CreatePageForm({ onSave, initialData }) {
           </Form.Group>
         </div>
 
-        <Button
-          type="submit"
-          className={`w-100 mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
-          disabled={!isValid}
-        >
-          Crear producto <i className="fa-solid fa-circle-plus ms-2"></i>
-        </Button>
+        <div className="d-flex justify-content-center">
+          <Button
+            type="submit"
+            className={`mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
+            style={{ minWidth: "220px" }}
+            disabled={!isValid}
+          >
+            Crear producto <i className="fa-solid fa-circle-plus ms-2"></i>
+          </Button>
+        </div>
       </Form>
 
       {/* MODAL DE ESCANEO POR CÁMARA */}

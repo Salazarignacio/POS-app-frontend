@@ -363,21 +363,24 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
           />
         </Form.Group> */}
 
-        <Button
-          type="submit"
-          className={`w-100 mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
-          disabled={!isValid}
-        >
-          {isMultiple ? (
-            <>
-              Actualizar productos seleccionados <i className="fa-solid fa-floppy-disk ms-2"></i>
-            </>
-          ) : (
-            <>
-              Actualizar producto <i className="fa-solid fa-floppy-disk ms-2"></i>
-            </>
-          )}
-        </Button>
+        <div className="d-flex justify-content-center">
+          <Button
+            type="submit"
+            className={`mt-3 btn-form-submit ${isValid ? "btn-mas" : "btn-vacio"}`}
+            style={{ minWidth: "260px" }}
+            disabled={!isValid}
+          >
+            {isMultiple ? (
+              <>
+                Actualizar productos seleccionados <i className="fa-solid fa-floppy-disk ms-2"></i>
+              </>
+            ) : (
+              <>
+                Actualizar producto <i className="fa-solid fa-floppy-disk ms-2"></i>
+              </>
+            )}
+          </Button>
+        </div>
       </Form>
 
       {/* MODAL DE ESCANEO POR CÁMARA */}
