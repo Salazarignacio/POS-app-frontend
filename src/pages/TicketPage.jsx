@@ -268,6 +268,7 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
           disabled={prods.length === 0 || isPrinting}
         >
           <img src={printlogo} alt="Imprimir" />
+          <span className="btn-print-text">Imprimir</span>
         </Button>
         <Button
           className="btn-cancel w-100"

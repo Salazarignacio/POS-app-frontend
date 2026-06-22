@@ -779,11 +779,19 @@ background-color: red; */
     height: 48px !important;
     flex: 1 !important;
     border-radius: 12px !important;
+    flex-direction: row !important;
+    gap: 8px !important;
   }
 
   .btn-print img {
-    width: 2.2rem !important;
+    width: 30px !important;
     height: auto !important;
+  }
+
+  .btn-print-text {
+    display: inline !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
   }
 
   .btn-cancel {
@@ -995,4 +1003,8 @@ background-color: red; */
   .container-one {
     margin-right: 0 !important;
   }
+}
+
+.btn-print-text {
+  display: none;
 }
