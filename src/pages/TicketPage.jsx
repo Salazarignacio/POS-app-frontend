@@ -205,17 +205,17 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
         <h3 className="ticket-title">Resumen de Venta</h3>
 
         <div className="ticket-info">
-          <div className="ticket-row">
+          <div className="ticket-row ticket-row-meta">
             <span>
               <i className="fa-regular fa-circle-user"></i>
             </span>
             <strong>Ignacio</strong>
           </div>
-          <div className="ticket-row">
+          <div className="ticket-row ticket-row-meta">
             <i className="fa-regular fa-calendar-days"></i>
             <strong>{fechaFormateada}</strong>
           </div>
-          <div className="ticket-row">
+          <div className="ticket-row ticket-row-meta">
             <span>
               <i className="fa-regular fa-clock"></i>
             </span>
@@ -275,7 +275,7 @@ export default function TicketPage({ total, subtotal, discount, items, prods, se
           title="Cancelar Venta (F10)"
           disabled={prods.length === 0 || isPrinting}
         >
-          Cancelar Compra <i className="fa-solid fa-arrow-rotate-left"></i>
+          Cancelar <span className="btn-text-extra">Compra</span> <i className="fa-solid fa-arrow-rotate-left"></i>
         </Button>
       </div>
     </div>

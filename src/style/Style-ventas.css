@@ -745,6 +745,56 @@ background-color: red; */
     padding-top: 20px;
     min-height: auto;
   }
+
+  /* Simplificación de la vista móvil/tablet para el resumen de venta */
+  .ticket-content {
+    gap: 0.8rem !important;
+  }
+
+  .ticket-title {
+    font-size: 1.15rem !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .ticket-row-meta {
+    display: none !important;
+  }
+
+  .ticket-info {
+    padding: 0.8rem 1rem !important;
+  }
+
+  .ticket-row.total {
+    font-size: 1.5rem !important;
+    padding-top: 0.5rem !important;
+  }
+
+  .ticket-actions {
+    flex-direction: row !important;
+    gap: 12px !important;
+    margin-top: 0.8rem !important;
+  }
+
+  .btn-print {
+    height: 48px !important;
+    flex: 1 !important;
+    border-radius: 12px !important;
+  }
+
+  .btn-print img {
+    width: 2.2rem !important;
+    height: auto !important;
+  }
+
+  .btn-cancel {
+    height: 48px !important;
+    flex: 1 !important;
+    font-size: 0.95rem !important;
+  }
+
+  .btn-text-extra {
+    display: none !important;
+  }
 }
 
 /* MICRO-INTERACCION: Hover del boton eliminar del carrito */
