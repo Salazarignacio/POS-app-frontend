@@ -465,13 +465,21 @@ background-color: red; */
     visibility: visible;
   }
 
-  .printable-ticket {
+  .print-only {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
     position: absolute;
     left: 0;
     top: 0;
-    width: 80mm; /* Ancho estándar de ticketera */
-    margin: 0;
-    padding: 10px;
+    width: 100%;
+  }
+
+  .printable-ticket {
+    width: 72mm; /* Ancho seguro de impresión para papel de 80mm */
+    max-width: 100%;
+    margin: 0 auto; /* Centrado horizontal */
+    padding: 5px 10px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-weight: 600; /* Le da más cuerpo/grosor a toda la tipografía */
     font-size: 13px;
