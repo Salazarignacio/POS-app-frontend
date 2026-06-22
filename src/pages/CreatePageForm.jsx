@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { getByCode } from "../api/ProductoService";
 import { Html5Qrcode } from "html5-qrcode";
 import { toast } from "react-hot-toast";
+import { playScanBeep } from "../reutilizable/sound";
 
 export default function CreatePageForm({ onSave, initialData }) {
   const [formData, setFormData] = useState({
@@ -47,16 +48,24 @@ export default function CreatePageForm({ onSave, initialData }) {
         const config = { 
           fps: 15, 
           qrbox: (width, height) => {
-            return { width: Math.min(width * 0.85, 280), height: 120 };
+            return { width: Math.min(width * 0.85, 320), height: 160 };
           },
-          aspectRatio: 1.0
+          aspectRatio: 1.0,
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+          }
         };
 
         html5QrCode.start(
-          { facingMode: "environment" },
+          { 
+            facingMode: "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
           config,
           async (decodedText) => {
             const cleanText = decodedText.replace(/-/g, "");
+            playScanBeep();
             setFormData(prev => ({ ...prev, codigo: cleanText }));
             toast.success(`Código escaneado: ${cleanText}`);
             stopCameraScan();

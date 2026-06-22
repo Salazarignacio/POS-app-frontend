@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { Modal } from "react-bootstrap";
 import { toast } from "react-hot-toast";
+import { playScanBeep } from "./sound";
 
 export default function SearchIndex({ searchPosible, searchCode, posibles, inputRef }) {
   const [code, setCode] = useState("");
@@ -41,16 +42,24 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
         const config = { 
           fps: 15, 
           qrbox: (width, height) => {
-            return { width: Math.min(width * 0.85, 280), height: 120 };
+            return { width: Math.min(width * 0.85, 320), height: 160 };
           },
-          aspectRatio: 1.0
+          aspectRatio: 1.0,
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+          }
         };
 
         html5QrCode.start(
-          { facingMode: "environment" },
+          { 
+            facingMode: "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
           config,
           (decodedText) => {
             const cleanText = decodedText.replace(/-/g, "");
+            playScanBeep();
             handleSearch(cleanText);
             toast.success(`Código escaneado: ${cleanText}`);
             stopCameraScan();
