@@ -211,7 +211,7 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
         <button
           type="button"
           onClick={startCameraScan}
-          className="position-absolute"
+          className="position-absolute camera-scan-btn"
           style={{
             right: "12px",
             top: "50%",

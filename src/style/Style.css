@@ -2381,3 +2381,11 @@ body.dark .btn-camera-scan-input:hover {
   background-color: #1e293b !important;
 }
 
+/* Ocultar botón de escaneo con cámara en laptop y escritorio (> 900px) */
+@media (min-width: 901px) {
+  .btn-camera-scan-input,
+  .camera-scan-btn {
+    display: none !important;
+  }
+}
+

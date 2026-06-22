@@ -129,7 +129,7 @@ export default function EditPage({
           <button
             type="button"
             onClick={startCameraScan}
-            className="position-absolute"
+            className="position-absolute camera-scan-btn"
             style={{
               right: "12px",
               top: "50%",
