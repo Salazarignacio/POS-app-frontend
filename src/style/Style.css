@@ -2191,9 +2191,18 @@ body.dark .input-soft:focus {
     flex-wrap: wrap;
     height: auto !important;
     gap: 10px;
-    position: static;
-    margin-bottom: 1.5rem;
+    position: sticky !important;
+    top: -15px !important;
+    z-index: 100 !important;
+    background-color: #fcfbfb !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    margin-top: -15px !important;
+    margin-bottom: 1.5rem !important;
     width: 100%;
+  }
+  body.dark .searchBar {
+    background-color: #1e293b !important;
   }
   
   .searchBar input.search-input {
@@ -2341,3 +2350,31 @@ body.dark .input-soft:focus {
   opacity: 0.45 !important;
   font-size: 0.85rem;
 }
+
+/* --- Camera Scanning Input Button --- */
+.btn-camera-scan-input {
+  border: 1px solid #cbd5e1 !important;
+  background-color: #f1f5f9 !important;
+  border-radius: 10px !important;
+  color: var(--btn-ppal) !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body.dark .btn-camera-scan-input {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+.btn-camera-scan-input:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}
+body.dark .btn-camera-scan-input:hover {
+  border-color: #475569 !important;
+  background-color: #1e293b !important;
+}
+

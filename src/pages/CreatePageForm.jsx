@@ -1,6 +1,8 @@
-import { Form, Button } from "react-bootstrap";
-import { useState } from "react";
+import { Form, Button, Modal } from "react-bootstrap";
+import { useState, useEffect, useRef } from "react";
 import { getByCode } from "../api/ProductoService";
+import { Html5Qrcode } from "html5-qrcode";
+import { toast } from "react-hot-toast";
 
 export default function CreatePageForm({ onSave, initialData }) {
   const [formData, setFormData] = useState({
@@ -16,6 +18,85 @@ export default function CreatePageForm({ onSave, initialData }) {
   });
   const [codigoExiste, setCodigoExiste] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+
+  const [isScanning, setIsScanning] = useState(false);
+  const html5QrCodeRef = useRef(null);
+
+  const startCameraScan = () => {
+    setIsScanning(true);
+  };
+
+  const stopCameraScan = async () => {
+    if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+      try {
+        await html5QrCodeRef.current.stop();
+      } catch (err) {
+        console.error("Error stopping scanner:", err);
+      }
+    }
+    html5QrCodeRef.current = null;
+    setIsScanning(false);
+  };
+
+  useEffect(() => {
+    if (isScanning) {
+      setTimeout(() => {
+        const html5QrCode = new Html5Qrcode("create-camera-reader");
+        html5QrCodeRef.current = html5QrCode;
+
+        const config = { 
+          fps: 15, 
+          qrbox: (width, height) => {
+            return { width: Math.min(width * 0.85, 280), height: 120 };
+          },
+          aspectRatio: 1.0
+        };
+
+        html5QrCode.start(
+          { facingMode: "environment" },
+          config,
+          async (decodedText) => {
+            const cleanText = decodedText.replace(/-/g, "");
+            setFormData(prev => ({ ...prev, codigo: cleanText }));
+            toast.success(`Código escaneado: ${cleanText}`);
+            stopCameraScan();
+
+            if (cleanText.trim()) {
+              setIsValidating(true);
+              try {
+                const data = await getByCode(cleanText);
+                if (data && (Array.isArray(data) ? data.length > 0 : true)) {
+                  setCodigoExiste(true);
+                } else {
+                  setCodigoExiste(false);
+                }
+              } catch (error) {
+                console.error("Error validando código:", error);
+              } finally {
+                setIsValidating(false);
+                setTouched((prev) => ({ ...prev, codigo: true }));
+              }
+            }
+          },
+          (errorMessage) => {
+            // Silently ignore scan frame errors
+          }
+        ).catch((err) => {
+          console.error("Error starting camera reader:", err);
+          toast.error("No se pudo iniciar la cámara.");
+          setIsScanning(false);
+        });
+      }, 500);
+    } else {
+      stopCameraScan();
+    }
+
+    return () => {
+      if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+        html5QrCodeRef.current.stop().catch(err => console.error(err));
+      }
+    };
+  }, [isScanning]);
 
   const isValid =
     formData.codigo.trim() !== "" && 
@@ -79,24 +160,34 @@ export default function CreatePageForm({ onSave, initialData }) {
       <Form onSubmit={handleSubmit} className="update-form">
         <Form.Group className="mb-3">
           <Form.Label className="fw-bold">Código</Form.Label>
-          <div className="position-relative">
-            <Form.Control
-              type="text"
-              name="codigo"
-              value={formData.codigo}
-              onChange={handleChange}
-              onBlur={handleBlurCodigo}
-              placeholder="Ej: PROD-001"
-              className={`input-soft ${
-                (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
-              }`}
-            />
-            {isValidating && (
-              <div className="spinner-border spinner-border-sm text-primary position-absolute" 
-                   style={{ right: '10px', top: '12px' }} role="status">
-                <span className="visually-hidden">Validando...</span>
-              </div>
-            )}
+          <div className="d-flex gap-2">
+            <div className="position-relative flex-grow-1">
+              <Form.Control
+                type="text"
+                name="codigo"
+                value={formData.codigo}
+                onChange={handleChange}
+                onBlur={handleBlurCodigo}
+                placeholder="Ej: PROD-001"
+                className={`input-soft w-100 ${
+                  (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
+                }`}
+              />
+              {isValidating && (
+                <div className="spinner-border spinner-border-sm text-primary position-absolute" 
+                     style={{ right: '12px', top: '16px' }} role="status">
+                  <span className="visually-hidden">Validando...</span>
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={startCameraScan}
+              className="btn-camera-scan-input"
+              title="Escanear con cámara"
+            >
+              <i className="fa-solid fa-camera"></i>
+            </button>
           </div>
           {touched.codigo && !formData.codigo.trim() && (
             <div className="error-text">El código es obligatorio</div>
@@ -174,6 +265,36 @@ export default function CreatePageForm({ onSave, initialData }) {
           Crear producto <i className="fa-solid fa-circle-plus ms-2"></i>
         </Button>
       </Form>
+
+      {/* MODAL DE ESCANEO POR CÁMARA */}
+      <Modal show={isScanning} onHide={stopCameraScan} centered size="md">
+        <Modal.Header closeButton style={{ background: "var(--bg-contenedores)", color: "var(--font-color)", borderBottom: "1px solid var(--hover-color)" }}>
+          <Modal.Title className="d-flex align-items-center gap-2">
+            <i className="fa-solid fa-camera" style={{ color: "var(--btn-ppal)" }}></i>
+            <span>Escaneo de Código de Barras</span>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ background: "var(--bg-contenedores)", color: "var(--font-color)", padding: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <p className="small text-center opacity-75 mb-3">
+            Apunta la cámara trasera de tu dispositivo hacia el código de barras.
+          </p>
+          <div 
+            id="create-camera-reader" 
+            style={{ 
+              width: "100%", 
+              maxWidth: "380px", 
+              borderRadius: "12px", 
+              overflow: "hidden",
+              border: "2px solid var(--btn-ppal)" 
+            }}
+          ></div>
+        </Modal.Body>
+        <Modal.Footer style={{ background: "var(--bg-contenedores)", borderTop: "1px solid var(--hover-color)" }}>
+          <button className="btn-cancel" onClick={stopCameraScan} style={{ height: "40px", width: "120px" }}>
+            Cancelar
+          </button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

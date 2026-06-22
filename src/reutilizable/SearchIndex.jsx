@@ -50,8 +50,9 @@ export default function SearchIndex({ searchPosible, searchCode, posibles, input
           { facingMode: "environment" },
           config,
           (decodedText) => {
-            handleSearch(decodedText);
-            toast.success(`Código escaneado: ${decodedText}`);
+            const cleanText = decodedText.replace(/-/g, "");
+            handleSearch(cleanText);
+            toast.success(`Código escaneado: ${cleanText}`);
             stopCameraScan();
           },
           (errorMessage) => {

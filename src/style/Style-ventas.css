@@ -704,6 +704,20 @@ background-color: red; */
 }
 
 @media (max-width: 1100px) {
+  .searcher-container {
+    position: sticky !important;
+    top: -15px !important;
+    z-index: 100 !important;
+    background-color: #fcfbfb !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    margin-top: -15px !important;
+    margin-bottom: 1rem !important;
+  }
+  body.dark .searcher-container {
+    background-color: #1e293b !important;
+  }
+
   .ventas-container {
     flex-direction: column;
     width: 100%;
