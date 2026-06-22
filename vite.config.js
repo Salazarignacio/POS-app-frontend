@@ -9,6 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      workbox: {
+        navigateFallbackDenylist: [/^\/chrome-extension:/, /chrome-extension/]
+      },
       manifest: {
         name: 'POS System',
         short_name: 'POS',
