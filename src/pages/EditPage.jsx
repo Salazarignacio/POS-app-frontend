@@ -63,15 +63,16 @@ export default function EditPage({
           aspectRatio: 1.0,
           experimentalFeatures: {
             useBarCodeDetectorIfSupported: true
+          },
+          videoConstraints: {
+            facingMode: "environment",
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
           }
         };
 
         html5QrCode.start(
-          { 
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
+          { facingMode: "environment" },
           config,
           (decodedText) => {
             const cleanText = decodedText.replace(/-/g, "");
