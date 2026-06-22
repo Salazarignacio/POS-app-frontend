@@ -29,7 +29,9 @@ export default function EditProductoPage({ props, onPrint }) {
         </span>
         <span className="codigo">{props.codigo}</span>
         <span className="nombre">{props.articulo}</span>
+        <span className="categoria">{props.categoria || "-"}</span>
         <span className="precio">${props.precio}</span>
+        <span className="stock">{props.stock}</span>
 
         <div className="prod-edit-btn">
           <Button variant="primary" className="btn-edit" onClick={onPrint} title="Imprimir Etiqueta">

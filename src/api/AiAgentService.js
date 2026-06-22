@@ -1,4 +1,4 @@
-﻿const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY || import.meta.env.VITE_GROQ_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_KEY || import.meta.env.VITE_GROQ_API_KEY;
 
 export async function processAiAction(prompt, currentProducts, history = []) {
   if (!GROQ_API_KEY) {
@@ -38,11 +38,13 @@ REGLAS DE ORO:
 1. MEMORIA: Revisa el historial de mensajes para entender referencias como "ese", "el anterior" o "subiles más".
 2. MULTI-ACCIÓN: Puedes devolver una LISTA de acciones si el usuario pide varias cosas a la vez.
 3. PRECISIÓN: Usa los datos del CONTEXTO DE PRODUCTOS para ser exacto.
+4. FORMATO: Cuando el usuario pida resúmenes, reportes de stock, listas de productos o comparaciones, escribe la respuesta en tu campo "mensaje" usando tablas markdown (ej: | Producto | Stock | Precio |) o listas con viñetas (-) para que se visualicen ordenadas y estéticas.
 
 ESTRUCTURA DE RESPUESTA (JSON):
 {
-  "razonamiento": "Tu análisis paso a paso",
+  "razonamiento": "Tu análisis paso a paso interno",
   "intent": "objetivo_general",
+  "mensaje": "Mensaje final amigable redactado para el usuario (obligatorio si el usuario hace preguntas de stock, valorización, reporte, o si quieres confirmarle lo que vas a hacer)",
   "actions": [
     { "action": "nombre_accion", "params": { ... } }
   ]
@@ -53,11 +55,13 @@ ACCIONES DISPONIBLES:
 - set_price: { "filter": "texto", "price": 1500 }
 - update_stock: { "filter": "texto", "value": 10, "type": "set" | "add" }
 - create_product: { "data": { "articulo": "...", "codigo": "...", "precio": 0, "stock": 0, "categoria": "..." } }
+- delete_product: { "filter": "texto" } // Eliminar productos que coincidan con el filtro
 - add_to_cart: { "filter": "texto", "quantity": 1 }
 - clear_cart: {}
 - checkout: {}
 - filter_view: { "filter": "texto" }
 - print_labels: { "filter": "texto" }
+- undo: {} // Deshacer la última acción de modificación (precio o stock). Úsalo cuando el usuario pida "deshacer", "volver atrás", "deshacer cambios", "cancelar último cambio", etc.
 
 CONTEXTO DE PRODUCTOS RELEVANTES:
 ${JSON.stringify(productContext)}
@@ -66,6 +70,7 @@ EJEMPLO DE MULTI-ACCIÓN:
 Usuario: "Aumentá 10% a Coca, filtrame las cervezas e imprimí etiquetas de Arcor"
 Respuesta: {
   "razonamiento": "El usuario quiere tres cosas: cambio de precio, cambio de vista e impresión de etiquetas.",
+  "mensaje": "Perfecto, he procedido a aumentar el 10% a los productos Coca-Cola, filtré la vista para mostrar cervezas y preparé la impresión de etiquetas para Arcor.",
   "actions": [
     { "action": "update_price", "params": { "filter": "Coca", "percentage": 1.10 } },
     { "action": "filter_view", "params": { "filter": "cervezas" } },

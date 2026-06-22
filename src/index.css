@@ -1,0 +1,236 @@
+/* --- PRESET Y TIPOGRAFÍA --- */
+body {
+  font-family: 'Outfit', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background) !important;
+  transition: background-color 0.3s ease;
+}
+
+button, input, select, textarea, span, p, div, table, th, td, h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* --- GLASSMORPHISM PARA CHAT FLOTANTE IA --- */
+.ai-chat-popup {
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 24px !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08), 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.dark .ai-chat-popup {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 
+    0 20px 45px rgba(0, 0, 0, 0.25), 
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.ai-chat-header {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 800 !important;
+}
+
+.ai-chat-body {
+  background: transparent !important;
+}
+
+/* Burbuja de Saludo con Glassmorphism */
+.ai-greeting-bubble {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
+  font-weight: 500 !important;
+  animation: smoothPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+.dark .ai-greeting-bubble {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.ai-greeting-bubble::after {
+  border-color: transparent rgba(255, 255, 255, 0.8) transparent transparent !important;
+}
+
+.dark .ai-greeting-bubble::after {
+  border-color: transparent rgba(30, 41, 59, 0.8) transparent transparent !important;
+}
+
+/* Bubbles del Historial de Chat */
+.ai-message-bubble {
+  border-radius: 16px !important;
+  padding: 10px 14px !important;
+  font-size: 0.82rem !important;
+  line-height: 1.4 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Mensajes del usuario con gradiente elegante */
+.ai-message-bubble[style*="background-color: rgb(245, 158, 11)"],
+.ai-message-bubble[style*="background-color: #f59e0b"] {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25) !important;
+  border: none !important;
+  color: white !important;
+}
+
+/* Mensajes del asistente con fondo suave */
+.ai-message-bubble[style*="background-color: var(--white-black)"] {
+  background: rgba(241, 245, 249, 0.6) !important;
+  border: 1px solid rgba(0, 0, 0, 0.03) !important;
+}
+
+.dark .ai-message-bubble[style*="background-color: var(--white-black)"] {
+  background: rgba(51, 65, 85, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+/* --- EFECTOS DE MOVIMIENTO Y SOLAPAS --- */
+.tabs-header {
+  gap: 6px;
+}
+
+.tab-link {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  border: 1px solid transparent !important;
+  border-radius: 16px 16px 0 0 !important;
+}
+
+.tab-link:hover:not(.tab-active) {
+  background: rgba(245, 158, 11, 0.06) !important;
+  color: #d97706 !important;
+  transform: translateY(-2px);
+}
+
+.tab-active {
+  background: #ffffff !important;
+  color: #d97706 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 3px solid #ffffff !important;
+  position: relative;
+  z-index: 20 !important;
+  margin-bottom: -1px !important;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03) !important;
+  transform: none !important;
+}
+
+.dark .tab-active {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-bottom: 3px solid #1e293b !important;
+  color: #f59e0b !important;
+}
+
+.panel-content {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  z-index: 5;
+}
+
+.dark .panel-content {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* --- BOTONES PREMIUM Y SOMBRAS --- */
+.btn-mas, .btn-print, .btn-confirm-save, .btn-new, .btn-form-submit {
+  border-radius: 12px !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+  font-weight: 600 !important;
+}
+
+.btn-mas:hover, .btn-form-submit:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3) !important;
+}
+
+.btn-print:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3) !important;
+}
+
+.btn-confirm-save:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* --- INPUTS PREMIUM CON ANIMACIÓN DE FOCO --- */
+.search-input {
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(0, 0, 0, 0.1) !important;
+  padding: 10px 16px !important;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+.search-input:focus {
+  border-color: #f59e0b !important;
+  box-shadow: 
+    0 0 0 4px rgba(245, 158, 11, 0.18), 
+    0 4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* --- ANIMACIÓN MICRO-INTERACCIONES EN VENTAS --- */
+@keyframes itemSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.carrito-container {
+  animation: itemSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transition: all 0.3s ease;
+  border-radius: 12px !important;
+}
+
+.carrito-container:hover {
+  background: var(--hover-color) !important;
+  transform: translateX(4px);
+}
+
+/* Animación sutil de pulso al actualizar total */
+@keyframes pulseTotal {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); color: #f59e0b; }
+  100% { transform: scale(1); }
+}
+
+.total-animado {
+  animation: pulseTotal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* --- ANIMACIÓN ONDAS MICRÓFONO IA --- */
+@keyframes micWave {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+}
+
+.btn-mic.listening {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  animation: micWave 1.2s infinite ease-out !important;
+}
+

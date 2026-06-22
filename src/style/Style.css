@@ -45,12 +45,11 @@
   opacity: 0.7;
 }
 
-/* PESTAÃ‘A ACTIVA */
 .tab-active {
-  background: #fcfbfb;; /* Tono arena cÃ¡lido y profesional */
+  background: #fcfbfb; /* Tono arena cálido y profesional */
   color: #f59e0b !important;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaÃ±a al panel */
+  border-bottom: 3px solid #fcfbfb; /* Une visualmente la pestaña al panel */
   position: relative;
   z-index: 20;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.02);
@@ -85,7 +84,7 @@
   flex: 1;
   background: #fcfbfb; /* Mismo tono que la pestaÃ±a activa */
   border-radius: 0 24px 24px 24px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  /* border: 1px solid rgba(0, 0, 0, 0.08); */
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
   padding: 15px;
   padding-top:25px;
@@ -123,19 +122,18 @@ body.dark .panel-content {
 /* SCROLLBAR PERSONALIZADA */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 10px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 10px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -144,11 +142,11 @@ body.dark .panel-content {
 
 /* Modo oscuro scrollbar */
 .dark ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
@@ -724,7 +722,7 @@ img:hover {
 .ticket-ventas {
   background: #ffffff !important;
   border-radius: 12px;
-  padding: 20px !important;
+  padding: 11px !important;
   /* Sombreado de contorno para efecto de elevaciÃ³n sutil */
   box-shadow: 
     0 2px 4px rgba(0,0,0,0.02),
@@ -1760,8 +1758,8 @@ body.dark .input-soft:focus {
 }
 
 .ia-carga-upload {
-  border: 2px dashed var(--btn-ppal);
-  background: rgba(224, 218, 208, 0.74);
+  border: 2px dashed rgba(245, 158, 11, 0.35);
+  background: var(--white-black);
   cursor: pointer;
   border-radius: 20px;
   min-height: 250px;
@@ -1773,17 +1771,31 @@ body.dark .input-soft:focus {
   gap: 15px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 30px;
+  position: relative;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.dark .ia-carga-upload {
+  border: 2px dashed rgba(245, 158, 11, 0.25);
+  background: rgba(30, 41, 59, 0.4);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .ia-carga-upload:hover, .ia-carga-upload.is-dragging {
-  background: rgba(245, 158, 11, 0.1);
-  transform: translateY(-4px);
-  border-style: solid;
+  background: rgba(245, 158, 11, 0.08);
   border-color: #f59e0b;
+  border-style: solid;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.06), inset 0 2px 8px rgba(0, 0, 0, 0.01);
+}
+
+.dark .ia-carga-upload:hover, .dark .ia-carga-upload.is-dragging {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: #f59e0b;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .ia-carga-upload.is-dragging {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
   scale: 1.02;
 }
 
@@ -2150,6 +2162,14 @@ body.dark .input-soft:focus {
 }
 
 @media (max-width: 1100px) {
+  .panel-content {
+    overflow-y: auto !important;
+  }
+
+  input, select, textarea, .search-input, .sell-input, .sell-input-cantidad {
+    font-size: 16px !important;
+  }
+
   .ia-carga-container {
     flex-direction: column;
     align-items: stretch;
@@ -2174,9 +2194,18 @@ body.dark .input-soft:focus {
     flex-wrap: wrap;
     height: auto !important;
     gap: 10px;
-    position: static;
-    margin-bottom: 1.5rem;
+    position: sticky !important;
+    top: -15px !important;
+    z-index: 100 !important;
+    background-color: #fcfbfb !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    margin-top: -15px !important;
+    margin-bottom: 1.5rem !important;
     width: 100%;
+  }
+  body.dark .searchBar {
+    background-color: #1e293b !important;
   }
   
   .searchBar input.search-input {
@@ -2228,6 +2257,11 @@ body.dark .input-soft:focus {
     font-size: 0.95rem !important;
   }
   
+  .producto-row span.categoria,
+  .producto-row span.stock {
+    display: flex !important;
+  }
+  
   .producto-row span.check {
     justify-content: flex-start !important;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.05) !important;
@@ -2270,3 +2304,80 @@ body.dark .input-soft:focus {
     border-radius: 12px 12px 0 0;
   }
 }
+
+/* --- Columnas de Stock y Categoría en Edición (Escritorio únicamente) --- */
+
+/* Ocultar en móviles y tablets de forma predeterminada */
+.productos-header span.categoria, .producto-row span.categoria,
+.productos-header span.stock, .producto-row span.stock {
+  display: none !important;
+}
+
+/* Mostrar únicamente en vista escritorio (> 900px) */
+@media (min-width: 901px) {
+  .productos-header, .producto-row {
+    grid-template-columns: 0.3fr 1.2fr 2.5fr 1.2fr 1fr 1fr auto !important;
+  }
+  .productos-header span.categoria, .producto-row span.categoria,
+  .productos-header span.stock, .producto-row span.stock {
+    display: block !important;
+  }
+}
+
+/* --- Refinamiento de Estados Vacíos (Empty States) --- */
+.no-products {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.no-products i {
+  color: var(--font-color) !important;
+  opacity: 0.25 !important;
+  margin-bottom: 1rem;
+}
+
+.no-products h3, .no-products p.fs-5 {
+  color: var(--font-color) !important;
+  opacity: 0.65 !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.25rem;
+}
+
+.no-products p.small, .no-products p.opacity-40 {
+  color: var(--font-color) !important;
+  opacity: 0.45 !important;
+  font-size: 0.85rem;
+}
+
+/* --- Camera Scanning Input Button --- */
+.btn-camera-scan-input {
+  border: 1px solid #cbd5e1 !important;
+  background-color: #f1f5f9 !important;
+  border-radius: 10px !important;
+  color: var(--btn-ppal) !important;
+  width: 46px !important;
+  height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+}
+body.dark .btn-camera-scan-input {
+  background-color: #0f172a !important;
+  border-color: #334155 !important;
+}
+.btn-camera-scan-input:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}
+body.dark .btn-camera-scan-input:hover {
+  border-color: #475569 !important;
+  background-color: #1e293b !important;
+}
+
