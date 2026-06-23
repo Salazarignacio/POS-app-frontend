@@ -812,9 +812,12 @@ img:hover {
   margin-bottom: 2rem;
   position: sticky;
   top: 0;
+  z-index: 100;
+  background-color: #fcfbfb;
+  gap: 15px;
 }
-.searchBar input {
-  width: 68vw;
+body.dark .searchBar {
+  background-color: #1e293b;
 }
 li {
   list-style-type: none;
@@ -2426,6 +2429,7 @@ body.dark .win-context-menu {
   width: 100% !important;
   padding: 8px 16px !important;
   text-align: left !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
 }
 
 .win-menu-item input[type="radio"] {
@@ -2438,9 +2442,14 @@ body.dark .win-context-menu {
   flex-grow: 1 !important;
 }
 
-.win-menu-item:hover {
+.win-menu-item:hover,
+.win-menu-item.active {
   background-color: var(--hover-color) !important;
   color: #f59e0b !important;
+}
+
+.win-menu-item.active {
+  font-weight: 600 !important;
 }
 
 

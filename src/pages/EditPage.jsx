@@ -188,13 +188,15 @@ export default function EditPage({
               background: "none",
               border: "none",
               color: "var(--btn-ppal)",
-              cursor: "pointer",
+              cursor: (searchCriteria !== "codigo" && searchCriteria !== "todos") ? "not-allowed" : "pointer",
+              opacity: (searchCriteria !== "codigo" && searchCriteria !== "todos") ? 0.45 : 1,
               fontSize: "1.25rem",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               padding: "4px",
-              zIndex: 5
+              zIndex: 5,
+              transition: "opacity 0.2s ease"
             }}
             title="Escanear con cámara"
             disabled={searchCriteria !== "codigo" && searchCriteria !== "todos"}
@@ -218,11 +220,11 @@ export default function EditPage({
                 flexDirection: "column"
               }}
             >
-              <div style={{ padding: "6px 12px", fontSize: "0.75rem", fontWeight: "bold", opacity: 0.6, borderBottom: "1px solid var(--hover-color)", marginBottom: "4px", textAlign: "left" }}>
+              <div style={{ padding: "6px 12px", fontSize: "0.75rem", fontWeight: "bold", opacity: 0.6, borderBottom: "1px solid var(--white-black)", marginBottom: "4px", textAlign: "left" }}>
                 CRITERIO DE BÚSQUEDA
               </div>
               <label 
-                className="win-menu-item"
+                className={`win-menu-item ${searchCriteria === "todos" ? "active" : ""}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -243,12 +245,15 @@ export default function EditPage({
                     onChangeCriteria("todos");
                     setShowMenu(false);
                   }}
-                  style={{ cursor: "pointer" }}
+                  style={{ display: "none" }}
                 />
+                <span className="menu-check-icon" style={{ width: "16px", display: "inline-flex", justifyContent: "center" }}>
+                  {searchCriteria === "todos" && <i className="fa-solid fa-check" style={{ color: "#f59e0b" }}></i>}
+                </span>
                 <span>Todos</span>
               </label>
               <label 
-                className="win-menu-item"
+                className={`win-menu-item ${searchCriteria === "codigo" ? "active" : ""}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -269,12 +274,15 @@ export default function EditPage({
                     onChangeCriteria("codigo");
                     setShowMenu(false);
                   }}
-                  style={{ cursor: "pointer" }}
+                  style={{ display: "none" }}
                 />
+                <span className="menu-check-icon" style={{ width: "16px", display: "inline-flex", justifyContent: "center" }}>
+                  {searchCriteria === "codigo" && <i className="fa-solid fa-check" style={{ color: "#f59e0b" }}></i>}
+                </span>
                 <span>Código</span>
               </label>
               <label 
-                className="win-menu-item"
+                className={`win-menu-item ${searchCriteria === "articulo" ? "active" : ""}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -295,12 +303,15 @@ export default function EditPage({
                     onChangeCriteria("articulo");
                     setShowMenu(false);
                   }}
-                  style={{ cursor: "pointer" }}
+                  style={{ display: "none" }}
                 />
+                <span className="menu-check-icon" style={{ width: "16px", display: "inline-flex", justifyContent: "center" }}>
+                  {searchCriteria === "articulo" && <i className="fa-solid fa-check" style={{ color: "#f59e0b" }}></i>}
+                </span>
                 <span>Nombre</span>
               </label>
               <label 
-                className="win-menu-item"
+                className={`win-menu-item ${searchCriteria === "categoria" ? "active" : ""}`}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -321,8 +332,11 @@ export default function EditPage({
                     onChangeCriteria("categoria");
                     setShowMenu(false);
                   }}
-                  style={{ cursor: "pointer" }}
+                  style={{ display: "none" }}
                 />
+                <span className="menu-check-icon" style={{ width: "16px", display: "inline-flex", justifyContent: "center" }}>
+                  {searchCriteria === "categoria" && <i className="fa-solid fa-check" style={{ color: "#f59e0b" }}></i>}
+                </span>
                 <span>Categoría</span>
               </label>
             </div>
