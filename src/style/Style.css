@@ -2389,3 +2389,60 @@ body.dark .btn-camera-scan-input:hover {
   }
 }
 
+/* --- Filter Modal Button in Search Bar --- */
+.filter-modal-btn {
+  color: var(--font-color) !important;
+  opacity: 0.6;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.filter-modal-btn:hover {
+  opacity: 1;
+  color: #f59e0b !important;
+}
+
+/* --- Windows Context Menu Styles --- */
+.win-context-menu {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  z-index: 99999 !important;
+}
+
+body.dark .win-context-menu {
+  background-color: #1e293b !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.win-menu-item {
+  color: var(--font-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 8px 16px !important;
+  text-align: left !important;
+}
+
+.win-menu-item input[type="radio"] {
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.win-menu-item span {
+  text-align: left !important;
+  flex-grow: 1 !important;
+}
+
+.win-menu-item:hover {
+  background-color: var(--hover-color) !important;
+  color: #f59e0b !important;
+}
+
+
+
+

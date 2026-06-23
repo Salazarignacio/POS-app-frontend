@@ -73,3 +73,22 @@ export async function getByCode(code) {
     return []; // En caso de error, retornamos array vacío para no romper el front
   }
 }
+
+export async function filterProducts({ articulo, categoria, codigo } = {}) {
+  try {
+    const params = new URLSearchParams();
+    if (articulo) params.append("articulo", articulo);
+    if (categoria) params.append("categoria", categoria);
+    if (codigo) params.append("codigo", codigo);
+
+    const res = await fetch(`${BASE_URL}/filtrar?${params.toString()}`);
+    if (!res.ok) {
+      throw new Error("Error al filtrar productos");
+    }
+    return await res.json();
+  } catch (err) {
+    console.error("Error en filterProducts:", err);
+    return [];
+  }
+}
+

@@ -24,7 +24,9 @@ export default function EditPage({
   onCloseSmartModal,
   printSingle,
   printMultiple,
-  clearSearch
+  clearSearch,
+  searchCriteria,
+  onChangeCriteria
 }) {
   const { selectedProducts } = useContext(SelectedIds);
   const isAllSelected = productos.length > 0 && productos.every(p => selectedProducts.some(sel => sel.id == p.id));
@@ -32,6 +34,19 @@ export default function EditPage({
 
   const [isScanning, setIsScanning] = useState(false);
   const html5QrCodeRef = useRef(null);
+
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const startCameraScan = () => {
     setIsScanning(true);
@@ -118,7 +133,7 @@ export default function EditPage({
   return (
     <div className="edit-page">
       <div className="searchBar">
-        <div className="position-relative flex-grow-1" style={{ minWidth: "200px" }}>
+        <div className="position-relative flex-grow-1" style={{ minWidth: "200px" }} ref={menuRef}>
           <input
             ref={searchInputRef}
             value={searchTerm}
@@ -129,15 +144,45 @@ export default function EditPage({
               }
             }}
             className="search-input w-100"
-            placeholder="Código producto"
-            style={{ paddingRight: "45px" }}
+            placeholder={
+              searchCriteria === "articulo"
+                ? "Buscar por Nombre..."
+                : searchCriteria === "categoria"
+                ? "Buscar por Categoría..."
+                : searchCriteria === "codigo"
+                ? "Buscar por Código..."
+                : "Buscar por Código, Nombre o Categoría..."
+            }
+            style={{ paddingRight: "75px" }}
           />
+          <button
+            type="button"
+            onClick={() => setShowMenu(!showMenu)}
+            className="position-absolute filter-modal-btn"
+            style={{
+              right: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "1.25rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "4px",
+              zIndex: 5
+            }}
+            title="Seleccionar criterio de búsqueda"
+          >
+            <i className="fa-solid fa-sliders"></i>
+          </button>
           <button
             type="button"
             onClick={startCameraScan}
             className="position-absolute camera-scan-btn"
             style={{
-              right: "12px",
+              right: "42px",
               top: "50%",
               transform: "translateY(-50%)",
               background: "none",
@@ -152,9 +197,136 @@ export default function EditPage({
               zIndex: 5
             }}
             title="Escanear con cámara"
+            disabled={searchCriteria !== "codigo" && searchCriteria !== "todos"}
           >
             <i className="fa-solid fa-camera"></i>
           </button>
+
+          {/* Windows-like Context Menu */}
+          {showMenu && (
+            <div 
+              className="win-context-menu"
+              style={{
+                position: "absolute",
+                right: "12px",
+                top: "calc(100% + 5px)",
+                width: "180px",
+                borderRadius: "6px",
+                padding: "4px 0",
+                zIndex: 99999,
+                display: "flex",
+                flexDirection: "column"
+              }}
+            >
+              <div style={{ padding: "6px 12px", fontSize: "0.75rem", fontWeight: "bold", opacity: 0.6, borderBottom: "1px solid var(--hover-color)", marginBottom: "4px", textAlign: "left" }}>
+                CRITERIO DE BÚSQUEDA
+              </div>
+              <label 
+                className="win-menu-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  margin: "0",
+                  transition: "background 0.15s"
+                }}
+              >
+                <input 
+                  type="radio" 
+                  name="searchCriteria" 
+                  value="todos" 
+                  checked={searchCriteria === "todos"} 
+                  onChange={() => {
+                    onChangeCriteria("todos");
+                    setShowMenu(false);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+                <span>Todos</span>
+              </label>
+              <label 
+                className="win-menu-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  margin: "0",
+                  transition: "background 0.15s"
+                }}
+              >
+                <input 
+                  type="radio" 
+                  name="searchCriteria" 
+                  value="codigo" 
+                  checked={searchCriteria === "codigo"} 
+                  onChange={() => {
+                    onChangeCriteria("codigo");
+                    setShowMenu(false);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+                <span>Código</span>
+              </label>
+              <label 
+                className="win-menu-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  margin: "0",
+                  transition: "background 0.15s"
+                }}
+              >
+                <input 
+                  type="radio" 
+                  name="searchCriteria" 
+                  value="articulo" 
+                  checked={searchCriteria === "articulo"} 
+                  onChange={() => {
+                    onChangeCriteria("articulo");
+                    setShowMenu(false);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+                <span>Nombre</span>
+              </label>
+              <label 
+                className="win-menu-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  margin: "0",
+                  transition: "background 0.15s"
+                }}
+              >
+                <input 
+                  type="radio" 
+                  name="searchCriteria" 
+                  value="categoria" 
+                  checked={searchCriteria === "categoria"} 
+                  onChange={() => {
+                    onChangeCriteria("categoria");
+                    setShowMenu(false);
+                  }}
+                  style={{ cursor: "pointer" }}
+                />
+                <span>Categoría</span>
+              </label>
+            </div>
+          )}
         </div>
 
         <ModalCreate />
@@ -164,9 +336,9 @@ export default function EditPage({
           initialData={smartCreateData}
         />
        <ModalUpdatePlural clearSearch={clearSearch}></ModalUpdatePlural>
-       <ModalPrintPlural printMultiple={() => {
-         printMultiple(selectedProducts);
-       }}></ModalPrintPlural>
+        <ModalPrintPlural printMultiple={() => {
+          printMultiple(selectedProducts);
+        }}></ModalPrintPlural>
       </div>
 
       <div className="scroll ">

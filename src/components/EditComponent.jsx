@@ -1,4 +1,4 @@
-import { getAll, getByCode } from "../api/ProductoService";
+import { getAll, getByCode, filterProducts } from "../api/ProductoService";
 import { useState, useEffect, useContext } from "react";   
 import EditPage from "../pages/EditPage";
 import { ProductContext } from "../context/ProductContext";
@@ -13,6 +13,7 @@ export default function EditComponent() {
   const { printSingle, printMultiple: providerPrintMultiple } = usePrint();
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCriteria, setSearchCriteria] = useState("todos");
 
   const [smartCreateData, setSmartCreateData] = useState(null);
   const [showSmartModal, setShowSmartModal] = useState(false);
@@ -29,13 +30,23 @@ export default function EditComponent() {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (searchTerm) {
-        setLoading(true);
-      }
+      setLoading(true);
 
-      const request = searchTerm
-        ? getByCode(searchTerm)
-        : getAll();
+      let request;
+      if (searchTerm) {
+        if (searchCriteria === "todos") {
+          request = getByCode(searchTerm);
+        } else {
+          const params = {
+            articulo: searchCriteria === "articulo" ? searchTerm : "",
+            categoria: searchCriteria === "categoria" ? searchTerm : "",
+            codigo: searchCriteria === "codigo" ? searchTerm : ""
+          };
+          request = filterProducts(params);
+        }
+      } else {
+        request = getAll();
+      }
 
       request
         .then((data) => {
@@ -49,7 +60,7 @@ export default function EditComponent() {
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, renderProducts]);
+  }, [searchTerm, searchCriteria, renderProducts]);
 
   const searchCode = (e) => {
     setSearchTerm(e.target.value);
@@ -106,6 +117,8 @@ export default function EditComponent() {
         printSingle={printSingle}
         printMultiple={handlePrintMultiple}
         clearSearch={clearSearch}
+        searchCriteria={searchCriteria}
+        onChangeCriteria={(criteria) => setSearchCriteria(criteria)}
       />
     </div>
   );
