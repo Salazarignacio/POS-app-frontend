@@ -4,7 +4,7 @@ import ModalUpdate from "../components/ModalUpdate.jsx";
 import { SelectedIds } from "../context/SelectedIds.jsx";
 import { Button } from "react-bootstrap";
 
-export default function EditProductoPage({ props, onPrint }) {
+export default function EditProductoPage({ props, onPrint, clearSearch }) {
   const { selectedProducts, setSelectedProducts } = useContext(SelectedIds); 
   const handleSelect = (product, checked) => {
     setSelectedProducts((prev) => {
@@ -15,6 +15,9 @@ export default function EditProductoPage({ props, onPrint }) {
         return prev.filter((p) => p.id != product.id);
       }
     });
+    if (checked && clearSearch) {
+      clearSearch();
+    }
   };
 
   return (

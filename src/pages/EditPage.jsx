@@ -109,6 +109,12 @@ export default function EditPage({
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      searchInputRef.current?.focus();
+    }
+  }, [searchTerm]);
+
   return (
     <div className="edit-page">
       <div className="searchBar">
@@ -181,8 +187,22 @@ export default function EditPage({
           <span className="header-item stock">Stock</span>
           <span className="header-item">Acciones</span>
         </div>
+        {/* 1. Renderizar siempre los productos seleccionados al principio */}
+        {productos
+          .filter((p) => selectedProducts.some((sel) => sel.id == p.id))
+          .map((element) => (
+            <div key={element.id}>
+              <EditProductoPage 
+                props={element} 
+                onPrint={() => printSingle(element)}
+                clearSearch={clearSearch}
+              />
+            </div>
+          ))}
+
+        {/* 2. Renderizar los no seleccionados o el cargando */}
         {loading ? (
-          <Skeleton count={8} />
+          <Skeleton count={5} />
         ) : productos.length < 1 ? (
           <div className="no-products">
             <div className="text-center py-5">
@@ -192,16 +212,17 @@ export default function EditPage({
             </div>
           </div>
         ) : (
-          productos.map((element, a) => {
-            return (
-              <div key={a} className="">
+          productos
+            .filter((p) => !selectedProducts.some((sel) => sel.id == p.id))
+            .map((element) => (
+              <div key={element.id}>
                 <EditProductoPage 
                   props={element} 
                   onPrint={() => printSingle(element)}
-                ></EditProductoPage>
+                  clearSearch={clearSearch}
+                />
               </div>
-            );
-          })
+            ))
         )}
       </div>
 

@@ -29,7 +29,9 @@ export default function EditComponent() {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      setLoading(true);
+      if (searchTerm) {
+        setLoading(true);
+      }
 
       const request = searchTerm
         ? getByCode(searchTerm)
