@@ -6,6 +6,9 @@ import { Button } from "react-bootstrap";
 
 export default function EditProductoPage({ props, onPrint, clearSearch }) {
   const { selectedProducts, setSelectedProducts } = useContext(SelectedIds); 
+
+  const isChecked = selectedProducts.some((p) => p.id == props.id);
+
   const handleSelect = (product, checked) => {
     setSelectedProducts((prev) => {
       if (checked) {
@@ -20,13 +23,25 @@ export default function EditProductoPage({ props, onPrint, clearSearch }) {
     }
   };
 
+  const toggleSelect = (e) => {
+    // Evitar disparar la selección si se hace click en los botones de acción o en el checkbox mismo
+    if (e.target.closest(".prod-edit-btn") || e.target.type === "checkbox") {
+      return;
+    }
+    handleSelect(props, !isChecked);
+  };
+
   return (
     <ul className="productos-edit">
-      <li className="producto-row">
+      <li 
+        className={`producto-row ${isChecked ? "selected" : ""}`} 
+        onClick={toggleSelect} 
+        style={{ cursor: "pointer" }}
+      >
         <span className="check">
           <input
             type="checkbox"
-            checked={selectedProducts.some((p) => p.id == props.id)}
+            checked={isChecked}
             onChange={(e) => handleSelect(props, e.target.checked)}
           />
         </span>

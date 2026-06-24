@@ -917,6 +917,11 @@ li {
 .producto-row:hover {
   background-color: var(--hover-color);
 }
+
+.producto-row.selected {
+  background-color: var(--hover-color) !important;
+  border-left: 3px solid #f59e0b !important;
+}
 .producto-row {
   font-size: 0.9rem;
   font-weight: 400;
