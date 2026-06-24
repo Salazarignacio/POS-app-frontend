@@ -28,6 +28,10 @@ export default function EditProductoPage({ props, onPrint, clearSearch }) {
     if (e.target.closest(".prod-edit-btn") || e.target.type === "checkbox") {
       return;
     }
+    // Evitar si el click se originó fuera del elemento en el DOM (por ejemplo, desde un Modal Portal)
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
     handleSelect(props, !isChecked);
   };
 
