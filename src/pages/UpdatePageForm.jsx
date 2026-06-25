@@ -219,82 +219,84 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
         </div>
       )}
       <Form onSubmit={handleSubmit} className="update-form">
-        {!isMultiple && (
-          <Form.Group className="mb-3">
-            <Form.Label className="fw-bold">Código</Form.Label>
-            <div className="d-flex gap-2">
-              <div className="position-relative flex-grow-1">
-                <Form.Control
-                  type="text"
-                  name="codigo"
-                  value={formData.codigo}
-                  onChange={handleChange}
-                  onBlur={handleBlurCodigo}
-                  placeholder="Código único"
-                  className={`input-soft w-100 ${
-                    (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
-                  }`}
-                />
-                {isValidating && (
-                  <div className="spinner-border spinner-border-sm text-primary position-absolute" 
-                       style={{ right: '12px', top: '16px' }} role="status">
-                    <span className="visually-hidden">Validando...</span>
-                  </div>
-                )}
+        <div className="form-card-group">
+          {!isMultiple && (
+            <Form.Group className="mb-3">
+              <Form.Label className="fw-bold">Código</Form.Label>
+              <div className="d-flex gap-2">
+                <div className="position-relative flex-grow-1">
+                  <Form.Control
+                    type="text"
+                    name="codigo"
+                    value={formData.codigo}
+                    onChange={handleChange}
+                    onBlur={handleBlurCodigo}
+                    placeholder="Código único"
+                    className={`input-soft w-100 ${
+                      (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
+                    }`}
+                  />
+                  {isValidating && (
+                    <div className="spinner-border spinner-border-sm text-primary position-absolute" 
+                         style={{ right: '12px', top: '16px' }} role="status">
+                      <span className="visually-hidden">Validando...</span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={startCameraScan}
+                  className="btn-camera-scan-input"
+                  title="Escanear con cámara"
+                >
+                  <i className="fa-solid fa-camera"></i>
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={startCameraScan}
-                className="btn-camera-scan-input"
-                title="Escanear con cámara"
-              >
-                <i className="fa-solid fa-camera"></i>
-              </button>
-            </div>
-            {touched.codigo && !formData.codigo.trim() && (
-              <div className="error-text">El código es obligatorio</div>
-            )}
-            {codigoExiste && (
-              <div className="error-text">Este código ya pertenece a otro producto</div>
+              {touched.codigo && !formData.codigo.trim() && (
+                <div className="error-text">El código es obligatorio</div>
+              )}
+              {codigoExiste && (
+                <div className="error-text">Este código ya pertenece a otro producto</div>
+              )}
+            </Form.Group>
+          )}
+
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">
+              {isMultiple ? "Nuevo nombre (opcional)" : "Nombre del artículo"}
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="articulo"
+              value={formData.articulo}
+              onChange={handleChange}
+              onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
+              placeholder={isMultiple ? "Dejar vacío para mantener original" : "Nombre descriptivo"}
+              className={`input-soft ${
+                !isMultiple && touched.articulo && !formData.articulo.trim() ? "input-error" : ""
+              }`}
+            />
+            {!isMultiple && touched.articulo && !formData.articulo.trim() && (
+              <div className="error-text">
+                El nombre del artículo es obligatorio
+              </div>
             )}
           </Form.Group>
-        )}
 
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">
-            {isMultiple ? "Nuevo nombre (opcional)" : "Nombre del artículo"}
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="articulo"
-            value={formData.articulo}
-            onChange={handleChange}
-            onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
-            placeholder={isMultiple ? "Dejar vacío para mantener original" : "Nombre descriptivo"}
-            className={`input-soft ${
-              !isMultiple && touched.articulo && !formData.articulo.trim() ? "input-error" : ""
-            }`}
-          />
-          {!isMultiple && touched.articulo && !formData.articulo.trim() && (
-            <div className="error-text">
-              El nombre del artículo es obligatorio
-            </div>
-          )}
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">
-            {isMultiple ? "Nueva categoría (opcional)" : "Categoría"}
-          </Form.Label>
-          <Form.Control
-            type="text"
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleChange}
-            placeholder={isMultiple ? "Mantener original" : ""}
-            className="input-soft"
-          />
-        </Form.Group>
+          <Form.Group className="mb-0">
+            <Form.Label className="fw-bold">
+              {isMultiple ? "Nueva categoría (opcional)" : "Categoría"}
+            </Form.Label>
+            <Form.Control
+              type="text"
+              name="categoria"
+              value={formData.categoria}
+              onChange={handleChange}
+              placeholder={isMultiple ? "Mantener original" : ""}
+              className="input-soft"
+            />
+          </Form.Group>
+        </div>
 
         <div className="form-row-2">
           <Form.Group>
@@ -336,7 +338,7 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
                 modoPrecio === "precio" ? formData.precio : formData.porcentaje
               }
               onChange={handleChange}
-              className="input-soft"
+              className="input-pill"
             />
             {isMultiple && modoPrecio === "porcentaje" && formData.porcentaje && (
               <div className="text-primary x-small mt-1" style={{ fontSize: '0.75rem' }}>
@@ -357,21 +359,10 @@ export default function UpdatePageForm({ updateFn, producto, isMultiple }) {
               value={formData.stock}
               onChange={handleChange}
               placeholder={isMultiple ? "Opcional" : "0"}
-              className="input-soft"
+              className="input-pill"
             />
           </Form.Group>
         </div>
-
-{/*         <Form.Group>
-          <Form.Label>Proveedor / Marca</Form.Label>
-          <Form.Control
-            type="number"
-            name="proveedor"
-            value={formData.proveedor}
-            onChange={handleChange}
-            className="input-soft"
-          />
-        </Form.Group> */}
 
         <div className="d-flex justify-content-center">
           <Button

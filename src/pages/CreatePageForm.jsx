@@ -168,76 +168,78 @@ export default function CreatePageForm({ onSave, initialData }) {
   return (
     <>
       <Form onSubmit={handleSubmit} className="update-form">
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">Código</Form.Label>
-          <div className="d-flex gap-2">
-            <div className="position-relative flex-grow-1">
-              <Form.Control
-                type="text"
-                name="codigo"
-                value={formData.codigo}
-                onChange={handleChange}
-                onBlur={handleBlurCodigo}
-                placeholder="Ej: PROD-001"
-                className={`input-soft w-100 ${
-                  (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
-                }`}
-              />
-              {isValidating && (
-                <div className="spinner-border spinner-border-sm text-primary position-absolute" 
-                     style={{ right: '12px', top: '16px' }} role="status">
-                  <span className="visually-hidden">Validando...</span>
-                </div>
-              )}
+        <div className="form-card-group">
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">Código</Form.Label>
+            <div className="d-flex gap-2">
+              <div className="position-relative flex-grow-1">
+                <Form.Control
+                  type="text"
+                  name="codigo"
+                  value={formData.codigo}
+                  onChange={handleChange}
+                  onBlur={handleBlurCodigo}
+                  placeholder="Ej: PROD-001"
+                  className={`input-soft w-100 ${
+                    (touched.codigo && !formData.codigo.trim()) || codigoExiste ? "input-error" : ""
+                  }`}
+                />
+                {isValidating && (
+                  <div className="spinner-border spinner-border-sm text-primary position-absolute" 
+                       style={{ right: '12px', top: '16px' }} role="status">
+                    <span className="visually-hidden">Validando...</span>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={startCameraScan}
+                className="btn-camera-scan-input"
+                title="Escanear con cámara"
+              >
+                <i className="fa-solid fa-camera"></i>
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={startCameraScan}
-              className="btn-camera-scan-input"
-              title="Escanear con cámara"
-            >
-              <i className="fa-solid fa-camera"></i>
-            </button>
-          </div>
-          {touched.codigo && !formData.codigo.trim() && (
-            <div className="error-text">El código es obligatorio</div>
-          )}
-          {codigoExiste && (
-            <div className="error-text">Este código ya existe en la base de datos</div>
-          )}
-        </Form.Group>
+            {touched.codigo && !formData.codigo.trim() && (
+              <div className="error-text">El código es obligatorio</div>
+            )}
+            {codigoExiste && (
+              <div className="error-text">Este código ya existe en la base de datos</div>
+            )}
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">Nombre del artículo</Form.Label>
-          <Form.Control
-            type="text"
-            name="articulo"
-            value={formData.articulo}
-            onChange={handleChange}
-            onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
-            placeholder="Nombre descriptivo"
-            className={`input-soft ${
-              touched.articulo && !formData.articulo.trim() ? "input-error" : ""
-            }`}
-          />
-          {touched.articulo && !formData.articulo.trim() && (
-            <div className="error-text">
-              El nombre del artículo es obligatorio
-            </div>
-          )}
-        </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label className="fw-bold">Nombre del artículo</Form.Label>
+            <Form.Control
+              type="text"
+              name="articulo"
+              value={formData.articulo}
+              onChange={handleChange}
+              onBlur={() => setTouched((prev) => ({ ...prev, articulo: true }))}
+              placeholder="Nombre descriptivo"
+              className={`input-soft ${
+                touched.articulo && !formData.articulo.trim() ? "input-error" : ""
+              }`}
+            />
+            {touched.articulo && !formData.articulo.trim() && (
+              <div className="error-text">
+                El nombre del artículo es obligatorio
+              </div>
+            )}
+          </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label className="fw-bold">Categoría</Form.Label>
-          <Form.Control
-            type="text"
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleChange}
-            placeholder="Opcional"
-            className="input-soft"
-          />
-        </Form.Group>
+          <Form.Group className="mb-0">
+            <Form.Label className="fw-bold">Categoría</Form.Label>
+            <Form.Control
+              type="text"
+              name="categoria"
+              value={formData.categoria}
+              onChange={handleChange}
+              placeholder="Opcional"
+              className="input-soft"
+            />
+          </Form.Group>
+        </div>
 
         <div className="form-row-2">
           <Form.Group>
@@ -249,7 +251,7 @@ export default function CreatePageForm({ onSave, initialData }) {
               value={formData.precio}
               onChange={handleChange}
               placeholder="0.00"
-              className="input-soft"
+              className="input-pill"
             />
           </Form.Group>
 
@@ -262,7 +264,7 @@ export default function CreatePageForm({ onSave, initialData }) {
               value={formData.stock}
               onChange={handleChange}
               placeholder="0"
-              className="input-soft"
+              className="input-pill"
             />
           </Form.Group>
         </div>
